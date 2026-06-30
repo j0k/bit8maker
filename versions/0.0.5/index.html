@@ -15,38 +15,26 @@
     </header>
     <p class="tagline" id="tagline"></p>
 
-    <section class="card" id="live-app">
+    <section class="card">
       <div class="transport">
         <button id="play" class="btn"></button>
         <button id="export" class="btn btn--ghost"></button>
         <button id="share" class="btn btn--ghost"></button>
         <button id="clear" class="btn btn--ghost"></button>
-        <select id="preset-select" class="lang-sel" aria-label="presets"><option value=""></option></select>
         <span id="share-status" class="share-status"></span>
         <label class="bpm"><span id="bpm-label"></span>
           <input type="range" id="bpm" min="60" max="250" value="100">
           <b id="bpm-val">100</b>
-          <span id="bpm-name" class="bpm-name"></span>
-        </label>
-      </div>
-      <div class="sections">
-        <div class="tabs" id="tabs"></div>
-        <input id="sec-name" class="sec-name" maxlength="14" aria-label="section name" placeholder="name">
-        <label class="rep"><span id="rep-label"></span>
-          <button id="rep-dn" class="mini">−</button><b id="rep-val"></b><button id="rep-up" class="mini">+</button>
         </label>
       </div>
       <div class="grid" id="grid"></div>
     </section>
 
-    <iframe id="ver-frame" class="ver-frame" title="version snapshot" hidden></iframe>
-
     <section class="card changelog">
       <div class="cl-head">
-        <input type="range" id="ver-slider" min="0" max="8" value="8">
+        <input type="range" id="ver-slider" min="0" max="4" value="4">
         <span id="cl-version" class="cl-ver"></span>
         <span id="cl-commit" class="cl-commit"></span>
-        <span id="cl-snap" class="cl-snap"></span>
       </div>
       <div id="cl-body"></div>
     </section>

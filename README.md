@@ -13,8 +13,9 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-## v0.0.8
+## v0.0.9
 
+- **Time-machine version slider** — drag it and the whole product rolls back to that release: real design **and** functionality, loaded from a frozen snapshot under `versions/<v>/` (taken from the git tag). Even 0.0.1 is playable.
 - Clickable 16-step grid · Kick / Snare / HiHat / Clap
 - **Genre presets** — load a ready beat: Boom bap, Hip-hop, House, Techno, Trap, Drum & Bass
 - **Storyline sections** — multiple **named** sections (intro / verse / drop…), each with its own pattern and repeat count, played in sequence

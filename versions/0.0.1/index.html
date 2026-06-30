@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bit8maker — yo, tap the grid, cook a beat… can't be beat.</title>
+  <meta name="description" content="Bit8maker — tap the grid, cook a beat. A click-to-make beat sequencer in your browser.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Bit<span class="i">8</span>maker</h1>
+      <div class="lang">
+        <button data-lang="en" class="lang-btn">🗽 EN</button>
+        <button data-lang="ru" class="lang-btn">🇷🇺 RU</button>
+      </div>
+    </header>
+    <p class="tagline" id="tagline"></p>
+
+    <section class="card">
+      <div class="transport">
+        <button id="play" class="btn"></button>
+        <button id="clear" class="btn btn--ghost"></button>
+        <label class="bpm"><span id="bpm-label"></span>
+          <input type="range" id="bpm" min="60" max="180" value="100">
+          <b id="bpm-val">100</b>
+        </label>
+      </div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <footer>
+      <span>Bit8maker v<span id="ver"></span> · <a href="https://github.com/j0k/bit8maker" target="_blank">GitHub</a></span>
+    </footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

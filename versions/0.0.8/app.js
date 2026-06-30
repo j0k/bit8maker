@@ -1,6 +1,6 @@
-// Bit8maker 0.0.9 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.8 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.9";
+const VERSION = "0.0.8";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap"];
 const MAX_BPM = 250;
@@ -33,7 +33,6 @@ const SHARE_LABEL = { "ru-modern": "Поделиться", "ru-classic": "Под
 const COPIED = { "ru-modern": "ссылка скопирована", "ru-classic": "ссылка скопирована", "uk": "посилання скопійовано", "eng-ny": "link copied!", "eng-uk": "link copied — sorted!", "fr": "lien copié", "jp": "リンクをコピーしました", "sa": "تم نسخ الرابط", "cn": "链接已复制", "kz": "сілтеме көшірілді", "lt": "nuoroda nukopijuota" };
 const REPEAT_LABEL = { "ru-modern": "Повторы", "ru-classic": "Повторы", "uk": "Повтори", "eng-ny": "Repeats", "eng-uk": "Repeats", "fr": "Répét.", "jp": "反復", "sa": "تكرار", "cn": "重复", "kz": "Қайталау", "lt": "Kart." };
 const PRESET_LABEL = { "ru-modern": "Пресеты", "ru-classic": "Пресеты", "uk": "Пресети", "eng-ny": "Presets", "eng-uk": "Presets", "fr": "Préréglages", "jp": "プリセット", "sa": "إعدادات مسبقة", "cn": "预设", "kz": "Пресеттер", "lt": "Šablonai" };
-const SNAP_LABEL = { "ru-modern": "снимок · только просмотр", "ru-classic": "снимок · только просмотр", "uk": "знімок · лише перегляд", "eng-ny": "snapshot · read-only", "eng-uk": "snapshot · read-only", "fr": "instantané · lecture seule", "jp": "スナップショット · 閲覧のみ", "sa": "لقطة · للعرض فقط", "cn": "快照 · 只读", "kz": "түсірілім · тек оқу", "lt": "momentinė kopija · tik peržiūra" };
 
 // Conventional names for BPM ranges — universal music terms, kept untranslated (like the drum names).
 // Genre/dance tempo + classical Italian tempo marking.
@@ -127,7 +126,7 @@ const CHANGELOG = [
     "sa": ["تسمية المقاطع", "اسم نطاق BPM (النوع + الإيقاع)"], "cn": ["为段落命名", "BPM 区间名称（风格 + 速度）"],
     "kz": ["Бөлім атаулары", "BPM ауқымының атауы (жанр + темп)"], "lt": ["Sekcijų pavadinimai", "BPM diapazono pavadinimas (žanras + tempas)"],
   }, arch: {} },
-  { v: "0.0.8", commit: "680689d", items: {
+  { v: "0.0.8", commit: "—", items: {
     "ru-modern": ["Жанровые пресеты: Boom bap, Hip-hop, House, Techno, Trap, Drum & Bass", "Добавлен британский английский"],
     "ru-classic": ["Пресеты по жанрам", "Британский английский"], "uk": ["Пресети за жанрами", "Британська англійська"],
     "eng-ny": ["Genre presets: Boom bap, Hip-hop, House, Techno, Trap, Drum & Bass", "Added British English"],
@@ -136,21 +135,6 @@ const CHANGELOG = [
     "sa": ["إعدادات مسبقة حسب النوع", "إضافة الإنجليزية البريطانية"], "cn": ["按风格的预设", "新增英式英语"],
     "kz": ["Жанр бойынша пресеттер", "Британдық ағылшын тілі қосылды"], "lt": ["Žanrų šablonai", "Pridėta britų anglų kalba"],
   }, arch: {} },
-  { v: "0.0.9", commit: "—", items: {
-    "ru-modern": ["Слайдер версий теперь по-настоящему откатывает продукт: выбираешь версию — и видишь её дизайн и функционал (живой снимок из git-тега)", "Самую первую 0.0.1 можно открыть и потрогать"],
-    "ru-classic": ["Слайдер версий загружает настоящий снимок выбранной версии", "Откат к первой версии 0.0.1"],
-    "uk": ["Слайдер версій завантажує справжній знімок обраної версії", "Відкат до першої версії 0.0.1"],
-    "eng-ny": ["The version slider now actually rolls the product back — pick a version, see its real design and features (live snapshot from the git tag)", "Even 0.0.1 is playable"],
-    "eng-uk": ["The version slider properly rolls the whole thing back — design and features and all", "Have a go on the very first 0.0.1"],
-    "fr": ["Le curseur de versions restaure réellement le produit (instantané réel du tag git)", "La toute première 0.0.1 est jouable"],
-    "jp": ["バージョンスライダーが実際に製品をロールバック（gitタグの実スナップショット）", "最初の0.0.1も操作可能"],
-    "sa": ["شريط الإصدارات يعيد المنتج فعليًا إلى الإصدار المختار (لقطة حقيقية من وسم git)", "حتى 0.0.1 قابل للتشغيل"],
-    "cn": ["版本滑块现在会真正回滚产品（来自 git 标签的真实快照）", "连最初的 0.0.1 也能玩"],
-    "kz": ["Нұсқа слайдері өнімді шынымен артқа қайтарады (git тегінен нақты түсірілім)", "Алғашқы 0.0.1 нұсқасын ашуға болады"],
-    "lt": ["Versijų slankiklis dabar tikrai grąžina produktą (tikra momentinė kopija iš git žymos)", "Net 0.0.1 galima išbandyti"],
-  }, arch: {
-    "ru-modern": "Каждая версия сохранена в /versions/<v>/ из git-тега; слайдер грузит её в iframe.", "eng-ny": "Each release is frozen under /versions/<v>/ from its git tag; the slider loads it in an iframe.",
-  } },
 ];
 
 // ---- language (URL ?lang overrides stored) ----
@@ -293,24 +277,14 @@ function renderTabs() {
 function sync() { renderTabs(); $("sec-name").value = sections[cur].name; renderGrid(); }
 function updateTransport() { $("play").textContent = playing ? STRINGS[lang].stop : STRINGS[lang].play; }
 function renderChangelog() {
-  const e = CHANGELOG[clIndex], L = CL_LABELS[lang], latest = clIndex === CHANGELOG.length - 1;
-  $("cl-version").textContent = L.version + " " + e.v + (latest ? " ·" : "");
-  $("cl-snap").textContent = latest ? "" : "📦 " + SNAP_LABEL[lang];
+  const e = CHANGELOG[clIndex], L = CL_LABELS[lang];
+  $("cl-version").textContent = L.version + " " + e.v + (clIndex === CHANGELOG.length - 1 ? " ·" : "");
   $("cl-commit").innerHTML = e.commit && e.commit !== "—" ? '<a href="https://github.com/j0k/bit8maker/commit/' + e.commit + '" target="_blank">' + e.commit + "</a>" : "";
   const items = (e.items[lang] || e.items["eng-ny"]).map((x) => "<li>" + x + "</li>").join("");
   let html = "<h3>" + L.whats + "</h3><ul>" + items + "</ul>";
   const arch = e.arch[lang] || e.arch["eng-ny"];
   if (arch) html += '<p class="cl-arch"><b>' + L.arch + ":</b> " + arch + "</p>";
   $("cl-body").innerHTML = html;
-}
-// Roll the whole product back: load the selected version's real snapshot in an iframe.
-function renderVersionView() {
-  const latest = clIndex === CHANGELOG.length - 1, frame = $("ver-frame");
-  $("live-app").hidden = !latest;
-  $("lang-select").style.visibility = latest ? "" : "hidden";
-  $("tagline").style.visibility = latest ? "" : "hidden";
-  if (latest) { frame.hidden = true; frame.removeAttribute("src"); }
-  else { if (playing) stop(); frame.hidden = false; frame.src = "versions/" + CHANGELOG[clIndex].v + "/index.html"; }
 }
 function applyLang() {
   document.documentElement.lang = lang.split("-")[0];
@@ -346,7 +320,6 @@ function showBpm() { $("bpm-val").textContent = bpm; $("bpm-name").textContent =
 const bpmIn = $("bpm"); bpmIn.max = MAX_BPM; bpmIn.value = bpm; showBpm();
 bpmIn.oninput = (e) => { bpm = +e.target.value; showBpm(); };
 const verSlider = $("ver-slider"); verSlider.max = CHANGELOG.length - 1; verSlider.value = clIndex;
-verSlider.oninput = (e) => { clIndex = +e.target.value; renderChangelog(); renderVersionView(); };
-$("ver-frame").onload = function () { try { this.style.height = this.contentDocument.body.scrollHeight + 24 + "px"; } catch (err) {} };
+verSlider.oninput = (e) => { clIndex = +e.target.value; renderChangelog(); };
 $("ver").textContent = VERSION;
 applyLang();

@@ -1,6 +1,6 @@
-// Bit8maker 0.0.9 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.7 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.9";
+const VERSION = "0.0.7";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap"];
 const MAX_BPM = 250;
@@ -9,8 +9,8 @@ const MAX_SEC = 8;
 // ---- languages ----
 const LANGS = [
   ["ru-modern", "Русский"], ["ru-classic", "Русский · классич."], ["uk", "Українська"],
-  ["eng-ny", "English · NY"], ["eng-uk", "English · UK"], ["fr", "Français"], ["jp", "日本語"],
-  ["sa", "العربية"], ["cn", "中文"], ["kz", "Қазақша"], ["lt", "Lietuvių"],
+  ["eng-ny", "English · NY"], ["fr", "Français"], ["jp", "日本語"], ["sa", "العربية"],
+  ["cn", "中文"], ["kz", "Қазақша"], ["lt", "Lietuvių"],
 ];
 const RTL = { sa: true };
 const RU_INSTR = { kick: "Бочка", snare: "Снейр", hihat: "Хэт", clap: "Хлопок" };
@@ -20,7 +20,6 @@ const STRINGS = {
   "ru-classic": { tagline: "Нажми на сетку — собери свой бит.", play: "Играть", stop: "Стоп", clear: "Очистить", bpm: "Темп", instr: RU_INSTR },
   "uk": { tagline: "Торкнись сітки — збери свій біт.", play: "Грати", stop: "Стоп", clear: "Очистити", bpm: "Темп", instr: { kick: "Бочка", snare: "Снер", hihat: "Хет", clap: "Плеск" } },
   "eng-ny": { tagline: "Yo — tap the grid, cook a beat… can't be beat.", play: "Play", stop: "Stop", clear: "Clear", bpm: "BPM", instr: EN_INSTR },
-  "eng-uk": { tagline: "Go on then — tap the grid, knock up a beat. Proper tidy.", play: "Play", stop: "Stop", clear: "Clear", bpm: "BPM", instr: EN_INSTR },
   "fr": { tagline: "Touche la grille, prépare un beat.", play: "Jouer", stop: "Stop", clear: "Effacer", bpm: "Tempo", instr: EN_INSTR },
   "jp": { tagline: "グリッドをタップして、ビートを作ろう。", play: "再生", stop: "停止", clear: "クリア", bpm: "BPM", instr: EN_INSTR },
   "sa": { tagline: "انقر على الشبكة واصنع إيقاعك.", play: "تشغيل", stop: "إيقاف", clear: "مسح", bpm: "إيقاع", instr: EN_INSTR },
@@ -28,12 +27,10 @@ const STRINGS = {
   "kz": { tagline: "Торды басып, битіңді жаса.", play: "Ойнату", stop: "Тоқтату", clear: "Тазалау", bpm: "Қарқын", instr: EN_INSTR },
   "lt": { tagline: "Spustelėk tinklelį ir sukurk ritmą.", play: "Groti", stop: "Stop", clear: "Išvalyti", bpm: "Tempas", instr: EN_INSTR },
 };
-const EXPORT_LABEL = { "ru-modern": "Экспорт WAV", "ru-classic": "Экспорт WAV", "uk": "Експорт WAV", "eng-ny": "Export WAV", "eng-uk": "Export WAV", "fr": "Export WAV", "jp": "WAV書き出し", "sa": "تصدير WAV", "cn": "导出 WAV", "kz": "WAV экспорт", "lt": "Eksportuoti WAV" };
-const SHARE_LABEL = { "ru-modern": "Поделиться", "ru-classic": "Поделиться", "uk": "Поділитися", "eng-ny": "Share link", "eng-uk": "Share link", "fr": "Partager", "jp": "共有", "sa": "مشاركة", "cn": "分享", "kz": "Бөлісу", "lt": "Dalintis" };
-const COPIED = { "ru-modern": "ссылка скопирована", "ru-classic": "ссылка скопирована", "uk": "посилання скопійовано", "eng-ny": "link copied!", "eng-uk": "link copied — sorted!", "fr": "lien copié", "jp": "リンクをコピーしました", "sa": "تم نسخ الرابط", "cn": "链接已复制", "kz": "сілтеме көшірілді", "lt": "nuoroda nukopijuota" };
-const REPEAT_LABEL = { "ru-modern": "Повторы", "ru-classic": "Повторы", "uk": "Повтори", "eng-ny": "Repeats", "eng-uk": "Repeats", "fr": "Répét.", "jp": "反復", "sa": "تكرار", "cn": "重复", "kz": "Қайталау", "lt": "Kart." };
-const PRESET_LABEL = { "ru-modern": "Пресеты", "ru-classic": "Пресеты", "uk": "Пресети", "eng-ny": "Presets", "eng-uk": "Presets", "fr": "Préréglages", "jp": "プリセット", "sa": "إعدادات مسبقة", "cn": "预设", "kz": "Пресеттер", "lt": "Šablonai" };
-const SNAP_LABEL = { "ru-modern": "снимок · только просмотр", "ru-classic": "снимок · только просмотр", "uk": "знімок · лише перегляд", "eng-ny": "snapshot · read-only", "eng-uk": "snapshot · read-only", "fr": "instantané · lecture seule", "jp": "スナップショット · 閲覧のみ", "sa": "لقطة · للعرض فقط", "cn": "快照 · 只读", "kz": "түсірілім · тек оқу", "lt": "momentinė kopija · tik peržiūra" };
+const EXPORT_LABEL = { "ru-modern": "Экспорт WAV", "ru-classic": "Экспорт WAV", "uk": "Експорт WAV", "eng-ny": "Export WAV", "fr": "Export WAV", "jp": "WAV書き出し", "sa": "تصدير WAV", "cn": "导出 WAV", "kz": "WAV экспорт", "lt": "Eksportuoti WAV" };
+const SHARE_LABEL = { "ru-modern": "Поделиться", "ru-classic": "Поделиться", "uk": "Поділитися", "eng-ny": "Share link", "fr": "Partager", "jp": "共有", "sa": "مشاركة", "cn": "分享", "kz": "Бөлісу", "lt": "Dalintis" };
+const COPIED = { "ru-modern": "ссылка скопирована", "ru-classic": "ссылка скопирована", "uk": "посилання скопійовано", "eng-ny": "link copied!", "fr": "lien copié", "jp": "リンクをコピーしました", "sa": "تم نسخ الرابط", "cn": "链接已复制", "kz": "сілтеме көшірілді", "lt": "nuoroda nukopijuota" };
+const REPEAT_LABEL = { "ru-modern": "Повторы", "ru-classic": "Повторы", "uk": "Повтори", "eng-ny": "Repeats", "fr": "Répét.", "jp": "反復", "sa": "تكرار", "cn": "重复", "kz": "Қайталау", "lt": "Kart." };
 
 // Conventional names for BPM ranges — universal music terms, kept untranslated (like the drum names).
 // Genre/dance tempo + classical Italian tempo marking.
@@ -44,28 +41,9 @@ function bpmName(b) { const g = rangeName(GENRE, b), t = rangeName(TEMPO, b); re
 const SEC_NAMES = ["intro", "verse", "drop", "bridge", "build", "break", "outro", "fill"];
 const defName = (i) => SEC_NAMES[i % SEC_NAMES.length];
 
-// Genre starter beats — labels are universal genre names (untranslated). `on` lists active steps per drum.
-const PRESETS = [
-  { label: "Boom bap", bpm: 88, sections: [{ name: "loop", repeat: 4, on: { kick: [0, 10], snare: [4, 12], hihat: [2, 6, 10, 14], clap: [] } }] },
-  { label: "Hip-hop", bpm: 92, sections: [
-    { name: "verse", repeat: 4, on: { kick: [0, 8, 11], snare: [4, 12], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [] } },
-    { name: "hook", repeat: 2, on: { kick: [0, 6, 8, 11], snare: [4, 12], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [4, 12] } },
-  ] },
-  { label: "House", bpm: 124, sections: [{ name: "groove", repeat: 4, on: { kick: [0, 4, 8, 12], snare: [], hihat: [2, 6, 10, 14], clap: [4, 12] } }] },
-  { label: "Techno", bpm: 128, sections: [{ name: "loop", repeat: 4, on: { kick: [0, 4, 8, 12], snare: [], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [4, 12] } }] },
-  { label: "Trap", bpm: 140, sections: [{ name: "main", repeat: 4, on: { kick: [0, 6, 10], snare: [8], hihat: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], clap: [8] } }] },
-  { label: "Drum & Bass", bpm: 174, sections: [{ name: "break", repeat: 4, on: { kick: [0, 10], snare: [4, 12], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [] } }] },
-];
-function loadPreset(p) {
-  bpm = p.bpm;
-  sections = p.sections.map((s) => { const pat = emptyPattern(); INSTR.forEach((k) => (s.on[k] || []).forEach((i) => { if (i < STEPS) pat[k][i] = true; })); return { name: s.name, repeat: s.repeat, pattern: pat }; });
-  cur = 0;
-  $("bpm").value = bpm; showBpm(); sync();
-}
-
 const CL_LABELS = {
   "ru-modern": { version: "Версия", whats: "Что нового", arch: "Архитектура" }, "ru-classic": { version: "Версия", whats: "Что нового", arch: "Архитектура" },
-  "uk": { version: "Версія", whats: "Що нового", arch: "Архітектура" }, "eng-ny": { version: "Version", whats: "What's new", arch: "Architecture" }, "eng-uk": { version: "Version", whats: "What's new", arch: "Architecture" },
+  "uk": { version: "Версія", whats: "Що нового", arch: "Архітектура" }, "eng-ny": { version: "Version", whats: "What's new", arch: "Architecture" },
   "fr": { version: "Version", whats: "Nouveautés", arch: "Architecture" }, "jp": { version: "バージョン", whats: "新着", arch: "アーキテクチャ" },
   "sa": { version: "الإصدار", whats: "الجديد", arch: "البنية" }, "cn": { version: "版本", whats: "更新内容", arch: "架构" },
   "kz": { version: "Нұсқа", whats: "Жаңалықтар", arch: "Архитектура" }, "lt": { version: "Versija", whats: "Naujienos", arch: "Architektūra" },
@@ -119,7 +97,7 @@ const CHANGELOG = [
     "sa": ["مقاطع متسلسلة مع تكرارات", "الرابط يحفظ اللغة (?lang)"], "cn": ["故事化段落（带重复）", "分享链接保留语言（?lang）"],
     "kz": ["Қайталаулары бар бөлімдер", "Сілтеме тілді сақтайды (?lang)"], "lt": ["Sekcijos su pakartojimais", "Nuoroda išsaugo kalbą (?lang)"],
   }, arch: {} },
-  { v: "0.0.7", commit: "a30d24a", items: {
+  { v: "0.0.7", commit: "—", items: {
     "ru-modern": ["Имена у секций — intro, verse, drop или свои", "Подсказка стиля/темпа по BPM: Hip-hop, House, Techno… и Allegro, Andante"],
     "ru-classic": ["Названия секций", "Названия диапазонов BPM (жанр + темп)"], "uk": ["Назви секцій", "Назви діапазонів BPM (жанр + темп)"],
     "eng-ny": ["Name your sections — intro, verse, drop, whatever", "BPM range hint: Hip-hop, House, Techno… plus Allegro, Andante"],
@@ -127,30 +105,6 @@ const CHANGELOG = [
     "sa": ["تسمية المقاطع", "اسم نطاق BPM (النوع + الإيقاع)"], "cn": ["为段落命名", "BPM 区间名称（风格 + 速度）"],
     "kz": ["Бөлім атаулары", "BPM ауқымының атауы (жанр + темп)"], "lt": ["Sekcijų pavadinimai", "BPM diapazono pavadinimas (žanras + tempas)"],
   }, arch: {} },
-  { v: "0.0.8", commit: "680689d", items: {
-    "ru-modern": ["Жанровые пресеты: Boom bap, Hip-hop, House, Techno, Trap, Drum & Bass", "Добавлен британский английский"],
-    "ru-classic": ["Пресеты по жанрам", "Британский английский"], "uk": ["Пресети за жанрами", "Британська англійська"],
-    "eng-ny": ["Genre presets: Boom bap, Hip-hop, House, Techno, Trap, Drum & Bass", "Added British English"],
-    "eng-uk": ["Genre presets — Boom bap, House, Techno, the lot", "Added British English (this one, innit)"],
-    "fr": ["Préréglages par genre", "Ajout de l'anglais britannique"], "jp": ["ジャンル別プリセット", "イギリス英語を追加"],
-    "sa": ["إعدادات مسبقة حسب النوع", "إضافة الإنجليزية البريطانية"], "cn": ["按风格的预设", "新增英式英语"],
-    "kz": ["Жанр бойынша пресеттер", "Британдық ағылшын тілі қосылды"], "lt": ["Žanrų šablonai", "Pridėta britų anglų kalba"],
-  }, arch: {} },
-  { v: "0.0.9", commit: "—", items: {
-    "ru-modern": ["Слайдер версий теперь по-настоящему откатывает продукт: выбираешь версию — и видишь её дизайн и функционал (живой снимок из git-тега)", "Самую первую 0.0.1 можно открыть и потрогать"],
-    "ru-classic": ["Слайдер версий загружает настоящий снимок выбранной версии", "Откат к первой версии 0.0.1"],
-    "uk": ["Слайдер версій завантажує справжній знімок обраної версії", "Відкат до першої версії 0.0.1"],
-    "eng-ny": ["The version slider now actually rolls the product back — pick a version, see its real design and features (live snapshot from the git tag)", "Even 0.0.1 is playable"],
-    "eng-uk": ["The version slider properly rolls the whole thing back — design and features and all", "Have a go on the very first 0.0.1"],
-    "fr": ["Le curseur de versions restaure réellement le produit (instantané réel du tag git)", "La toute première 0.0.1 est jouable"],
-    "jp": ["バージョンスライダーが実際に製品をロールバック（gitタグの実スナップショット）", "最初の0.0.1も操作可能"],
-    "sa": ["شريط الإصدارات يعيد المنتج فعليًا إلى الإصدار المختار (لقطة حقيقية من وسم git)", "حتى 0.0.1 قابل للتشغيل"],
-    "cn": ["版本滑块现在会真正回滚产品（来自 git 标签的真实快照）", "连最初的 0.0.1 也能玩"],
-    "kz": ["Нұсқа слайдері өнімді шынымен артқа қайтарады (git тегінен нақты түсірілім)", "Алғашқы 0.0.1 нұсқасын ашуға болады"],
-    "lt": ["Versijų slankiklis dabar tikrai grąžina produktą (tikra momentinė kopija iš git žymos)", "Net 0.0.1 galima išbandyti"],
-  }, arch: {
-    "ru-modern": "Каждая версия сохранена в /versions/<v>/ из git-тега; слайдер грузит её в iframe.", "eng-ny": "Each release is frozen under /versions/<v>/ from its git tag; the slider loads it in an iframe.",
-  } },
 ];
 
 // ---- language (URL ?lang overrides stored) ----
@@ -293,24 +247,14 @@ function renderTabs() {
 function sync() { renderTabs(); $("sec-name").value = sections[cur].name; renderGrid(); }
 function updateTransport() { $("play").textContent = playing ? STRINGS[lang].stop : STRINGS[lang].play; }
 function renderChangelog() {
-  const e = CHANGELOG[clIndex], L = CL_LABELS[lang], latest = clIndex === CHANGELOG.length - 1;
-  $("cl-version").textContent = L.version + " " + e.v + (latest ? " ·" : "");
-  $("cl-snap").textContent = latest ? "" : "📦 " + SNAP_LABEL[lang];
+  const e = CHANGELOG[clIndex], L = CL_LABELS[lang];
+  $("cl-version").textContent = L.version + " " + e.v + (clIndex === CHANGELOG.length - 1 ? " ·" : "");
   $("cl-commit").innerHTML = e.commit && e.commit !== "—" ? '<a href="https://github.com/j0k/bit8maker/commit/' + e.commit + '" target="_blank">' + e.commit + "</a>" : "";
   const items = (e.items[lang] || e.items["eng-ny"]).map((x) => "<li>" + x + "</li>").join("");
   let html = "<h3>" + L.whats + "</h3><ul>" + items + "</ul>";
   const arch = e.arch[lang] || e.arch["eng-ny"];
   if (arch) html += '<p class="cl-arch"><b>' + L.arch + ":</b> " + arch + "</p>";
   $("cl-body").innerHTML = html;
-}
-// Roll the whole product back: load the selected version's real snapshot in an iframe.
-function renderVersionView() {
-  const latest = clIndex === CHANGELOG.length - 1, frame = $("ver-frame");
-  $("live-app").hidden = !latest;
-  $("lang-select").style.visibility = latest ? "" : "hidden";
-  $("tagline").style.visibility = latest ? "" : "hidden";
-  if (latest) { frame.hidden = true; frame.removeAttribute("src"); }
-  else { if (playing) stop(); frame.hidden = false; frame.src = "versions/" + CHANGELOG[clIndex].v + "/index.html"; }
 }
 function applyLang() {
   document.documentElement.lang = lang.split("-")[0];
@@ -321,7 +265,6 @@ function applyLang() {
   $("export").textContent = EXPORT_LABEL[lang];
   $("share").textContent = SHARE_LABEL[lang];
   $("rep-label").textContent = REPEAT_LABEL[lang];
-  $("preset-select").options[0].textContent = PRESET_LABEL[lang];
   $("bpm-label").textContent = t.bpm;
   updateTransport(); sync(); renderChangelog();
   $("lang-select").value = lang;
@@ -339,14 +282,10 @@ $("share").onclick = shareLink;
 $("rep-dn").onclick = () => { sections[cur].repeat = Math.max(1, sections[cur].repeat - 1); $("rep-val").textContent = "×" + sections[cur].repeat; };
 $("rep-up").onclick = () => { sections[cur].repeat = Math.min(8, sections[cur].repeat + 1); $("rep-val").textContent = "×" + sections[cur].repeat; };
 $("sec-name").oninput = (e) => { sections[cur].name = e.target.value; renderTabs(); };
-const presetSel = $("preset-select");
-PRESETS.forEach((p, i) => { const o = document.createElement("option"); o.value = i; o.textContent = p.label; presetSel.appendChild(o); });
-presetSel.onchange = () => { const p = PRESETS[+presetSel.value]; if (p) loadPreset(p); presetSel.selectedIndex = 0; };
 function showBpm() { $("bpm-val").textContent = bpm; $("bpm-name").textContent = bpmName(bpm); }
 const bpmIn = $("bpm"); bpmIn.max = MAX_BPM; bpmIn.value = bpm; showBpm();
 bpmIn.oninput = (e) => { bpm = +e.target.value; showBpm(); };
 const verSlider = $("ver-slider"); verSlider.max = CHANGELOG.length - 1; verSlider.value = clIndex;
-verSlider.oninput = (e) => { clIndex = +e.target.value; renderChangelog(); renderVersionView(); };
-$("ver-frame").onload = function () { try { this.style.height = this.contentDocument.body.scrollHeight + 24 + "px"; } catch (err) {} };
+verSlider.oninput = (e) => { clIndex = +e.target.value; renderChangelog(); };
 $("ver").textContent = VERSION;
 applyLang();

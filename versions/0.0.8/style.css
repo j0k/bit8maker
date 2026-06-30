@@ -58,10 +58,7 @@ h1 .i{color:var(--brand)}
 /* keep the sequencer left-to-right even in RTL languages */
 .grid,.steps,.transport{direction:ltr}
 
-.ver-frame{width:100%;min-height:520px;border:1px solid var(--line);border-radius:16px;margin-top:18px;background:var(--bg);display:block}
-
 .changelog .cl-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
-.cl-snap{color:var(--muted);font-size:13px}
 #ver-slider{flex:1;min-width:160px;accent-color:var(--brand)}
 .cl-ver{font-weight:700}
 .cl-commit a{color:var(--brand-l);text-decoration:none;font-family:ui-monospace,monospace;font-size:13px}
