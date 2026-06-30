@@ -1,6 +1,6 @@
-// Bit8maker 0.0.13 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.12 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.13";
+const VERSION = "0.0.12";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap"];
 const MAX_BPM = 250;
@@ -34,7 +34,6 @@ const COPIED = { "ru-modern": "ссылка скопирована", "ru-classic
 const REPEAT_LABEL = { "ru-modern": "Повторы", "ru-classic": "Повторы", "uk": "Повтори", "eng-ny": "Repeats", "eng-uk": "Repeats", "fr": "Répét.", "jp": "反復", "sa": "تكرار", "cn": "重复", "kz": "Қайталау", "lt": "Kart." };
 const PRESET_LABEL = { "ru-modern": "+ стиль", "ru-classic": "+ стиль", "uk": "+ стиль", "eng-ny": "+ style", "eng-uk": "+ style", "fr": "+ style", "jp": "+ スタイル", "sa": "+ نمط", "cn": "+ 风格", "kz": "+ стиль", "lt": "+ stilius" };
 const SEC_FULL = { "ru-modern": "максимум секций", "ru-classic": "максимум секций", "uk": "максимум секцій", "eng-ny": "max sections", "eng-uk": "max sections", "fr": "sections au max", "jp": "セクション上限", "sa": "الحد الأقصى للمقاطع", "cn": "段落已满", "kz": "бөлім шегі", "lt": "sekcijų riba" };
-const NP_LABEL = { "ru-modern": "Сейчас играет", "ru-classic": "Сейчас играет", "uk": "Зараз грає", "eng-ny": "Now playing", "eng-uk": "Now playing", "fr": "En lecture", "jp": "再生中", "sa": "قيد التشغيل", "cn": "正在播放", "kz": "Қазір ойнауда", "lt": "Dabar groja" };
 const SNAP_LABEL = { "ru-modern": "снимок · только просмотр", "ru-classic": "снимок · только просмотр", "uk": "знімок · лише перегляд", "eng-ny": "snapshot · read-only", "eng-uk": "snapshot · read-only", "fr": "instantané · lecture seule", "jp": "スナップショット · 閲覧のみ", "sa": "لقطة · للعرض فقط", "cn": "快照 · 只读", "kz": "түсірілім · тек оқу", "lt": "momentinė kopija · tik peržiūra" };
 
 // Conventional names for BPM ranges — universal music terms, kept untranslated (like the drum names).
@@ -178,7 +177,7 @@ const CHANGELOG = [
     "sa": ["شريط الإصدارات لم يعد يهزّ الصفحة: يُحمّل عند الإفلات في إطار ثابت الارتفاع"], "cn": ["版本滑块不再抖动或撑大页面：松开时加载，固定高度带滚动"],
     "kz": ["Нұсқа слайдері бетті дірілдетпейді: жібергенде жүктеледі, биіктігі тұрақты терезе"], "lt": ["Versijų slankiklis nebepurto puslapio: įkeliama atleidus, fiksuoto aukščio rėmas"],
   }, arch: {} },
-  { v: "0.0.12", commit: "57e0e41", items: {
+  { v: "0.0.12", commit: "—", items: {
     "ru-modern": ["Пресеты теперь добавляют стиль как новые секции к текущему стори-борду, а не заменяют всё", "Добавление во время игры не сбрасывает на начало — стиль входит в конце текущего цикла", "До 16 секций"],
     "ru-classic": ["Пресеты добавляются как секции (стопка стилей)", "Без рестарта при добавлении на лету", "До 16 секций"],
     "uk": ["Пресети додаються як секції", "Без рестарту при додаванні під час відтворення", "До 16 секцій"],
@@ -190,15 +189,6 @@ const CHANGELOG = [
     "cn": ["预设现在是叠加：把风格作为新段落加入", "播放中添加不会从头开始", "最多 16 段"],
     "kz": ["Пресеттер енді жаңа бөлім ретінде қосылады", "Ойнау кезінде қосқанда басынан бастамайды", "16 бөлімге дейін"],
     "lt": ["Šablonai dabar pridedami kaip naujos sekcijos", "Pridėjus grojant, neprasideda iš naujo", "Iki 16 sekcijų"],
-  }, arch: {} },
-  { v: "0.0.13", commit: "—", items: {
-    "ru-modern": ["Окно «Сейчас играет»: видно, какая секция звучит сейчас — имя, повтор и шаг, с пульсирующим индикатором", "Играющая секция подсвечивается во вкладках, отдельно от редактируемой"],
-    "ru-classic": ["Индикатор «Сейчас играет» (секция, повтор, шаг)", "Подсветка играющей секции"], "uk": ["Вікно «Зараз грає» (секція, повтор, крок)", "Підсвічування секції, що грає"],
-    "eng-ny": ["A 'Now playing' window — see which section is sounding right now (name, repeat, step), with a pulsing dot", "The playing section lights up in the tabs, separate from the one you're editing"],
-    "eng-uk": ["A 'Now playing' panel — which section's going off right now", "The playing section lights up in the tabs"],
-    "fr": ["Fenêtre « En lecture » (section, répétition, pas)", "La section en cours s'illumine dans les onglets"], "jp": ["「再生中」ウィンドウ（セクション・反復・ステップ）", "再生中のセクションをタブで強調"],
-    "sa": ["نافذة «قيد التشغيل» (المقطع، التكرار، الخطوة)", "إبراز المقطع قيد التشغيل في التبويبات"], "cn": ["“正在播放”窗口（段落、重复、步）", "正在播放的段落在标签中高亮"],
-    "kz": ["«Қазір ойнауда» терезесі (бөлім, қайталау, қадам)", "Ойнап жатқан бөлім қойындыларда ерекшеленеді"], "lt": ["„Dabar groja\" langas (sekcija, pakartojimas, žingsnis)", "Grojanti sekcija paryškinama skirtukuose"],
   }, arch: {} },
 ];
 
@@ -222,7 +212,7 @@ function saveVol() { localStorage.setItem("b8_vol", JSON.stringify(volumes)); }
 let bpm = 100;
 let ctx = null;
 let playing = false, nextNoteTime = 0, timer = null;
-let seq = [], seqPos = 0, playingSec = -1;
+let seq = [], seqPos = 0;
 const $ = (id) => document.getElementById(id);
 
 // ---- synthesis ----
@@ -236,28 +226,15 @@ const VOICES = { kick, snare, hihat, clap };
 // ---- sequence + scheduler ----
 function buildSequence() {
   const s = [];
-  sections.forEach((sec, si) => { for (let r = 0; r < sec.repeat; r++) for (let st = 0; st < STEPS; st++) s.push([sec.pattern, st, si, r + 1, sec.repeat]); });
-  return s.length ? s : [[sections[0].pattern, 0, 0, 1, 1]];
-}
-// cell = [pattern, step, sectionIndex, repeatNum, repeatTotal]
-function tick(cell) {
-  highlight(cell[1]);
-  setPlayingSection(cell[2]);
-  const sec = sections[cell[2]];
-  $("np-info").textContent = (sec ? sec.name || "—" : "—") + " · " + cell[3] + "/" + cell[4] + " · " + (cell[1] + 1) + "/" + STEPS;
-}
-function setPlayingSection(si) {
-  if (si === playingSec) return;
-  playingSec = si;
-  const tabs = $("tabs").children;
-  for (let i = 0; i < tabs.length; i++) tabs[i].classList.toggle("playing", i === si);
+  sections.forEach((sec) => { for (let r = 0; r < sec.repeat; r++) for (let st = 0; st < STEPS; st++) s.push([sec.pattern, st]); });
+  return s.length ? s : [[sections[0].pattern, 0]];
 }
 function scheduler() {
   while (nextNoteTime < ctx.currentTime + 0.1) {
     const cell = seq[seqPos], pat = cell[0], st = cell[1];
     INSTR.forEach((k) => { if (pat[k][st]) VOICES[k](nextNoteTime, volumes[k]); });
     const dt = (nextNoteTime - ctx.currentTime) * 1000;
-    setTimeout(() => tick(cell), Math.max(0, dt));
+    setTimeout(() => highlight(st), Math.max(0, dt));
     seqPos = (seqPos + 1) % seq.length;
     nextNoteTime += (60 / bpm) / 4;
   }
@@ -267,16 +244,9 @@ function play() {
   if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
   ctx.resume();
   playing = true; seq = buildSequence(); seqPos = 0; nextNoteTime = ctx.currentTime + 0.06;
-  $("now-playing").classList.add("live");
   scheduler(); updateTransport();
 }
-function stop() {
-  playing = false; clearTimeout(timer); clearHighlight(); updateTransport();
-  playingSec = -1;
-  const tabs = $("tabs").children; for (let i = 0; i < tabs.length; i++) tabs[i].classList.remove("playing");
-  $("now-playing").classList.remove("live");
-  $("np-info").textContent = "—";
-}
+function stop() { playing = false; clearTimeout(timer); clearHighlight(); updateTransport(); }
 
 // ---- WAV export (full storyline) ----
 function encodeWAV(audioBuf) {
@@ -352,7 +322,7 @@ function renderGrid() {
 }
 function renderTabs() {
   const el = $("tabs"); el.innerHTML = "";
-  sections.forEach((s, i) => { const b = document.createElement("button"); b.className = "tab" + (i === cur ? " active" : "") + (i === playingSec ? " playing" : ""); b.textContent = (i + 1) + ". " + (s.name || "—"); b.onclick = () => { cur = i; sync(); }; el.appendChild(b); });
+  sections.forEach((s, i) => { const b = document.createElement("button"); b.className = "tab" + (i === cur ? " active" : ""); b.textContent = (i + 1) + ". " + (s.name || "—"); b.onclick = () => { cur = i; sync(); }; el.appendChild(b); });
   const add = document.createElement("button"); add.className = "tab tab--icon"; add.textContent = "＋"; add.title = "add";
   add.onclick = () => { if (sections.length < MAX_SEC) { sections.push({ name: defName(sections.length), pattern: emptyPattern(), repeat: 2 }); cur = sections.length - 1; sync(); } };
   el.appendChild(add);
@@ -391,8 +361,6 @@ function applyLang() {
   $("share").textContent = SHARE_LABEL[lang];
   $("rep-label").textContent = REPEAT_LABEL[lang];
   $("preset-select").options[0].textContent = PRESET_LABEL[lang];
-  $("np-label").textContent = NP_LABEL[lang];
-  if (!playing) $("np-info").textContent = "—";
   $("bpm-label").textContent = t.bpm;
   updateTransport(); sync(); renderChangelog();
   $("lang-select").value = lang;

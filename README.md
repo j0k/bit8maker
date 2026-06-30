@@ -13,8 +13,9 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-## v0.0.12
+## v0.0.13
 
+- **"Now playing" window** — with several sections it shows which one is sounding right now (name · repeat · step) with a pulsing dot; the playing section also lights up in the tabs
 - **Stackable genre presets** — each preset *adds* its style as new sections to your storyline (up to 16) instead of replacing it; add one mid-playback and it joins at the end of the loop without restarting
 - **Time-machine version slider** — drag it and the whole product rolls back to that release: real design **and** functionality, loaded from a frozen snapshot under `versions/<v>/` (taken from the git tag). Even 0.0.1 is playable. The snapshot loads on release into a fixed-height, self-scrolling frame, so spinning the slider no longer shakes or stretches the page.
 - BPM tempo hint refined (174 = _Drum & Bass · Presto_) and its layout fixed so the BPM slider no longer jumps while dragging

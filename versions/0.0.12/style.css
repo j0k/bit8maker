@@ -38,19 +38,11 @@ h1 .i{color:var(--brand)}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tab{background:#1c1f27;border:1px solid var(--line);color:#cfd6dd;border-radius:8px;min-width:34px;padding:6px 10px;font:inherit;cursor:pointer}
 .tab.active{background:var(--brand);border-color:var(--brand-l);color:#fff;font-weight:700}
-.tab.playing{box-shadow:0 0 0 2px var(--brand-l), 0 0 10px rgba(90,166,218,.7)}
 .tab--icon{min-width:30px;padding:6px 8px}
 .sec-name{background:#0e0e10;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;width:110px}
 .rep{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px;margin-left:auto}
 .rep b{min-width:26px;text-align:center;color:var(--txt)}
 .mini{background:#1c1f27;border:1px solid var(--line);color:#cfd6dd;border-radius:6px;width:26px;height:26px;cursor:pointer;font:inherit}
-
-.now-playing{display:flex;align-items:center;gap:10px;margin-top:16px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#12141a;color:var(--muted);font-size:14px}
-.now-playing b{color:var(--brand-l)}
-#np-info{color:var(--txt)}
-.np-dot{width:10px;height:10px;border-radius:50%;background:#3a4150;flex:none}
-.now-playing.live .np-dot{background:var(--brand);animation:np-pulse 1s ease-in-out infinite}
-@keyframes np-pulse{0%,100%{box-shadow:0 0 0 0 rgba(38,125,183,.7)}50%{box-shadow:0 0 0 6px rgba(38,125,183,0)}}
 
 .grid{display:grid;gap:6px}
 .row{display:grid;grid-template-columns:84px 1fr 92px;gap:10px;align-items:center}
