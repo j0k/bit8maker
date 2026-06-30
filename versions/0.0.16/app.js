@@ -1,6 +1,6 @@
-// Bit8maker 0.0.17 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.16 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.17";
+const VERSION = "0.0.16";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -35,7 +35,6 @@ const REPEAT_LABEL = { "ru-modern": "Повторы", "ru-classic": "Повто�
 const PRESET_LABEL = { "ru-modern": "+ стиль", "ru-classic": "+ стиль", "uk": "+ стиль", "eng-ny": "+ style", "eng-uk": "+ style", "fr": "+ style", "jp": "+ スタイル", "sa": "+ نمط", "cn": "+ 风格", "kz": "+ стиль", "lt": "+ stilius" };
 const SEC_FULL = { "ru-modern": "максимум секций", "ru-classic": "максимум секций", "uk": "максимум секцій", "eng-ny": "max sections", "eng-uk": "max sections", "fr": "sections au max", "jp": "セクション上限", "sa": "الحد الأقصى للمقاطع", "cn": "段落已满", "kz": "бөлім шегі", "lt": "sekcijų riba" };
 const NP_LABEL = { "ru-modern": "Сейчас играет", "ru-classic": "Сейчас играет", "uk": "Зараз грає", "eng-ny": "Now playing", "eng-uk": "Now playing", "fr": "En lecture", "jp": "再生中", "sa": "قيد التشغيل", "cn": "正在播放", "kz": "Қазір ойнауда", "lt": "Dabar groja" };
-const SCOPE_LABEL = { "ru-modern": "Волна и спектр", "ru-classic": "Волна и спектр", "uk": "Хвиля та спектр", "eng-ny": "Wave & spectrum", "eng-uk": "Wave & spectrum", "fr": "Onde et spectre", "jp": "波形とスペクトル", "sa": "الموجة والطيف", "cn": "波形与频谱", "kz": "Толқын мен спектр", "lt": "Banga ir spektras" };
 const SNAP_LABEL = { "ru-modern": "снимок · только просмотр", "ru-classic": "снимок · только просмотр", "uk": "знімок · лише перегляд", "eng-ny": "snapshot · read-only", "eng-uk": "snapshot · read-only", "fr": "instantané · lecture seule", "jp": "スナップショット · 閲覧のみ", "sa": "لقطة · للعرض فقط", "cn": "快照 · 只读", "kz": "түсірілім · тек оқу", "lt": "momentinė kopija · tik peržiūra" };
 
 // Conventional names for BPM ranges — universal music terms, kept untranslated (like the drum names).
@@ -219,7 +218,7 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "Пул кэшированных iframe вместо перезагрузки src на каждое переключение.", "eng-ny": "Cached iframe pool instead of reloading src on every switch.",
   } },
-  { v: "0.0.16", commit: "87c6b01", items: {
+  { v: "0.0.16", commit: "—", items: {
     "ru-modern": ["Ползунок версий вынесен на отдельную строку во всю ширину — он больше не меняет длину и не «прыгает» при перетаскивании (версия, коммит и снимок теперь под ним)"],
     "ru-classic": ["Ползунок версий фиксированной ширины — не дёргается"], "uk": ["Повзунок версій на окремому рядку, фіксованої ширини — більше не смикається"],
     "eng-ny": ["Version slider moved to its own full-width row — it no longer resizes or jumps while you drag (version/commit/snapshot now sit below it)"],
@@ -227,13 +226,6 @@ const CHANGELOG = [
     "fr": ["Curseur de versions sur sa propre ligne pleine largeur — il ne change plus de taille ni ne saute"], "jp": ["バージョンスライダーを全幅の独立行に — 幅が変わらず、ドラッグ中に跳ねない"],
     "sa": ["نُقل شريط الإصدارات إلى سطر مستقل بعرض كامل — لم يعد يتغير حجمه أو يقفز"], "cn": ["版本滑块移到单独的整行 — 拖动时不再改变长度或跳动"],
     "kz": ["Нұсқа слайдері бөлек жолға, толық еніне — енді өлшемі өзгермейді, секірмейді"], "lt": ["Versijų slankiklis perkeltas į atskirą viso pločio eilutę — nebekeičia dydžio ir nebešokinėja"],
-  }, arch: {} },
-  { v: "0.0.17", commit: "—", items: {
-    "ru-modern": ["Живая визуализация звука во время игры: форма волны (осциллограф) и спектр частот", "Весь звук идёт через анализатор (AnalyserNode)"],
-    "ru-classic": ["Осциллограф и спектр воспроизведения"], "uk": ["Осцилограф і спектр відтворення"],
-    "eng-ny": ["Live audio visuals while it plays: the waveform (scope) and the frequency spectrum", "Everything routes through an AnalyserNode"],
-    "eng-uk": ["Live waveform + spectrum while it plays"], "fr": ["Visualisation en direct : forme d'onde et spectre"], "jp": ["再生中のライブ表示：波形とスペクトル"],
-    "sa": ["عرض حي أثناء التشغيل: الموجة والطيف"], "cn": ["播放时实时显示：波形与频谱"], "kz": ["Ойнау кезінде тірі визуализация: толқын мен спектр"], "lt": ["Gyva vizualizacija grojant: banga ir spektras"],
   }, arch: {} },
 ];
 
@@ -255,26 +247,19 @@ const volumes = Object.assign({}, DEF_VOL, JSON.parse(localStorage.getItem("b8_v
 function saveVol() { localStorage.setItem("b8_vol", JSON.stringify(volumes)); }
 
 let bpm = 100;
-let ctx = null, analyser = null, bus = null, rafId = null, waveBuf = null, freqBuf = null;
-const out = () => bus || ctx.destination; // voices route through the analyser bus when live
-function ensureCtx() {
-  if (ctx) return;
-  ctx = new (window.AudioContext || window.webkitAudioContext)();
-  analyser = ctx.createAnalyser(); analyser.fftSize = 2048; analyser.smoothingTimeConstant = 0.8;
-  bus = ctx.createGain(); bus.connect(analyser); analyser.connect(ctx.destination);
-}
+let ctx = null;
 let playing = false, nextNoteTime = 0, timer = null;
 let seq = [], seqPos = 0, playingSec = -1;
 const $ = (id) => document.getElementById(id);
 
 // ---- synthesis ----
 function noise(dur) { const n = Math.floor(ctx.sampleRate * dur), b = ctx.createBuffer(1, n, ctx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; return b; }
-function kick(t, v) { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(50, t + 0.18); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3); o.connect(g).connect(out()); o.start(t); o.stop(t + 0.31); }
-function snare(t, v) { const s = ctx.createBufferSource(); s.buffer = noise(0.2); const f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 1400; const g = ctx.createGain(); g.gain.setValueAtTime(0.7 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.2); s.connect(f).connect(g).connect(out()); s.start(t); s.stop(t + 0.2); const o = ctx.createOscillator(), og = ctx.createGain(); o.type = "triangle"; o.frequency.value = 180; og.gain.setValueAtTime(0.4 * v, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.15); o.connect(og).connect(out()); o.start(t); o.stop(t + 0.15); }
-function hihat(t, v) { const s = ctx.createBufferSource(); s.buffer = noise(0.06); const f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 7000; const g = ctx.createGain(); g.gain.setValueAtTime(0.4 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.06); s.connect(f).connect(g).connect(out()); s.start(t); s.stop(t + 0.06); }
-function clap(t, v) { const s = ctx.createBufferSource(); s.buffer = noise(0.18); const f = ctx.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = 1200; const g = ctx.createGain(); g.gain.setValueAtTime(0.7 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.18); s.connect(f).connect(g).connect(out()); s.start(t); s.stop(t + 0.18); }
-function bass(t, v) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = "triangle"; o.frequency.setValueAtTime(55, t); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.95 * v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t + 0.32); o.connect(g).connect(out()); o.start(t); o.stop(t + 0.34); }
-function synth(t, v) { const o = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter(); o.type = "sawtooth"; o.frequency.setValueAtTime(330, t); f.type = "lowpass"; f.frequency.setValueAtTime(2600, t); f.frequency.exponentialRampToValueAtTime(600, t + 0.2); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5 * v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t + 0.25); o.connect(f).connect(g).connect(out()); o.start(t); o.stop(t + 0.27); }
+function kick(t, v) { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(50, t + 0.18); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3); o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.31); }
+function snare(t, v) { const s = ctx.createBufferSource(); s.buffer = noise(0.2); const f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 1400; const g = ctx.createGain(); g.gain.setValueAtTime(0.7 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.2); s.connect(f).connect(g).connect(ctx.destination); s.start(t); s.stop(t + 0.2); const o = ctx.createOscillator(), og = ctx.createGain(); o.type = "triangle"; o.frequency.value = 180; og.gain.setValueAtTime(0.4 * v, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.15); o.connect(og).connect(ctx.destination); o.start(t); o.stop(t + 0.15); }
+function hihat(t, v) { const s = ctx.createBufferSource(); s.buffer = noise(0.06); const f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 7000; const g = ctx.createGain(); g.gain.setValueAtTime(0.4 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.06); s.connect(f).connect(g).connect(ctx.destination); s.start(t); s.stop(t + 0.06); }
+function clap(t, v) { const s = ctx.createBufferSource(); s.buffer = noise(0.18); const f = ctx.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = 1200; const g = ctx.createGain(); g.gain.setValueAtTime(0.7 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.18); s.connect(f).connect(g).connect(ctx.destination); s.start(t); s.stop(t + 0.18); }
+function bass(t, v) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = "triangle"; o.frequency.setValueAtTime(55, t); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.95 * v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t + 0.32); o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.34); }
+function synth(t, v) { const o = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter(); o.type = "sawtooth"; o.frequency.setValueAtTime(330, t); f.type = "lowpass"; f.frequency.setValueAtTime(2600, t); f.frequency.exponentialRampToValueAtTime(600, t + 0.2); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5 * v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t + 0.25); o.connect(f).connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.27); }
 const VOICES = { kick, snare, hihat, clap, bass, synth };
 
 // ---- sequence + scheduler ----
@@ -308,11 +293,11 @@ function scheduler() {
   timer = setTimeout(scheduler, 25);
 }
 function play() {
-  ensureCtx();
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
   ctx.resume();
   playing = true; seq = buildSequence(); seqPos = 0; nextNoteTime = ctx.currentTime + 0.06;
   $("now-playing").classList.add("live");
-  scheduler(); startScope(); updateTransport();
+  scheduler(); updateTransport();
 }
 function stop() {
   playing = false; clearTimeout(timer); clearHighlight(); updateTransport();
@@ -320,35 +305,7 @@ function stop() {
   const tabs = $("tabs").children; for (let i = 0; i < tabs.length; i++) tabs[i].classList.remove("playing");
   $("now-playing").classList.remove("live");
   $("np-info").textContent = "—";
-  stopScope();
 }
-// ---- waveform + spectrum visualiser (AnalyserNode) ----
-function fitCanvas(cv) { const w = cv.clientWidth | 0, h = cv.clientHeight | 0; if (w && cv.width !== w) cv.width = w; if (h && cv.height !== h) cv.height = h; }
-function drawScope(flat) {
-  if (!analyser) return;
-  if (!waveBuf) { waveBuf = new Uint8Array(analyser.fftSize); freqBuf = new Uint8Array(analyser.frequencyBinCount); }
-  const wave = $("wave"); fitCanvas(wave);
-  const wc = wave.getContext("2d"), W = wave.width, H = wave.height;
-  wc.clearRect(0, 0, W, H); wc.lineWidth = 2; wc.strokeStyle = "#5aa6da"; wc.beginPath();
-  if (flat) { wc.moveTo(0, H / 2); wc.lineTo(W, H / 2); }
-  else {
-    analyser.getByteTimeDomainData(waveBuf);
-    const step = waveBuf.length / W;
-    for (let x = 0; x < W; x++) { const y = H / 2 + (waveBuf[(x * step) | 0] / 128 - 1) * H * 0.45; x ? wc.lineTo(x, y) : wc.moveTo(x, y); }
-  }
-  wc.stroke();
-  const spec = $("spectrum"); fitCanvas(spec);
-  const sc = spec.getContext("2d"), SW = spec.width, SH = spec.height;
-  sc.clearRect(0, 0, SW, SH);
-  if (!flat) {
-    analyser.getByteFrequencyData(freqBuf);
-    const use = (freqBuf.length * 0.7) | 0, bw = SW / use;
-    for (let i = 0; i < use; i++) { const v = freqBuf[i] / 255, h = v * SH; sc.fillStyle = "rgba(38,125,183," + (0.35 + v * 0.65) + ")"; sc.fillRect(i * bw, SH - h, Math.max(1, bw - 1), h); }
-  }
-  if (playing) rafId = requestAnimationFrame(() => drawScope());
-}
-function startScope() { if (rafId) cancelAnimationFrame(rafId); drawScope(); }
-function stopScope() { if (rafId) cancelAnimationFrame(rafId); rafId = null; drawScope(true); }
 
 // ---- WAV export (full storyline) ----
 function encodeWAV(audioBuf) {
@@ -364,13 +321,13 @@ function encodeWAV(audioBuf) {
 }
 async function exportWAV() {
   const sq = buildSequence(), sr = 44100, stepDur = (60 / bpm) / 4, total = sq.length * stepDur + 0.4;
-  const off = new OfflineAudioContext(1, Math.ceil(total * sr), sr), live = ctx, liveBus = bus; ctx = off; bus = null;
+  const off = new OfflineAudioContext(1, Math.ceil(total * sr), sr), live = ctx; ctx = off;
   try {
     sq.forEach((cell, i) => { const t = i * stepDur; INSTR.forEach((k) => { if (cell[0][k][cell[1]]) VOICES[k](t, volumes[k]); }); });
     const blob = new Blob([encodeWAV(await off.startRendering())], { type: "audio/wav" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "bit8maker.wav"; a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  } finally { ctx = live; bus = liveBus; }
+  } finally { ctx = live; }
 }
 
 // ---- save / load by link ----
@@ -481,7 +438,6 @@ function applyLang() {
   $("rep-label").textContent = REPEAT_LABEL[lang];
   $("preset-select").options[0].textContent = PRESET_LABEL[lang];
   $("np-label").textContent = NP_LABEL[lang];
-  $("scope-cap").textContent = SCOPE_LABEL[lang];
   if (!playing) $("np-info").textContent = "—";
   $("bpm-label").textContent = t.bpm;
   updateTransport(); sync(); renderChangelog();
