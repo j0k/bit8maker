@@ -1,6 +1,6 @@
 // Bit8maker 0.0.3 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.3";
+const VERSION = "0.0.4";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap"];
 const MAX_BPM = 250;
@@ -33,6 +33,10 @@ const STRINGS = {
   "cn": { tagline: "点击网格，做出你的节拍。", play: "播放", stop: "停止", clear: "清除", bpm: "BPM", instr: EN_INSTR },
   "kz": { tagline: "Торды басып, битіңді жаса.", play: "Ойнату", stop: "Тоқтату", clear: "Тазалау", bpm: "Қарқын", instr: EN_INSTR },
   "lt": { tagline: "Spustelėk tinklelį ir sukurk ritmą.", play: "Groti", stop: "Stop", clear: "Išvalyti", bpm: "Tempas", instr: EN_INSTR },
+};
+const EXPORT_LABEL = {
+  "ru-modern": "Экспорт WAV", "ru-classic": "Экспорт WAV", "uk": "Експорт WAV", "eng-ny": "Export WAV",
+  "fr": "Export WAV", "jp": "WAV書き出し", "sa": "تصدير WAV", "cn": "导出 WAV", "kz": "WAV экспорт", "lt": "Eksportuoti WAV",
 };
 
 // ---- changelog (localized) ----
@@ -88,7 +92,7 @@ const CHANGELOG = [
     arch: {},
   },
   {
-    v: "0.0.3", commit: "—",
+    v: "0.0.3", commit: "82d9eec",
     items: {
       "ru-modern": ["Максимальный темп — 250 BPM", "Десять языков интерфейса", "Слайдер версий и история изменений внизу"],
       "ru-classic": ["Максимум 250 BPM", "10 языков интерфейса", "Слайдер версий + changelog"],
@@ -100,6 +104,22 @@ const CHANGELOG = [
       "cn": ["最高速度提升到 250 BPM", "十种界面语言", "底部版本滑块与更新日志"],
       "kz": ["Ең жоғары қарқын — 250 BPM", "Интерфейстің он тілі", "Төменде нұсқа слайдері мен өзгерістер тізімі"],
       "lt": ["Maksimalus tempas — 250 BPM", "Dešimt sąsajos kalbų", "Versijų slankiklis ir pakeitimų sąrašas apačioje"],
+    },
+    arch: {},
+  },
+  {
+    v: "0.0.4", commit: "—",
+    items: {
+      "ru-modern": ["Экспорт бита в WAV — скачивание прямо из браузера"],
+      "ru-classic": ["Экспорт в WAV"],
+      "uk": ["Експорт у WAV"],
+      "eng-ny": ["Export your beat to WAV (download)"],
+      "fr": ["Export du beat en WAV (téléchargement)"],
+      "jp": ["ビートをWAVで書き出し（ダウンロード）"],
+      "sa": ["تصدير الإيقاع إلى WAV (تنزيل)"],
+      "cn": ["将节拍导出为 WAV（下载）"],
+      "kz": ["Битті WAV-қа экспорттау (жүктеу)"],
+      "lt": ["Ritmo eksportas į WAV (atsisiuntimas)"],
     },
     arch: {},
   },
@@ -188,6 +208,37 @@ function play() {
 }
 function stop() { playing = false; clearTimeout(timer); clearHighlight(); updateTransport(); }
 
+// ---- WAV export (offline render, client-side) ----
+function encodeWAV(audioBuf) {
+  const ch = audioBuf.getChannelData(0), n = ch.length, sr = audioBuf.sampleRate;
+  const ab = new ArrayBuffer(44 + n * 2), v = new DataView(ab);
+  const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  str(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); str(8, "WAVE"); str(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, "data"); v.setUint32(40, n * 2, true);
+  let o = 44;
+  for (let i = 0; i < n; i++) { const x = Math.max(-1, Math.min(1, ch[i])); v.setInt16(o, x < 0 ? x * 0x8000 : x * 0x7fff, true); o += 2; }
+  return ab;
+}
+async function exportWAV() {
+  const loops = 2, sr = 44100, stepDur = (60 / bpm) / 4;
+  const total = loops * STEPS * stepDur + 0.4;
+  const off = new OfflineAudioContext(1, Math.ceil(total * sr), sr);
+  const live = ctx; ctx = off; // voices use the global ctx
+  try {
+    for (let i = 0; i < loops * STEPS; i++) {
+      const s = i % STEPS, t = i * stepDur;
+      INSTR.forEach((k) => { if (pattern[k][s]) VOICES[k](t, volumes[k]); });
+    }
+    const rendered = await off.startRendering();
+    const blob = new Blob([encodeWAV(rendered)], { type: "audio/wav" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "bit8maker.wav"; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  } finally { ctx = live; }
+}
+
 // ---- UI ----
 function highlight(step) {
   clearHighlight();
@@ -235,6 +286,7 @@ function applyLang() {
   const t = STRINGS[lang];
   $("tagline").textContent = t.tagline;
   $("clear").textContent = t.clear;
+  $("export").textContent = EXPORT_LABEL[lang];
   $("bpm-label").textContent = t.bpm;
   updateTransport(); renderGrid(); renderChangelog();
   $("lang-select").value = lang;
@@ -248,6 +300,7 @@ LANGS.forEach(([code, label]) => {
 sel.onchange = () => { lang = sel.value; localStorage.setItem("b8_lang", lang); applyLang(); };
 $("play").onclick = () => (playing ? stop() : play());
 $("clear").onclick = () => { INSTR.forEach((k) => pattern[k].fill(false)); renderGrid(); };
+$("export").onclick = exportWAV;
 const bpmIn = $("bpm"); bpmIn.max = MAX_BPM;
 bpmIn.oninput = (e) => { bpm = +e.target.value; $("bpm-val").textContent = bpm; };
 const verSlider = $("ver-slider");
