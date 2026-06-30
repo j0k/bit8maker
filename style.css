@@ -26,6 +26,7 @@ h1 .i{color:var(--brand)}
 }
 .btn:hover{background:var(--brand-d)}
 .btn--ghost{background:transparent;border:1px solid var(--line);color:#cfd6dd;min-width:0}
+.share-status{color:var(--brand-l);font-size:13px}
 .bpm{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-left:auto}
 .bpm input{width:130px}
 

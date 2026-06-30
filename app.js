@@ -1,6 +1,6 @@
 // Bit8maker 0.0.3 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.4";
+const VERSION = "0.0.5";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap"];
 const MAX_BPM = 250;
@@ -37,6 +37,15 @@ const STRINGS = {
 const EXPORT_LABEL = {
   "ru-modern": "Экспорт WAV", "ru-classic": "Экспорт WAV", "uk": "Експорт WAV", "eng-ny": "Export WAV",
   "fr": "Export WAV", "jp": "WAV書き出し", "sa": "تصدير WAV", "cn": "导出 WAV", "kz": "WAV экспорт", "lt": "Eksportuoti WAV",
+};
+const SHARE_LABEL = {
+  "ru-modern": "Поделиться", "ru-classic": "Поделиться", "uk": "Поділитися", "eng-ny": "Share link",
+  "fr": "Partager", "jp": "共有", "sa": "مشاركة", "cn": "分享", "kz": "Бөлісу", "lt": "Dalintis",
+};
+const COPIED = {
+  "ru-modern": "ссылка скопирована", "ru-classic": "ссылка скопирована", "uk": "посилання скопійовано",
+  "eng-ny": "link copied!", "fr": "lien copié", "jp": "リンクをコピーしました", "sa": "تم نسخ الرابط",
+  "cn": "链接已复制", "kz": "сілтеме көшірілді", "lt": "nuoroda nukopijuota",
 };
 
 // ---- changelog (localized) ----
@@ -108,7 +117,7 @@ const CHANGELOG = [
     arch: {},
   },
   {
-    v: "0.0.4", commit: "—",
+    v: "0.0.4", commit: "da01b72",
     items: {
       "ru-modern": ["Экспорт бита в WAV — скачивание прямо из браузера"],
       "ru-classic": ["Экспорт в WAV"],
@@ -120,6 +129,22 @@ const CHANGELOG = [
       "cn": ["将节拍导出为 WAV（下载）"],
       "kz": ["Битті WAV-қа экспорттау (жүктеу)"],
       "lt": ["Ritmo eksportas į WAV (atsisiuntimas)"],
+    },
+    arch: {},
+  },
+  {
+    v: "0.0.5", commit: "—",
+    items: {
+      "ru-modern": ["Сохранение и загрузка паттерна по ссылке — поделись битом одним кликом"],
+      "ru-classic": ["Сохранение/загрузка паттерна по ссылке"],
+      "uk": ["Збереження/завантаження патерну за посиланням"],
+      "eng-ny": ["Save & load a pattern by link — share your beat in one click"],
+      "fr": ["Sauvegarde/chargement du motif par lien"],
+      "jp": ["リンクでパターンを保存・読み込み"],
+      "sa": ["حفظ النمط وتحميله عبر رابط"],
+      "cn": ["通过链接保存/加载节拍型"],
+      "kz": ["Үлгіні сілтеме арқылы сақтау/жүктеу"],
+      "lt": ["Šablono išsaugojimas/įkėlimas per nuorodą"],
     },
     arch: {},
   },
@@ -239,6 +264,41 @@ async function exportWAV() {
   } finally { ctx = live; }
 }
 
+// ---- save / load by link (state encoded in the URL hash) ----
+function encodeState() {
+  const p = INSTR.map((k) => { let n = 0; for (let s = 0; s < STEPS; s++) if (pattern[k][s]) n |= 1 << s; return n; });
+  const v = INSTR.map((k) => Math.round(volumes[k] * 100));
+  const json = JSON.stringify({ b: bpm, p: p, v: v });
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function decodeState(str) {
+  try {
+    const b64 = str.replace(/-/g, "+").replace(/_/g, "/");
+    const o = JSON.parse(decodeURIComponent(escape(atob(b64))));
+    if (o.b) bpm = Math.max(60, Math.min(MAX_BPM, o.b | 0));
+    if (Array.isArray(o.p)) INSTR.forEach((k, i) => {
+      const n = o.p[i] | 0;
+      for (let s = 0; s < STEPS; s++) pattern[k][s] = !!(n & (1 << s));
+    });
+    if (Array.isArray(o.v)) INSTR.forEach((k, i) => {
+      if (o.v[i] != null) volumes[k] = Math.max(0, Math.min(1, o.v[i] / 100));
+    });
+    return true;
+  } catch (e) { return false; }
+}
+let statusTimer = null;
+function flashStatus(msg) {
+  const e = $("share-status"); e.textContent = msg;
+  clearTimeout(statusTimer); statusTimer = setTimeout(() => (e.textContent = ""), 2500);
+}
+function shareLink() {
+  const code = encodeState();
+  history.replaceState(null, "", "#" + code);
+  const url = location.href;
+  if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => flashStatus(COPIED[lang])).catch(() => {});
+  else flashStatus(COPIED[lang]);
+}
+
 // ---- UI ----
 function highlight(step) {
   clearHighlight();
@@ -287,12 +347,14 @@ function applyLang() {
   $("tagline").textContent = t.tagline;
   $("clear").textContent = t.clear;
   $("export").textContent = EXPORT_LABEL[lang];
+  $("share").textContent = SHARE_LABEL[lang];
   $("bpm-label").textContent = t.bpm;
   updateTransport(); renderGrid(); renderChangelog();
   $("lang-select").value = lang;
 }
 
 // ---- wire ----
+if (location.hash.length > 1) decodeState(location.hash.slice(1)); // load shared pattern
 const sel = $("lang-select");
 LANGS.forEach(([code, label]) => {
   const o = document.createElement("option"); o.value = code; o.textContent = label; sel.appendChild(o);
@@ -301,7 +363,9 @@ sel.onchange = () => { lang = sel.value; localStorage.setItem("b8_lang", lang); 
 $("play").onclick = () => (playing ? stop() : play());
 $("clear").onclick = () => { INSTR.forEach((k) => pattern[k].fill(false)); renderGrid(); };
 $("export").onclick = exportWAV;
+$("share").onclick = shareLink;
 const bpmIn = $("bpm"); bpmIn.max = MAX_BPM;
+bpmIn.value = bpm; $("bpm-val").textContent = bpm;
 bpmIn.oninput = (e) => { bpm = +e.target.value; $("bpm-val").textContent = bpm; };
 const verSlider = $("ver-slider");
 verSlider.max = CHANGELOG.length - 1; verSlider.value = clIndex;
