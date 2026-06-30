@@ -1,6 +1,6 @@
-// Bit8maker 0.0.10 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.9 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.10";
+const VERSION = "0.0.9";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap"];
 const MAX_BPM = 250;
@@ -38,7 +38,7 @@ const SNAP_LABEL = { "ru-modern": "снимок · только просмотр
 // Conventional names for BPM ranges — universal music terms, kept untranslated (like the drum names).
 // Genre/dance tempo + classical Italian tempo marking.
 const GENRE = [[60, 69, "Downtempo"], [70, 84, "Hip-hop / Boom bap"], [85, 99, "Hip-hop"], [100, 109, "Trap / Half-time"], [110, 119, "Deep House"], [120, 124, "House"], [125, 129, "Techno"], [130, 139, "Trance / Hard"], [140, 149, "Dubstep / Trap"], [150, 159, "Hardcore"], [160, 179, "Drum & Bass"], [180, 200, "Footwork"], [201, 999, "Speedcore"]];
-const TEMPO = [[0, 59, "Largo"], [60, 65, "Larghetto"], [66, 75, "Adagio"], [76, 107, "Andante"], [108, 119, "Moderato"], [120, 155, "Allegro"], [156, 167, "Vivace"], [168, 199, "Presto"], [200, 999, "Prestissimo"]];
+const TEMPO = [[0, 59, "Largo"], [60, 65, "Larghetto"], [66, 75, "Adagio"], [76, 107, "Andante"], [108, 119, "Moderato"], [120, 155, "Allegro"], [156, 175, "Vivace"], [176, 199, "Presto"], [200, 999, "Prestissimo"]];
 function rangeName(table, b) { for (let i = 0; i < table.length; i++) if (b >= table[i][0] && b <= table[i][1]) return table[i][2]; return ""; }
 function bpmName(b) { const g = rangeName(GENRE, b), t = rangeName(TEMPO, b); return g && t ? g + " · " + t : g || t; }
 const SEC_NAMES = ["intro", "verse", "drop", "bridge", "build", "break", "outro", "fill"];
@@ -136,7 +136,7 @@ const CHANGELOG = [
     "sa": ["إعدادات مسبقة حسب النوع", "إضافة الإنجليزية البريطانية"], "cn": ["按风格的预设", "新增英式英语"],
     "kz": ["Жанр бойынша пресеттер", "Британдық ағылшын тілі қосылды"], "lt": ["Žanrų šablonai", "Pridėta britų anglų kalba"],
   }, arch: {} },
-  { v: "0.0.9", commit: "f7eb03f", items: {
+  { v: "0.0.9", commit: "—", items: {
     "ru-modern": ["Слайдер версий теперь по-настоящему откатывает продукт: выбираешь версию — и видишь её дизайн и функционал (живой снимок из git-тега)", "Самую первую 0.0.1 можно открыть и потрогать"],
     "ru-classic": ["Слайдер версий загружает настоящий снимок выбранной версии", "Откат к первой версии 0.0.1"],
     "uk": ["Слайдер версій завантажує справжній знімок обраної версії", "Відкат до першої версії 0.0.1"],
@@ -151,15 +151,6 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "Каждая версия сохранена в /versions/<v>/ из git-тега; слайдер грузит её в iframe.", "eng-ny": "Each release is frozen under /versions/<v>/ from its git tag; the slider loads it in an iframe.",
   } },
-  { v: "0.0.10", commit: "—", items: {
-    "ru-modern": ["174 BPM теперь читается как Presto (Drum & Bass)", "Подсказка темпа больше не «дёргает» BPM-слайдер при перетаскивании — разметка зафиксирована"],
-    "ru-classic": ["174 BPM → Presto", "BPM-слайдер не прыгает от подсказки"], "uk": ["174 BPM → Presto", "BPM-повзунок не стрибає від підказки"],
-    "eng-ny": ["174 BPM now reads Presto (Drum & Bass)", "BPM hint no longer makes the slider jump while you drag"],
-    "eng-uk": ["174 BPM is Presto now (Drum & Bass)", "BPM hint stays put — the slider doesn't jump about"],
-    "fr": ["174 BPM = Presto (Drum & Bass)", "L'indice BPM ne fait plus sauter le curseur"], "jp": ["174 BPMはPrestoに（Drum & Bass）", "BPMヒントでスライダーが動かないように"],
-    "sa": ["174 BPM يصبح Presto (Drum & Bass)", "تلميح BPM لم يعد يحرّك المنزلق"], "cn": ["174 BPM 现在显示为 Presto（Drum & Bass）", "BPM 提示不再让滑块跳动"],
-    "kz": ["174 BPM енді Presto (Drum & Bass)", "BPM кеңесі слайдерді секіртпейді"], "lt": ["174 BPM dabar Presto (Drum & Bass)", "BPM užuomina nebešokdina slankiklio"],
-  }, arch: {} },
 ];
 
 // ---- language (URL ?lang overrides stored) ----

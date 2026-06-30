@@ -29,10 +29,7 @@ h1 .i{color:var(--brand)}
 .share-status{color:var(--brand-l);font-size:13px}
 .bpm{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-left:auto}
 .bpm input{width:130px}
-.bpm b{display:inline-block;min-width:32px;text-align:right}
-/* reserve fixed space so the genre/tempo hint never reflows the BPM slider while dragging */
-.bpm-name{display:inline-block;width:210px;color:var(--brand-l);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
-@media(max-width:560px){.bpm{margin-left:0;width:100%}.bpm-name{width:auto;flex:1}}
+.bpm-name{color:var(--brand-l);font-size:13px;white-space:nowrap}
 
 .sections{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;direction:ltr}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
