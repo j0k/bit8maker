@@ -13,8 +13,9 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-## v0.0.14
+## v0.0.15
 
+- **Snappy version switching** — snapshots are cached in an iframe pool (loaded once, then just shown), with neighbours pre-warmed, so dragging the slider no longer lags
 - **Six instruments** — Kick / Snare / HiHat / Clap / **Bass** / **Synth** (bass = low triangle tone, synth = filtered saw pluck)
 - **"Now playing" window** — with several sections it shows which one is sounding right now (name · repeat · step) with a pulsing dot; the playing section also lights up in the tabs
 - **Stackable genre presets** — each preset *adds* its style as new sections to your storyline (up to 16) instead of replacing it; add one mid-playback and it joins at the end of the loop without restarting

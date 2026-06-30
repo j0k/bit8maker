@@ -1,6 +1,6 @@
-// Bit8maker 0.0.15 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.14 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.15";
+const VERSION = "0.0.14";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -200,24 +200,13 @@ const CHANGELOG = [
     "sa": ["نافذة «قيد التشغيل» (المقطع، التكرار، الخطوة)", "إبراز المقطع قيد التشغيل في التبويبات"], "cn": ["“正在播放”窗口（段落、重复、步）", "正在播放的段落在标签中高亮"],
     "kz": ["«Қазір ойнауда» терезесі (бөлім, қайталау, қадам)", "Ойнап жатқан бөлім қойындыларда ерекшеленеді"], "lt": ["„Dabar groja\" langas (sekcija, pakartojimas, žingsnis)", "Grojanti sekcija paryškinama skirtukuose"],
   }, arch: {} },
-  { v: "0.0.14", commit: "5ab7956", items: {
+  { v: "0.0.14", commit: "—", items: {
     "ru-modern": ["Два новых инструмента: Бас (низкий тон) и Синт (пилообразный плак с фильтром)", "Бас и синт работают в сетке, пресетах, экспорте WAV и ссылках"],
     "ru-classic": ["Новые инструменты: Бас и Синт"], "uk": ["Нові інструменти: Бас і Синт"],
     "eng-ny": ["Two new instruments: Bass (low tone) and Synth (filtered saw pluck)", "Bass/Synth work in the grid, presets, WAV export and share links"],
     "eng-uk": ["Two new instruments — Bass and Synth"], "fr": ["Deux nouveaux instruments : Basse et Synth"], "jp": ["新しい楽器：ベースとシンセ"],
     "sa": ["آلتان جديدتان: باس وسينث"], "cn": ["两件新乐器：贝斯和合成器"], "kz": ["Екі жаңа аспап: Бас және Синт"], "lt": ["Du nauji instrumentai: Bosas ir Sintezatorius"],
   }, arch: {} },
-  { v: "0.0.15", commit: "—", items: {
-    "ru-modern": ["Переключение версий больше не лагает: каждый снимок грузится один раз в кэшированный iframe и дальше просто показывается; соседние версии прогреваются заранее"],
-    "ru-classic": ["Быстрое переключение версий (кэш iframe)"], "uk": ["Швидке перемикання версій (кеш iframe)"],
-    "eng-ny": ["Version switching no longer lags — each snapshot loads once into a cached iframe and is just shown after that; neighbours are pre-warmed"],
-    "eng-uk": ["Version switching's smooth now — snapshots are cached, not reloaded each time"],
-    "fr": ["Changement de version sans lag : chaque instantané est mis en cache puis simplement affiché"], "jp": ["バージョン切替が軽快に：スナップショットはキャッシュして再読み込みしない"],
-    "sa": ["تبديل الإصدارات بلا تأخير: تُحمّل اللقطة مرة واحدة ثم تُعرض فقط"], "cn": ["版本切换不再卡顿：快照只加载一次并缓存，之后仅显示"],
-    "kz": ["Нұсқаны ауыстыру кідірмейді: әр түсірілім бір рет жүктеліп, кэште сақталады"], "lt": ["Versijų perjungimas nebevėluoja: kiekviena kopija įkeliama vieną kartą ir kešuojama"],
-  }, arch: {
-    "ru-modern": "Пул кэшированных iframe вместо перезагрузки src на каждое переключение.", "eng-ny": "Cached iframe pool instead of reloading src on every switch.",
-  } },
 ];
 
 // ---- language (URL ?lang overrides stored) ----
@@ -392,31 +381,14 @@ function renderChangelog() {
   if (arch) html += '<p class="cl-arch"><b>' + L.arch + ":</b> " + arch + "</p>";
   $("cl-body").innerHTML = html;
 }
-// Roll the whole product back: each version's real snapshot is loaded once into a
-// cached iframe and then just shown/hidden — so switching is instant, never a reload.
-const verFrames = {};
-function ensureFrame(v) {
-  if (!verFrames[v]) {
-    const fr = document.createElement("iframe");
-    fr.className = "ver-frame"; fr.style.display = "none"; fr.title = "bit8maker " + v;
-    fr.src = "versions/" + v + "/index.html";
-    verFrames[v] = fr; $("ver-stage").appendChild(fr);
-  }
-  return verFrames[v];
-}
+// Roll the whole product back: load the selected version's real snapshot in an iframe.
 function renderVersionView() {
-  const latest = clIndex === CHANGELOG.length - 1, lastSnap = CHANGELOG.length - 1;
+  const latest = clIndex === CHANGELOG.length - 1, frame = $("ver-frame");
   $("live-app").hidden = !latest;
   $("lang-select").style.visibility = latest ? "" : "hidden";
   $("tagline").style.visibility = latest ? "" : "hidden";
-  for (const v in verFrames) verFrames[v].style.display = "none";
-  if (latest) { $("ver-stage").hidden = true; return; }
-  if (playing) stop();
-  $("ver-stage").hidden = false;
-  ensureFrame(CHANGELOG[clIndex].v).style.display = "block";
-  // warm up the neighbours so adjacent drags are instant too (skip the live latest)
-  if (clIndex - 1 >= 0) ensureFrame(CHANGELOG[clIndex - 1].v);
-  if (clIndex + 1 < lastSnap) ensureFrame(CHANGELOG[clIndex + 1].v);
+  if (latest) { frame.hidden = true; frame.removeAttribute("src"); }
+  else { if (playing) stop(); frame.hidden = false; frame.src = "versions/" + CHANGELOG[clIndex].v + "/index.html"; }
 }
 function applyLang() {
   document.documentElement.lang = lang.split("-")[0];
