@@ -13,8 +13,9 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-## v0.0.15
+## v0.0.16
 
+- **Steady version slider** — moved to its own full-width row so it never resizes or jumps while dragging
 - **Snappy version switching** — snapshots are cached in an iframe pool (loaded once, then just shown), with neighbours pre-warmed, so dragging the slider no longer lags
 - **Six instruments** — Kick / Snare / HiHat / Clap / **Bass** / **Synth** (bass = low triangle tone, synth = filtered saw pluck)
 - **"Now playing" window** — with several sections it shows which one is sounding right now (name · repeat · step) with a pulsing dot; the playing section also lights up in the tabs

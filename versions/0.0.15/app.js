@@ -1,6 +1,6 @@
-// Bit8maker 0.0.16 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.15 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.16";
+const VERSION = "0.0.15";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -207,7 +207,7 @@ const CHANGELOG = [
     "eng-uk": ["Two new instruments — Bass and Synth"], "fr": ["Deux nouveaux instruments : Basse et Synth"], "jp": ["新しい楽器：ベースとシンセ"],
     "sa": ["آلتان جديدتان: باس وسينث"], "cn": ["两件新乐器：贝斯和合成器"], "kz": ["Екі жаңа аспап: Бас және Синт"], "lt": ["Du nauji instrumentai: Bosas ir Sintezatorius"],
   }, arch: {} },
-  { v: "0.0.15", commit: "7b37dbf", items: {
+  { v: "0.0.15", commit: "—", items: {
     "ru-modern": ["Переключение версий больше не лагает: каждый снимок грузится один раз в кэшированный iframe и дальше просто показывается; соседние версии прогреваются заранее"],
     "ru-classic": ["Быстрое переключение версий (кэш iframe)"], "uk": ["Швидке перемикання версій (кеш iframe)"],
     "eng-ny": ["Version switching no longer lags — each snapshot loads once into a cached iframe and is just shown after that; neighbours are pre-warmed"],
@@ -218,15 +218,6 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "Пул кэшированных iframe вместо перезагрузки src на каждое переключение.", "eng-ny": "Cached iframe pool instead of reloading src on every switch.",
   } },
-  { v: "0.0.16", commit: "—", items: {
-    "ru-modern": ["Ползунок версий вынесен на отдельную строку во всю ширину — он больше не меняет длину и не «прыгает» при перетаскивании (версия, коммит и снимок теперь под ним)"],
-    "ru-classic": ["Ползунок версий фиксированной ширины — не дёргается"], "uk": ["Повзунок версій на окремому рядку, фіксованої ширини — більше не смикається"],
-    "eng-ny": ["Version slider moved to its own full-width row — it no longer resizes or jumps while you drag (version/commit/snapshot now sit below it)"],
-    "eng-uk": ["Version slider's on its own full-width row now — no more resizing or jumping"],
-    "fr": ["Curseur de versions sur sa propre ligne pleine largeur — il ne change plus de taille ni ne saute"], "jp": ["バージョンスライダーを全幅の独立行に — 幅が変わらず、ドラッグ中に跳ねない"],
-    "sa": ["نُقل شريط الإصدارات إلى سطر مستقل بعرض كامل — لم يعد يتغير حجمه أو يقفز"], "cn": ["版本滑块移到单独的整行 — 拖动时不再改变长度或跳动"],
-    "kz": ["Нұсқа слайдері бөлек жолға, толық еніне — енді өлшемі өзгермейді, секірмейді"], "lt": ["Versijų slankiklis perkeltas į atskirą viso pločio eilutę — nebekeičia dydžio ir nebešokinėja"],
-  }, arch: {} },
 ];
 
 // ---- language (URL ?lang overrides stored) ----

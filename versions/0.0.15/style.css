@@ -73,12 +73,9 @@ h1 .i{color:var(--brand)}
 .ver-stage{margin-top:18px}
 .ver-frame{width:100%;height:640px;border:1px solid var(--line);border-radius:16px;background:var(--bg);display:block}
 
-/* slider on its own full-width row so the version/commit/snapshot text below it
-   can change length without ever resizing or jerking the slider */
-.changelog .cl-head{margin-bottom:10px}
+.changelog .cl-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
 .cl-snap{color:var(--muted);font-size:13px}
-#ver-slider{display:block;width:100%;accent-color:var(--brand);margin-bottom:10px}
-.cl-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:20px}
+#ver-slider{flex:1;min-width:160px;accent-color:var(--brand)}
 .cl-ver{font-weight:700}
 .cl-commit a{color:var(--brand-l);text-decoration:none;font-family:ui-monospace,monospace;font-size:13px}
 #cl-body h3{font-size:15px;margin-bottom:6px;color:#cfd6dd}
