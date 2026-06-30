@@ -12,12 +12,10 @@ body{
 header{display:flex;align-items:center;justify-content:space-between;gap:16px}
 h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
 h1 .i{color:var(--brand)}
-.lang{display:flex;gap:8px}
-.lang-btn{
+.lang-sel{
   background:#0e0e10;border:1px solid var(--line);color:#cfd6dd;
-  border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;font-size:14px;
+  border-radius:999px;padding:7px 12px;cursor:pointer;font:inherit;font-size:14px;
 }
-.lang-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
 .tagline{color:var(--muted);margin-top:6px}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:18px}
@@ -44,6 +42,17 @@ h1 .i{color:var(--brand)}
 .cell:nth-child(4n+1){border-color:#3a4150}
 .cell.on{background:var(--brand);border-color:var(--brand-l);box-shadow:0 0 8px rgba(38,125,183,.55)}
 .cell.playing{outline:2px solid #fff}
+
+/* keep the sequencer left-to-right even in RTL languages */
+.grid,.steps,.transport{direction:ltr}
+
+.changelog .cl-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+#ver-slider{flex:1;min-width:160px;accent-color:var(--brand)}
+.cl-ver{font-weight:700}
+.cl-commit a{color:var(--brand-l);text-decoration:none;font-family:ui-monospace,monospace;font-size:13px}
+#cl-body h3{font-size:15px;margin-bottom:6px;color:#cfd6dd}
+#cl-body ul{margin:0 0 6px;padding-inline-start:22px;line-height:1.7}
+.cl-arch{color:var(--muted);font-size:14px;margin-top:6px}
 
 footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center}
 footer a{color:var(--brand-l);text-decoration:none}

@@ -11,10 +11,7 @@
   <div class="wrap">
     <header>
       <h1>Bit<span class="i">8</span>maker</h1>
-      <div class="lang">
-        <button data-lang="en" class="lang-btn">🗽 EN</button>
-        <button data-lang="ru" class="lang-btn">🇷🇺 RU</button>
-      </div>
+      <select id="lang-select" class="lang-sel" aria-label="language"></select>
     </header>
     <p class="tagline" id="tagline"></p>
 
@@ -23,11 +20,20 @@
         <button id="play" class="btn"></button>
         <button id="clear" class="btn btn--ghost"></button>
         <label class="bpm"><span id="bpm-label"></span>
-          <input type="range" id="bpm" min="60" max="180" value="100">
+          <input type="range" id="bpm" min="60" max="250" value="100">
           <b id="bpm-val">100</b>
         </label>
       </div>
       <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="card changelog">
+      <div class="cl-head">
+        <input type="range" id="ver-slider" min="0" max="2" value="2">
+        <span id="cl-version" class="cl-ver"></span>
+        <span id="cl-commit" class="cl-commit"></span>
+      </div>
+      <div id="cl-body"></div>
     </section>
 
     <footer>
