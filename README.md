@@ -13,12 +13,14 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-## v0.0.7
+## v0.0.8
 
 - Clickable 16-step grid · Kick / Snare / HiHat / Clap
+- **Genre presets** — load a ready beat: Boom bap, Hip-hop, House, Techno, Trap, Drum & Bass
 - **Storyline sections** — multiple **named** sections (intro / verse / drop…), each with its own pattern and repeat count, played in sequence
 - Per-track volume sliders (remembered)
 - Play / Stop with a Web-Audio scheduler · BPM up to **250** (with a conventional **genre + tempo hint**: Hip-hop / House / Techno… · Allegro / Andante) · Clear
+- **11 interface languages** — incl. English · NY and English · UK
 - Export WAV — renders the **full storyline** offline and downloads it (client-side)
 - **Share by link** — sections + bpm + volumes packed into the URL hash, plus `?lang=` so the link opens in your language
 - 10 interface languages (ru-modern, ru-classic, uk, eng-ny, fr, jp, sa, cn, kz, lt)
