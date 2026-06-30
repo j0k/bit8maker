@@ -61,8 +61,7 @@ h1 .i{color:var(--brand)}
 /* keep the sequencer left-to-right even in RTL languages */
 .grid,.steps,.transport{direction:ltr}
 
-/* fixed height + own scroll: switching versions never resizes/jumps the page */
-.ver-frame{width:100%;height:640px;border:1px solid var(--line);border-radius:16px;margin-top:18px;background:var(--bg);display:block}
+.ver-frame{width:100%;min-height:520px;border:1px solid var(--line);border-radius:16px;margin-top:18px;background:var(--bg);display:block}
 
 .changelog .cl-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
 .cl-snap{color:var(--muted);font-size:13px}

@@ -13,9 +13,9 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-## v0.0.10
+## v0.0.11
 
-- **Time-machine version slider** — drag it and the whole product rolls back to that release: real design **and** functionality, loaded from a frozen snapshot under `versions/<v>/` (taken from the git tag). Even 0.0.1 is playable.
+- **Time-machine version slider** — drag it and the whole product rolls back to that release: real design **and** functionality, loaded from a frozen snapshot under `versions/<v>/` (taken from the git tag). Even 0.0.1 is playable. The snapshot loads on release into a fixed-height, self-scrolling frame, so spinning the slider no longer shakes or stretches the page.
 - BPM tempo hint refined (174 = _Drum & Bass · Presto_) and its layout fixed so the BPM slider no longer jumps while dragging
 - Clickable 16-step grid · Kick / Snare / HiHat / Clap
 - **Genre presets** — load a ready beat: Boom bap, Hip-hop, House, Techno, Trap, Drum & Bass

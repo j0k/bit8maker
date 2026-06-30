@@ -1,6 +1,6 @@
-// Bit8maker 0.0.11 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.10 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.11";
+const VERSION = "0.0.10";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap"];
 const MAX_BPM = 250;
@@ -151,7 +151,7 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "Каждая версия сохранена в /versions/<v>/ из git-тега; слайдер грузит её в iframe.", "eng-ny": "Each release is frozen under /versions/<v>/ from its git tag; the slider loads it in an iframe.",
   } },
-  { v: "0.0.10", commit: "6a497cf", items: {
+  { v: "0.0.10", commit: "—", items: {
     "ru-modern": ["174 BPM теперь читается как Presto (Drum & Bass)", "Подсказка темпа больше не «дёргает» BPM-слайдер при перетаскивании — разметка зафиксирована"],
     "ru-classic": ["174 BPM → Presto", "BPM-слайдер не прыгает от подсказки"], "uk": ["174 BPM → Presto", "BPM-повзунок не стрибає від підказки"],
     "eng-ny": ["174 BPM now reads Presto (Drum & Bass)", "BPM hint no longer makes the slider jump while you drag"],
@@ -159,15 +159,6 @@ const CHANGELOG = [
     "fr": ["174 BPM = Presto (Drum & Bass)", "L'indice BPM ne fait plus sauter le curseur"], "jp": ["174 BPMはPrestoに（Drum & Bass）", "BPMヒントでスライダーが動かないように"],
     "sa": ["174 BPM يصبح Presto (Drum & Bass)", "تلميح BPM لم يعد يحرّك المنزلق"], "cn": ["174 BPM 现在显示为 Presto（Drum & Bass）", "BPM 提示不再让滑块跳动"],
     "kz": ["174 BPM енді Presto (Drum & Bass)", "BPM кеңесі слайдерді секіртпейді"], "lt": ["174 BPM dabar Presto (Drum & Bass)", "BPM užuomina nebešokdina slankiklio"],
-  }, arch: {} },
-  { v: "0.0.11", commit: "—", items: {
-    "ru-modern": ["Слайдер версий больше не дёргает и не растягивает страницу: снимок грузится при отпускании, а окно версии теперь фиксированной высоты со своей прокруткой"],
-    "ru-classic": ["Слайдер версий: убраны дёрганье и растяжение страницы"], "uk": ["Слайдер версій: прибрано смикання й розтягування сторінки"],
-    "eng-ny": ["Version slider stops shaking the page — the snapshot loads on release, in a fixed-height frame with its own scroll"],
-    "eng-uk": ["Version slider no longer jitters or stretches the page — loads on release, fixed-height frame"],
-    "fr": ["Le curseur de versions ne secoue plus la page : chargement au relâchement, cadre à hauteur fixe"], "jp": ["バージョンスライダーで画面が揺れない：離した時に読み込み、固定高さの枠"],
-    "sa": ["شريط الإصدارات لم يعد يهزّ الصفحة: يُحمّل عند الإفلات في إطار ثابت الارتفاع"], "cn": ["版本滑块不再抖动或撑大页面：松开时加载，固定高度带滚动"],
-    "kz": ["Нұсқа слайдері бетті дірілдетпейді: жібергенде жүктеледі, биіктігі тұрақты терезе"], "lt": ["Versijų slankiklis nebepurto puslapio: įkeliama atleidus, fiksuoto aukščio rėmas"],
   }, arch: {} },
 ];
 
@@ -364,7 +355,7 @@ function showBpm() { $("bpm-val").textContent = bpm; $("bpm-name").textContent =
 const bpmIn = $("bpm"); bpmIn.max = MAX_BPM; bpmIn.value = bpm; showBpm();
 bpmIn.oninput = (e) => { bpm = +e.target.value; showBpm(); };
 const verSlider = $("ver-slider"); verSlider.max = CHANGELOG.length - 1; verSlider.value = clIndex;
-verSlider.oninput = (e) => { clIndex = +e.target.value; renderChangelog(); };  // live + cheap: just the changelog text
-verSlider.onchange = renderVersionView;                                        // heavy: swap the snapshot only when the slider is released
+verSlider.oninput = (e) => { clIndex = +e.target.value; renderChangelog(); renderVersionView(); };
+$("ver-frame").onload = function () { try { this.style.height = this.contentDocument.body.scrollHeight + 24 + "px"; } catch (err) {} };
 $("ver").textContent = VERSION;
 applyLang();
