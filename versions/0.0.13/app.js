@@ -1,8 +1,8 @@
-// Bit8maker 0.0.14 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.13 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.14";
+const VERSION = "0.0.13";
 const STEPS = 16;
-const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
+const INSTR = ["kick", "snare", "hihat", "clap"];
 const MAX_BPM = 250;
 const MAX_SEC = 16;
 
@@ -13,12 +13,12 @@ const LANGS = [
   ["sa", "العربية"], ["cn", "中文"], ["kz", "Қазақша"], ["lt", "Lietuvių"],
 ];
 const RTL = { sa: true };
-const RU_INSTR = { kick: "Бочка", snare: "Снейр", hihat: "Хэт", clap: "Хлопок", bass: "Бас", synth: "Синт" };
-const EN_INSTR = { kick: "Kick", snare: "Snare", hihat: "HiHat", clap: "Clap", bass: "Bass", synth: "Synth" };
+const RU_INSTR = { kick: "Бочка", snare: "Снейр", hihat: "Хэт", clap: "Хлопок" };
+const EN_INSTR = { kick: "Kick", snare: "Snare", hihat: "HiHat", clap: "Clap" };
 const STRINGS = {
   "ru-modern": { tagline: "Касание сетки — и ритм оживает. Курсив, как водится, ваш.", play: "Играть", stop: "Стоп", clear: "Очистить", bpm: "Темп", instr: RU_INSTR },
   "ru-classic": { tagline: "Нажми на сетку — собери свой бит.", play: "Играть", stop: "Стоп", clear: "Очистить", bpm: "Темп", instr: RU_INSTR },
-  "uk": { tagline: "Торкнись сітки — збери свій біт.", play: "Грати", stop: "Стоп", clear: "Очистити", bpm: "Темп", instr: { kick: "Бочка", snare: "Снер", hihat: "Хет", clap: "Плеск", bass: "Бас", synth: "Синт" } },
+  "uk": { tagline: "Торкнись сітки — збери свій біт.", play: "Грати", stop: "Стоп", clear: "Очистити", bpm: "Темп", instr: { kick: "Бочка", snare: "Снер", hihat: "Хет", clap: "Плеск" } },
   "eng-ny": { tagline: "Yo — tap the grid, cook a beat… can't be beat.", play: "Play", stop: "Stop", clear: "Clear", bpm: "BPM", instr: EN_INSTR },
   "eng-uk": { tagline: "Go on then — tap the grid, knock up a beat. Proper tidy.", play: "Play", stop: "Stop", clear: "Clear", bpm: "BPM", instr: EN_INSTR },
   "fr": { tagline: "Touche la grille, prépare un beat.", play: "Jouer", stop: "Stop", clear: "Effacer", bpm: "Tempo", instr: EN_INSTR },
@@ -53,10 +53,10 @@ const PRESETS = [
     { name: "verse", repeat: 4, on: { kick: [0, 8, 11], snare: [4, 12], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [] } },
     { name: "hook", repeat: 2, on: { kick: [0, 6, 8, 11], snare: [4, 12], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [4, 12] } },
   ] },
-  { label: "House", bpm: 124, sections: [{ name: "groove", repeat: 4, on: { kick: [0, 4, 8, 12], snare: [], hihat: [2, 6, 10, 14], clap: [4, 12], bass: [0, 4, 8, 12] } }] },
-  { label: "Techno", bpm: 128, sections: [{ name: "loop", repeat: 4, on: { kick: [0, 4, 8, 12], snare: [], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [4, 12], bass: [0, 4, 8, 12], synth: [2, 10] } }] },
+  { label: "House", bpm: 124, sections: [{ name: "groove", repeat: 4, on: { kick: [0, 4, 8, 12], snare: [], hihat: [2, 6, 10, 14], clap: [4, 12] } }] },
+  { label: "Techno", bpm: 128, sections: [{ name: "loop", repeat: 4, on: { kick: [0, 4, 8, 12], snare: [], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [4, 12] } }] },
   { label: "Trap", bpm: 140, sections: [{ name: "main", repeat: 4, on: { kick: [0, 6, 10], snare: [8], hihat: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], clap: [8] } }] },
-  { label: "Drum & Bass", bpm: 174, sections: [{ name: "break", repeat: 4, on: { kick: [0, 10], snare: [4, 12], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [], bass: [0, 8] } }] },
+  { label: "Drum & Bass", bpm: 174, sections: [{ name: "break", repeat: 4, on: { kick: [0, 10], snare: [4, 12], hihat: [0, 2, 4, 6, 8, 10, 12, 14], clap: [] } }] },
 ];
 // Append a preset's style as new section(s) to the current storyline.
 // While playing, sequence is rebuilt without resetting position, so the new
@@ -191,7 +191,7 @@ const CHANGELOG = [
     "kz": ["Пресеттер енді жаңа бөлім ретінде қосылады", "Ойнау кезінде қосқанда басынан бастамайды", "16 бөлімге дейін"],
     "lt": ["Šablonai dabar pridedami kaip naujos sekcijos", "Pridėjus grojant, neprasideda iš naujo", "Iki 16 sekcijų"],
   }, arch: {} },
-  { v: "0.0.13", commit: "7731d17", items: {
+  { v: "0.0.13", commit: "—", items: {
     "ru-modern": ["Окно «Сейчас играет»: видно, какая секция звучит сейчас — имя, повтор и шаг, с пульсирующим индикатором", "Играющая секция подсвечивается во вкладках, отдельно от редактируемой"],
     "ru-classic": ["Индикатор «Сейчас играет» (секция, повтор, шаг)", "Подсветка играющей секции"], "uk": ["Вікно «Зараз грає» (секція, повтор, крок)", "Підсвічування секції, що грає"],
     "eng-ny": ["A 'Now playing' window — see which section is sounding right now (name, repeat, step), with a pulsing dot", "The playing section lights up in the tabs, separate from the one you're editing"],
@@ -199,13 +199,6 @@ const CHANGELOG = [
     "fr": ["Fenêtre « En lecture » (section, répétition, pas)", "La section en cours s'illumine dans les onglets"], "jp": ["「再生中」ウィンドウ（セクション・反復・ステップ）", "再生中のセクションをタブで強調"],
     "sa": ["نافذة «قيد التشغيل» (المقطع، التكرار، الخطوة)", "إبراز المقطع قيد التشغيل في التبويبات"], "cn": ["“正在播放”窗口（段落、重复、步）", "正在播放的段落在标签中高亮"],
     "kz": ["«Қазір ойнауда» терезесі (бөлім, қайталау, қадам)", "Ойнап жатқан бөлім қойындыларда ерекшеленеді"], "lt": ["„Dabar groja\" langas (sekcija, pakartojimas, žingsnis)", "Grojanti sekcija paryškinama skirtukuose"],
-  }, arch: {} },
-  { v: "0.0.14", commit: "—", items: {
-    "ru-modern": ["Два новых инструмента: Бас (низкий тон) и Синт (пилообразный плак с фильтром)", "Бас и синт работают в сетке, пресетах, экспорте WAV и ссылках"],
-    "ru-classic": ["Новые инструменты: Бас и Синт"], "uk": ["Нові інструменти: Бас і Синт"],
-    "eng-ny": ["Two new instruments: Bass (low tone) and Synth (filtered saw pluck)", "Bass/Synth work in the grid, presets, WAV export and share links"],
-    "eng-uk": ["Two new instruments — Bass and Synth"], "fr": ["Deux nouveaux instruments : Basse et Synth"], "jp": ["新しい楽器：ベースとシンセ"],
-    "sa": ["آلتان جديدتان: باس وسينث"], "cn": ["两件新乐器：贝斯和合成器"], "kz": ["Екі жаңа аспап: Бас және Синт"], "lt": ["Du nauji instrumentai: Bosas ir Sintezatorius"],
   }, arch: {} },
 ];
 
@@ -217,12 +210,12 @@ let clIndex = CHANGELOG.length - 1;
 
 // ---- state: sections ----
 function emptyPattern() { const p = {}; INSTR.forEach((k) => (p[k] = new Array(STEPS).fill(false))); return p; }
-function demo1() { const p = emptyPattern(); [0, 4, 8, 12].forEach((i) => (p.kick[i] = true)); [2, 6, 10, 14].forEach((i) => (p.hihat[i] = true)); [4, 12].forEach((i) => (p.snare[i] = true)); [0, 8].forEach((i) => (p.bass[i] = true)); return p; }
-function demo2() { const p = emptyPattern(); [0, 2, 4, 6, 8, 10, 12, 14].forEach((i) => (p.kick[i] = true)); for (let i = 0; i < 16; i++) p.hihat[i] = true; [4, 12].forEach((i) => (p.snare[i] = true)); [7, 15].forEach((i) => (p.clap[i] = true)); [0, 4, 8, 12].forEach((i) => (p.bass[i] = true)); [2, 6, 10, 14].forEach((i) => (p.synth[i] = true)); return p; }
+function demo1() { const p = emptyPattern(); [0, 4, 8, 12].forEach((i) => (p.kick[i] = true)); [2, 6, 10, 14].forEach((i) => (p.hihat[i] = true)); [4, 12].forEach((i) => (p.snare[i] = true)); return p; }
+function demo2() { const p = emptyPattern(); [0, 2, 4, 6, 8, 10, 12, 14].forEach((i) => (p.kick[i] = true)); for (let i = 0; i < 16; i++) p.hihat[i] = true; [4, 12].forEach((i) => (p.snare[i] = true)); [7, 15].forEach((i) => (p.clap[i] = true)); return p; }
 let sections = [{ name: "intro", pattern: demo1(), repeat: 2 }, { name: "drop", pattern: demo2(), repeat: 2 }];
 let cur = 0;
 
-const DEF_VOL = { kick: 0.9, snare: 0.8, hihat: 0.6, clap: 0.7, bass: 0.8, synth: 0.5 };
+const DEF_VOL = { kick: 0.9, snare: 0.8, hihat: 0.6, clap: 0.7 };
 const volumes = Object.assign({}, DEF_VOL, JSON.parse(localStorage.getItem("b8_vol") || "{}"));
 function saveVol() { localStorage.setItem("b8_vol", JSON.stringify(volumes)); }
 
@@ -238,9 +231,7 @@ function kick(t, v) { const o = ctx.createOscillator(), g = ctx.createGain(); o.
 function snare(t, v) { const s = ctx.createBufferSource(); s.buffer = noise(0.2); const f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 1400; const g = ctx.createGain(); g.gain.setValueAtTime(0.7 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.2); s.connect(f).connect(g).connect(ctx.destination); s.start(t); s.stop(t + 0.2); const o = ctx.createOscillator(), og = ctx.createGain(); o.type = "triangle"; o.frequency.value = 180; og.gain.setValueAtTime(0.4 * v, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.15); o.connect(og).connect(ctx.destination); o.start(t); o.stop(t + 0.15); }
 function hihat(t, v) { const s = ctx.createBufferSource(); s.buffer = noise(0.06); const f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 7000; const g = ctx.createGain(); g.gain.setValueAtTime(0.4 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.06); s.connect(f).connect(g).connect(ctx.destination); s.start(t); s.stop(t + 0.06); }
 function clap(t, v) { const s = ctx.createBufferSource(); s.buffer = noise(0.18); const f = ctx.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = 1200; const g = ctx.createGain(); g.gain.setValueAtTime(0.7 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.18); s.connect(f).connect(g).connect(ctx.destination); s.start(t); s.stop(t + 0.18); }
-function bass(t, v) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = "triangle"; o.frequency.setValueAtTime(55, t); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.95 * v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t + 0.32); o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.34); }
-function synth(t, v) { const o = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter(); o.type = "sawtooth"; o.frequency.setValueAtTime(330, t); f.type = "lowpass"; f.frequency.setValueAtTime(2600, t); f.frequency.exponentialRampToValueAtTime(600, t + 0.2); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5 * v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t + 0.25); o.connect(f).connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.27); }
-const VOICES = { kick, snare, hihat, clap, bass, synth };
+const VOICES = { kick, snare, hihat, clap };
 
 // ---- sequence + scheduler ----
 function buildSequence() {
