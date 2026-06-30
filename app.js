@@ -1,6 +1,6 @@
-// Bit8maker 0.0.6 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.7 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.0.6";
+const VERSION = "0.0.7";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap"];
 const MAX_BPM = 250;
@@ -31,6 +31,15 @@ const EXPORT_LABEL = { "ru-modern": "Экспорт WAV", "ru-classic": "Экс�
 const SHARE_LABEL = { "ru-modern": "Поделиться", "ru-classic": "Поделиться", "uk": "Поділитися", "eng-ny": "Share link", "fr": "Partager", "jp": "共有", "sa": "مشاركة", "cn": "分享", "kz": "Бөлісу", "lt": "Dalintis" };
 const COPIED = { "ru-modern": "ссылка скопирована", "ru-classic": "ссылка скопирована", "uk": "посилання скопійовано", "eng-ny": "link copied!", "fr": "lien copié", "jp": "リンクをコピーしました", "sa": "تم نسخ الرابط", "cn": "链接已复制", "kz": "сілтеме көшірілді", "lt": "nuoroda nukopijuota" };
 const REPEAT_LABEL = { "ru-modern": "Повторы", "ru-classic": "Повторы", "uk": "Повтори", "eng-ny": "Repeats", "fr": "Répét.", "jp": "反復", "sa": "تكرار", "cn": "重复", "kz": "Қайталау", "lt": "Kart." };
+
+// Conventional names for BPM ranges — universal music terms, kept untranslated (like the drum names).
+// Genre/dance tempo + classical Italian tempo marking.
+const GENRE = [[60, 69, "Downtempo"], [70, 84, "Hip-hop / Boom bap"], [85, 99, "Hip-hop"], [100, 109, "Trap / Half-time"], [110, 119, "Deep House"], [120, 124, "House"], [125, 129, "Techno"], [130, 139, "Trance / Hard"], [140, 149, "Dubstep / Trap"], [150, 159, "Hardcore"], [160, 179, "Drum & Bass"], [180, 200, "Footwork"], [201, 999, "Speedcore"]];
+const TEMPO = [[0, 59, "Largo"], [60, 65, "Larghetto"], [66, 75, "Adagio"], [76, 107, "Andante"], [108, 119, "Moderato"], [120, 155, "Allegro"], [156, 175, "Vivace"], [176, 199, "Presto"], [200, 999, "Prestissimo"]];
+function rangeName(table, b) { for (let i = 0; i < table.length; i++) if (b >= table[i][0] && b <= table[i][1]) return table[i][2]; return ""; }
+function bpmName(b) { const g = rangeName(GENRE, b), t = rangeName(TEMPO, b); return g && t ? g + " · " + t : g || t; }
+const SEC_NAMES = ["intro", "verse", "drop", "bridge", "build", "break", "outro", "fill"];
+const defName = (i) => SEC_NAMES[i % SEC_NAMES.length];
 
 const CL_LABELS = {
   "ru-modern": { version: "Версия", whats: "Что нового", arch: "Архитектура" }, "ru-classic": { version: "Версия", whats: "Что нового", arch: "Архитектура" },
@@ -80,13 +89,21 @@ const CHANGELOG = [
     "eng-ny": ["Save & load a pattern by link — share your beat in one click"], "fr": ["Sauvegarde/chargement du motif par lien"], "jp": ["リンクでパターンを保存・読み込み"],
     "sa": ["حفظ النمط وتحميله عبر رابط"], "cn": ["通过链接保存/加载节拍型"], "kz": ["Үлгіні сілтеме арқылы сақтау/жүктеу"], "lt": ["Šablono išsaugojimas/įkėlimas per nuorodą"],
   }, arch: {} },
-  { v: "0.0.6", commit: "—", items: {
+  { v: "0.0.6", commit: "83b39b8", items: {
     "ru-modern": ["Сюжетные секции: интро, куплет, дроп — каждая со своим паттерном и повторами", "Ссылка теперь хранит и язык (?lang)"],
     "ru-classic": ["Секции с повторами", "Ссылка сохраняет язык (?lang)"], "uk": ["Секції з повторами", "Посилання зберігає мову (?lang)"],
     "eng-ny": ["Storyline sections — intro, verse, drop, each with its own pattern and repeats", "Share link now keeps the language (?lang)"],
     "fr": ["Sections (storyline) avec répétitions", "Le lien conserve la langue (?lang)"], "jp": ["ストーリー的セクション（反復つき）", "共有リンクに言語を保持（?lang）"],
     "sa": ["مقاطع متسلسلة مع تكرارات", "الرابط يحفظ اللغة (?lang)"], "cn": ["故事化段落（带重复）", "分享链接保留语言（?lang）"],
     "kz": ["Қайталаулары бар бөлімдер", "Сілтеме тілді сақтайды (?lang)"], "lt": ["Sekcijos su pakartojimais", "Nuoroda išsaugo kalbą (?lang)"],
+  }, arch: {} },
+  { v: "0.0.7", commit: "—", items: {
+    "ru-modern": ["Имена у секций — intro, verse, drop или свои", "Подсказка стиля/темпа по BPM: Hip-hop, House, Techno… и Allegro, Andante"],
+    "ru-classic": ["Названия секций", "Названия диапазонов BPM (жанр + темп)"], "uk": ["Назви секцій", "Назви діапазонів BPM (жанр + темп)"],
+    "eng-ny": ["Name your sections — intro, verse, drop, whatever", "BPM range hint: Hip-hop, House, Techno… plus Allegro, Andante"],
+    "fr": ["Noms de sections", "Indice de style/tempo selon le BPM"], "jp": ["セクション名（intro/verse/drop など）", "BPM帯の名称（ジャンル＋テンポ）"],
+    "sa": ["تسمية المقاطع", "اسم نطاق BPM (النوع + الإيقاع)"], "cn": ["为段落命名", "BPM 区间名称（风格 + 速度）"],
+    "kz": ["Бөлім атаулары", "BPM ауқымының атауы (жанр + темп)"], "lt": ["Sekcijų pavadinimai", "BPM diapazono pavadinimas (žanras + tempas)"],
   }, arch: {} },
 ];
 
@@ -100,7 +117,7 @@ let clIndex = CHANGELOG.length - 1;
 function emptyPattern() { const p = {}; INSTR.forEach((k) => (p[k] = new Array(STEPS).fill(false))); return p; }
 function demo1() { const p = emptyPattern(); [0, 4, 8, 12].forEach((i) => (p.kick[i] = true)); [2, 6, 10, 14].forEach((i) => (p.hihat[i] = true)); [4, 12].forEach((i) => (p.snare[i] = true)); return p; }
 function demo2() { const p = emptyPattern(); [0, 2, 4, 6, 8, 10, 12, 14].forEach((i) => (p.kick[i] = true)); for (let i = 0; i < 16; i++) p.hihat[i] = true; [4, 12].forEach((i) => (p.snare[i] = true)); [7, 15].forEach((i) => (p.clap[i] = true)); return p; }
-let sections = [{ pattern: demo1(), repeat: 2 }, { pattern: demo2(), repeat: 2 }];
+let sections = [{ name: "intro", pattern: demo1(), repeat: 2 }, { name: "drop", pattern: demo2(), repeat: 2 }];
 let cur = 0;
 
 const DEF_VOL = { kick: 0.9, snare: 0.8, hihat: 0.6, clap: 0.7 };
@@ -175,7 +192,7 @@ const b64dec = (s) => decodeURIComponent(escape(atob(s.replace(/-/g, "+").replac
 function patBits(pat) { return INSTR.map((k) => { let n = 0; for (let st = 0; st < STEPS; st++) if (pat[k][st]) n |= 1 << st; return n; }); }
 function bitsToPat(arr) { const p = emptyPattern(); INSTR.forEach((k, i) => { const n = (arr && arr[i]) | 0; for (let st = 0; st < STEPS; st++) p[k][st] = !!(n & (1 << st)); }); return p; }
 function encodeState() {
-  const s = sections.map((sec) => ({ r: sec.repeat, p: patBits(sec.pattern) }));
+  const s = sections.map((sec) => ({ n: sec.name, r: sec.repeat, p: patBits(sec.pattern) }));
   return b64url(JSON.stringify({ b: bpm, v: INSTR.map((k) => Math.round(volumes[k] * 100)), s: s }));
 }
 function decodeState(str) {
@@ -183,9 +200,9 @@ function decodeState(str) {
     const o = JSON.parse(b64dec(str));
     if (o.b) bpm = Math.max(60, Math.min(MAX_BPM, o.b | 0));
     if (Array.isArray(o.v)) INSTR.forEach((k, i) => { if (o.v[i] != null) volumes[k] = Math.max(0, Math.min(1, o.v[i] / 100)); });
-    if (Array.isArray(o.s)) sections = o.s.slice(0, MAX_SEC).map((sec) => ({ repeat: Math.max(1, Math.min(8, (sec.r | 0) || 1)), pattern: bitsToPat(sec.p) }));
-    else if (Array.isArray(o.p)) sections = [{ repeat: 1, pattern: bitsToPat(o.p) }]; // 0.0.5 link
-    if (!sections.length) sections = [{ pattern: emptyPattern(), repeat: 1 }];
+    if (Array.isArray(o.s)) sections = o.s.slice(0, MAX_SEC).map((sec, i) => ({ name: (sec.n != null ? String(sec.n) : defName(i)).slice(0, 20), repeat: Math.max(1, Math.min(8, (sec.r | 0) || 1)), pattern: bitsToPat(sec.p) }));
+    else if (Array.isArray(o.p)) sections = [{ name: defName(0), repeat: 1, pattern: bitsToPat(o.p) }]; // 0.0.5 link
+    if (!sections.length) sections = [{ name: defName(0), pattern: emptyPattern(), repeat: 1 }];
     cur = 0;
     return true;
   } catch (e) { return false; }
@@ -220,14 +237,14 @@ function renderGrid() {
 }
 function renderTabs() {
   const el = $("tabs"); el.innerHTML = "";
-  sections.forEach((s, i) => { const b = document.createElement("button"); b.className = "tab" + (i === cur ? " active" : ""); b.textContent = i + 1; b.onclick = () => { cur = i; sync(); }; el.appendChild(b); });
-  const add = document.createElement("button"); add.className = "tab"; add.textContent = "＋"; add.title = "add";
-  add.onclick = () => { if (sections.length < MAX_SEC) { sections.push({ pattern: emptyPattern(), repeat: 2 }); cur = sections.length - 1; sync(); } };
+  sections.forEach((s, i) => { const b = document.createElement("button"); b.className = "tab" + (i === cur ? " active" : ""); b.textContent = (i + 1) + ". " + (s.name || "—"); b.onclick = () => { cur = i; sync(); }; el.appendChild(b); });
+  const add = document.createElement("button"); add.className = "tab tab--icon"; add.textContent = "＋"; add.title = "add";
+  add.onclick = () => { if (sections.length < MAX_SEC) { sections.push({ name: defName(sections.length), pattern: emptyPattern(), repeat: 2 }); cur = sections.length - 1; sync(); } };
   el.appendChild(add);
-  if (sections.length > 1) { const rem = document.createElement("button"); rem.className = "tab"; rem.textContent = "✕"; rem.title = "remove"; rem.onclick = () => { sections.splice(cur, 1); cur = Math.min(cur, sections.length - 1); sync(); }; el.appendChild(rem); }
+  if (sections.length > 1) { const rem = document.createElement("button"); rem.className = "tab tab--icon"; rem.textContent = "✕"; rem.title = "remove"; rem.onclick = () => { sections.splice(cur, 1); cur = Math.min(cur, sections.length - 1); sync(); }; el.appendChild(rem); }
   $("rep-val").textContent = "×" + sections[cur].repeat;
 }
-function sync() { renderTabs(); renderGrid(); }
+function sync() { renderTabs(); $("sec-name").value = sections[cur].name; renderGrid(); }
 function updateTransport() { $("play").textContent = playing ? STRINGS[lang].stop : STRINGS[lang].play; }
 function renderChangelog() {
   const e = CHANGELOG[clIndex], L = CL_LABELS[lang];
@@ -264,8 +281,10 @@ $("export").onclick = exportWAV;
 $("share").onclick = shareLink;
 $("rep-dn").onclick = () => { sections[cur].repeat = Math.max(1, sections[cur].repeat - 1); $("rep-val").textContent = "×" + sections[cur].repeat; };
 $("rep-up").onclick = () => { sections[cur].repeat = Math.min(8, sections[cur].repeat + 1); $("rep-val").textContent = "×" + sections[cur].repeat; };
-const bpmIn = $("bpm"); bpmIn.max = MAX_BPM; bpmIn.value = bpm; $("bpm-val").textContent = bpm;
-bpmIn.oninput = (e) => { bpm = +e.target.value; $("bpm-val").textContent = bpm; };
+$("sec-name").oninput = (e) => { sections[cur].name = e.target.value; renderTabs(); };
+function showBpm() { $("bpm-val").textContent = bpm; $("bpm-name").textContent = bpmName(bpm); }
+const bpmIn = $("bpm"); bpmIn.max = MAX_BPM; bpmIn.value = bpm; showBpm();
+bpmIn.oninput = (e) => { bpm = +e.target.value; showBpm(); };
 const verSlider = $("ver-slider"); verSlider.max = CHANGELOG.length - 1; verSlider.value = clIndex;
 verSlider.oninput = (e) => { clIndex = +e.target.value; renderChangelog(); };
 $("ver").textContent = VERSION;
