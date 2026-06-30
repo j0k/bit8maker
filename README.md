@@ -13,9 +13,10 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-## v0.0.1
+## v0.0.2
 
 - Clickable 16-step grid · Kick / Snare / HiHat / Clap
+- **Per-track volume sliders** (remembered)
 - Play / Stop with a Web-Audio scheduler · BPM · Clear
 - EN / RU language switch (remembered)
 - Procedural drum synthesis (no samples)

@@ -32,8 +32,10 @@ h1 .i{color:var(--brand)}
 .bpm input{width:130px}
 
 .grid{display:grid;gap:6px}
-.row{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:center}
+.row{display:grid;grid-template-columns:84px 1fr 92px;gap:10px;align-items:center}
 .label{font-size:14px;color:#cfd6dd}
+.row-vol{width:92px;accent-color:var(--brand)}
+@media(max-width:560px){.row{grid-template-columns:64px 1fr}.row-vol{display:none}}
 .steps{display:grid;grid-template-columns:repeat(16,1fr);gap:4px}
 .cell{
   aspect-ratio:1;background:#1c1f27;border:1px solid #2a2e38;border-radius:6px;
