@@ -1,0 +1,47 @@
+:root{
+  --brand:#267DB7; --brand-d:#1F6699; --brand-l:#5aa6da;
+  --bg:#0e0e10; --card:#15161a; --line:#23262e; --txt:#eef2f6; --muted:#8b97a4;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:24px 16px 60px;
+}
+.wrap{max-width:860px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+h1 .i{color:var(--brand)}
+.lang{display:flex;gap:8px}
+.lang-btn{
+  background:#0e0e10;border:1px solid var(--line);color:#cfd6dd;
+  border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;font-size:14px;
+}
+.lang-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.tagline{color:var(--muted);margin-top:6px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:18px}
+.transport{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.btn{
+  background:var(--brand);color:#fff;border:none;border-radius:12px;
+  padding:12px 24px;font:inherit;font-weight:700;cursor:pointer;min-width:96px;
+}
+.btn:hover{background:var(--brand-d)}
+.btn--ghost{background:transparent;border:1px solid var(--line);color:#cfd6dd;min-width:0}
+.bpm{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-left:auto}
+.bpm input{width:130px}
+
+.grid{display:grid;gap:6px}
+.row{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:center}
+.label{font-size:14px;color:#cfd6dd}
+.steps{display:grid;grid-template-columns:repeat(16,1fr);gap:4px}
+.cell{
+  aspect-ratio:1;background:#1c1f27;border:1px solid #2a2e38;border-radius:6px;
+  cursor:pointer;transition:background .05s;
+}
+.cell:nth-child(4n+1){border-color:#3a4150}
+.cell.on{background:var(--brand);border-color:var(--brand-l);box-shadow:0 0 8px rgba(38,125,183,.55)}
+.cell.playing{outline:2px solid #fff}
+
+footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center}
+footer a{color:var(--brand-l);text-decoration:none}
