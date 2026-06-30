@@ -13,13 +13,14 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-## v0.0.5
+## v0.0.6
 
 - Clickable 16-step grid · Kick / Snare / HiHat / Clap
+- **Storyline sections** — multiple sections (intro / verse / drop), each with its own pattern and repeat count, played in sequence
 - Per-track volume sliders (remembered)
 - Play / Stop with a Web-Audio scheduler · BPM up to **250** · Clear
-- **Export WAV** — render the loop offline and download it (client-side)
-- **Share a pattern by link** — state packed into the URL hash; open the link to restore the beat
+- Export WAV — renders the **full storyline** offline and downloads it (client-side)
+- **Share by link** — sections + bpm + volumes packed into the URL hash, plus `?lang=` so the link opens in your language
 - 10 interface languages (ru-modern, ru-classic, uk, eng-ny, fr, jp, sa, cn, kz, lt)
 - Version slider + localized changelog at the bottom
 - Procedural drum synthesis (no samples)

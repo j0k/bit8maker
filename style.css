@@ -30,6 +30,14 @@ h1 .i{color:var(--brand)}
 .bpm{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-left:auto}
 .bpm input{width:130px}
 
+.sections{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;direction:ltr}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{background:#1c1f27;border:1px solid var(--line);color:#cfd6dd;border-radius:8px;min-width:34px;padding:6px 10px;font:inherit;cursor:pointer}
+.tab.active{background:var(--brand);border-color:var(--brand-l);color:#fff;font-weight:700}
+.rep{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px;margin-left:auto}
+.rep b{min-width:26px;text-align:center;color:var(--txt)}
+.mini{background:#1c1f27;border:1px solid var(--line);color:#cfd6dd;border-radius:6px;width:26px;height:26px;cursor:pointer;font:inherit}
+
 .grid{display:grid;gap:6px}
 .row{display:grid;grid-template-columns:84px 1fr 92px;gap:10px;align-items:center}
 .label{font-size:14px;color:#cfd6dd}
