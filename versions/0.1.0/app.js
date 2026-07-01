@@ -1,6 +1,6 @@
-// Bit8maker 0.1.1 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.0 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.1";
+const VERSION = "0.1.0";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -237,7 +237,7 @@ const CHANGELOG = [
     "eng-uk": ["Live waveform + spectrum while it plays"], "fr": ["Visualisation en direct : forme d'onde et spectre"], "jp": ["再生中のライブ表示：波形とスペクトル"],
     "sa": ["عرض حي أثناء التشغيل: الموجة والطيف"], "cn": ["播放时实时显示：波形与频谱"], "kz": ["Ойнау кезінде тірі визуализация: толқын мен спектр"], "lt": ["Gyva vizualizacija grojant: banga ir spektras"],
   }, arch: {} },
-  { v: "0.1.0", commit: "3df04e2", items: {
+  { v: "0.1.0", commit: "—", items: {
     "ru-modern": ["«Игра Жизнь»: поле превращается в клеточный автомат Конвея (тор 6×16) — бит эволюционирует вживую во время игры", "Шаг эволюции от 1/16 до 64/16; кнопки «шаг» и «случайный посев» 🎲", "Веха-релиз 0.1.0 — нативные сборки уедут на 0.1.x"],
     "ru-classic": ["Режим «Игра Жизнь» (клеточный автомат) для сетки", "Шаг 1/16…64/16, ручной шаг и посев"],
     "uk": ["Режим «Гра Життя» (клітинний автомат) для сітки", "Крок 1/16…64/16, ручний крок і посів"],
@@ -252,15 +252,6 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "Правила B3/S23 на торе INSTR×STEPS; эволюция в tick() на границе шага.", "eng-ny": "B3/S23 on an INSTR×STEPS torus; evolves in tick() at the step boundary.",
   } },
-  { v: "0.1.1", commit: "—", items: {
-    "ru-modern": ["Исправлено: при «Стоп» осциллограф и спектр больше не застывают на последнем кадре — отложенный кадр анимации гасится флагом scopeOn"],
-    "ru-classic": ["Фикс: визуализация не зависает при стопе"], "uk": ["Фікс: візуалізація не зависає при стопі"],
-    "eng-ny": ["Fixed: on Stop the scope and spectrum no longer freeze on the last frame (a stray animation frame could redraw over the reset)"],
-    "eng-uk": ["Fixed: the scope no longer freezes when you hit Stop"],
-    "fr": ["Corrigé : à l'arrêt, l'oscilloscope et le spectre ne se figent plus"], "jp": ["修正：停止時に波形とスペクトルが固まらないように"],
-    "sa": ["إصلاح: عند الإيقاف لم يعد العرض يتجمد على آخر إطار"], "cn": ["修复：停止时波形与频谱不再卡在最后一帧"],
-    "kz": ["Түзету: «Тоқтату» кезінде визуализация қатып қалмайды"], "lt": ["Pataisa: sustabdžius, vizualizacija nebeužstringa"],
-  }, arch: {} },
 ];
 
 // ---- language (URL ?lang overrides stored) ----
@@ -281,7 +272,7 @@ const volumes = Object.assign({}, DEF_VOL, JSON.parse(localStorage.getItem("b8_v
 function saveVol() { localStorage.setItem("b8_vol", JSON.stringify(volumes)); }
 
 let bpm = 100;
-let ctx = null, analyser = null, bus = null, rafId = null, waveBuf = null, freqBuf = null, scopeOn = false;
+let ctx = null, analyser = null, bus = null, rafId = null, waveBuf = null, freqBuf = null;
 const out = () => bus || ctx.destination; // voices route through the analyser bus when live
 function ensureCtx() {
   if (ctx) return;
@@ -390,10 +381,10 @@ function drawScope(flat) {
     const use = (freqBuf.length * 0.7) | 0, bw = SW / use;
     for (let i = 0; i < use; i++) { const v = freqBuf[i] / 255, h = v * SH; sc.fillStyle = "rgba(38,125,183," + (0.35 + v * 0.65) + ")"; sc.fillRect(i * bw, SH - h, Math.max(1, bw - 1), h); }
   }
-  if (!flat) rafId = requestAnimationFrame(() => { if (scopeOn) drawScope(); });
+  if (playing) rafId = requestAnimationFrame(() => drawScope());
 }
-function startScope() { scopeOn = true; if (rafId) cancelAnimationFrame(rafId); drawScope(); }
-function stopScope() { scopeOn = false; if (rafId) cancelAnimationFrame(rafId); rafId = null; drawScope(true); }
+function startScope() { if (rafId) cancelAnimationFrame(rafId); drawScope(); }
+function stopScope() { if (rafId) cancelAnimationFrame(rafId); rafId = null; drawScope(true); }
 
 // ---- WAV export (full storyline) ----
 function encodeWAV(audioBuf) {
