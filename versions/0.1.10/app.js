@@ -1,6 +1,6 @@
-// Bit8maker 0.1.11 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.10 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.11";
+const VERSION = "0.1.10";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -332,7 +332,7 @@ const CHANGELOG = [
     "eng-uk": ["Section repeats now apply live while playing"], "fr": ["Les « répétitions » de section s'appliquent en direct"], "jp": ["セクションの「反復」が再生中に即反映"],
     "sa": ["«تكرار» المقطع يُطبّق أثناء التشغيل"], "cn": ["段落“重复”现在实时生效"], "kz": ["Бөлімнің «Қайталауы» ойнау кезінде қолданылады"], "lt": ["Sekcijos pakartojimai taikomi grojant"],
   }, arch: {} },
-  { v: "0.1.10", commit: "e268991", items: {
+  { v: "0.1.10", commit: "—", items: {
     "ru-modern": ["Нативные сборки: GitHub Actions по тегу собирает десктоп-приложение (Electron) — Windows .exe (установщик) и Linux .deb + .tar.gz — и кладёт их в Releases", "Тот же клиентский код, обёрнутый electron-main.js; dmg пока не делаем"],
     "ru-classic": ["Нативные сборки exe/deb/tar.gz через GitHub Actions"], "uk": ["Нативні збірки exe/deb/tar.gz через GitHub Actions"],
     "eng-ny": ["Native builds: a GitHub Actions release workflow packages a desktop app (Electron) on tag — Windows .exe installer and Linux .deb + .tar.gz — attached to the Release", "Same client-side code, wrapped by electron-main.js; dmg skipped for now"],
@@ -341,13 +341,6 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "Electron-обёртка (webSecurity:false для fetch wasm из file://); electron-builder targets win:nsis, linux:[deb,tar.gz]; матрица windows/ubuntu.", "eng-ny": "Electron wrapper (webSecurity:false so wasm fetch works over file://); electron-builder targets win:nsis, linux:[deb,tar.gz]; windows/ubuntu matrix.",
   } },
-  { v: "0.1.11", commit: "—", items: {
-    "ru-modern": ["Починка релизного CI: загрузка бинарников больше не зависит от стороннего action — использую встроенный gh CLI, релиз создаётся и exe/deb/tar.gz прикладываются", "Раньше джобы падали на «Set up job» (0 шагов) — вероятно, сторонний action был запрещён политикой репозитория"],
-    "ru-classic": ["Фикс релиза GitHub Actions (gh CLI вместо стороннего action)"], "uk": ["Фікс релізного CI (gh CLI замість стороннього action)"],
-    "eng-ny": ["Fixed the release CI: binary upload no longer needs a third-party action — uses the built-in gh CLI, so the Release is created and exe/deb/tar.gz attach", "The jobs were failing at 'Set up job' (0 steps) — a sign the third-party action was blocked by repo policy"],
-    "eng-uk": ["Fixed the release workflow (gh CLI instead of a third-party action)"], "fr": ["Correction du CI de release (gh CLI au lieu d'une action tierce)"], "jp": ["リリースCIの修正（サードパーティactionをやめgh CLIに）"],
-    "sa": ["إصلاح CI الإصدار (gh CLI بدل إجراء طرف ثالث)"], "cn": ["修复发布 CI（改用内置 gh CLI，不再依赖第三方 action）"], "kz": ["Релиз CI түзетілді (сыртқы action орнына gh CLI)"], "lt": ["Pataisytas leidimo CI (gh CLI vietoj treciosios salies action)"],
-  }, arch: {} },
 ];
 
 // ---- language (URL ?lang overrides stored) ----

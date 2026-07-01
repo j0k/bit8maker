@@ -14,9 +14,9 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            target: --win        # Windows .exe (NSIS installer)
+            target: "--win"        # Windows .exe (NSIS installer)
           - os: ubuntu-latest
-            target: --linux       # Linux .deb + .tar.gz
+            target: "--linux"      # Linux .deb + .tar.gz
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -27,10 +27,15 @@ jobs:
         run: npm install
       - name: Build native package
         run: npx electron-builder ${{ matrix.target }} --publish never
-      - name: Attach binaries to the Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/*.exe
-            dist/*.deb
-            dist/*.tar.gz
+      # Upload with the built-in gh CLI (no third-party actions, which some repo
+      # policies block — that was making the jobs fail at "Set up job").
+      - name: Publish binaries to the Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(dist/*.exe dist/*.deb dist/*.tar.gz)
+          echo "Uploading: ${files[*]:-<none>}"
+          gh release create "$GITHUB_REF_NAME" -t "$GITHUB_REF_NAME" -n "Bit8maker $GITHUB_REF_NAME — native builds (exe / deb / tar.gz)." 2>/dev/null || true
+          gh release upload "$GITHUB_REF_NAME" "${files[@]}" --clobber

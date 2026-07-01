@@ -24,6 +24,10 @@ Release:
 
 (`.dmg` for macOS is not built yet.) Build locally with `npm install && npm run dist`.
 
+## v0.1.11
+
+- Fixed the release workflow — binaries now upload via the built-in `gh` CLI instead of a third-party action (which repo policy was blocking), so `.exe` / `.deb` / `.tar.gz` attach to the Release
+
 ## v0.1.10
 
 - **Native builds** — GitHub Actions packages a desktop app on tag (Windows `.exe`, Linux `.deb` + `.tar.gz`) and attaches them to the Release
