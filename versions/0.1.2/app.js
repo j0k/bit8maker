@@ -1,6 +1,6 @@
-// Bit8maker 0.1.3 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.2 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.3";
+const VERSION = "0.1.2";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -28,8 +28,7 @@ const STRINGS = {
   "kz": { tagline: "Торды басып, битіңді жаса.", play: "Ойнату", stop: "Тоқтату", clear: "Тазалау", bpm: "Қарқын", instr: EN_INSTR },
   "lt": { tagline: "Spustelėk tinklelį ir sukurk ritmą.", play: "Groti", stop: "Stop", clear: "Išvalyti", bpm: "Tempas", instr: EN_INSTR },
 };
-const EXPORT_LABEL = { "ru-modern": "Экспорт", "ru-classic": "Экспорт", "uk": "Експорт", "eng-ny": "Export", "eng-uk": "Export", "fr": "Exporter", "jp": "書き出し", "sa": "تصدير", "cn": "导出", "kz": "Экспорт", "lt": "Eksportuoti" };
-const TRACK_LABEL = { "ru-modern": "название трека", "ru-classic": "название трека", "uk": "назва треку", "eng-ny": "track name", "eng-uk": "track name", "fr": "nom de piste", "jp": "トラック名", "sa": "اسم المقطع", "cn": "曲目名称", "kz": "трек атауы", "lt": "takelio pavadinimas" };
+const EXPORT_LABEL = { "ru-modern": "Экспорт WAV", "ru-classic": "Экспорт WAV", "uk": "Експорт WAV", "eng-ny": "Export WAV", "eng-uk": "Export WAV", "fr": "Export WAV", "jp": "WAV書き出し", "sa": "تصدير WAV", "cn": "导出 WAV", "kz": "WAV экспорт", "lt": "Eksportuoti WAV" };
 const SHARE_LABEL = { "ru-modern": "Поделиться", "ru-classic": "Поделиться", "uk": "Поділитися", "eng-ny": "Share link", "eng-uk": "Share link", "fr": "Partager", "jp": "共有", "sa": "مشاركة", "cn": "分享", "kz": "Бөлісу", "lt": "Dalintis" };
 const COPIED = { "ru-modern": "ссылка скопирована", "ru-classic": "ссылка скопирована", "uk": "посилання скопійовано", "eng-ny": "link copied!", "eng-uk": "link copied — sorted!", "fr": "lien copié", "jp": "リンクをコピーしました", "sa": "تم نسخ الرابط", "cn": "链接已复制", "kz": "сілтеме көшірілді", "lt": "nuoroda nukopijuota" };
 const REPEAT_LABEL = { "ru-modern": "Повторы", "ru-classic": "Повторы", "uk": "Повтори", "eng-ny": "Repeats", "eng-uk": "Repeats", "fr": "Répét.", "jp": "反復", "sa": "تكرار", "cn": "重复", "kz": "Қайталау", "lt": "Kart." };
@@ -262,7 +261,7 @@ const CHANGELOG = [
     "sa": ["إصلاح: عند الإيقاف لم يعد العرض يتجمد على آخر إطار"], "cn": ["修复：停止时波形与频谱不再卡在最后一帧"],
     "kz": ["Түзету: «Тоқтату» кезінде визуализация қатып қалмайды"], "lt": ["Pataisa: sustabdžius, vizualizacija nebeužstringa"],
   }, arch: {} },
-  { v: "0.1.2", commit: "255f4ea", items: {
+  { v: "0.1.2", commit: "—", items: {
     "ru-modern": ["Галочка «Игра Жизнь» теперь применяется к конкретной секции, а не ко всему треку — у каждой секции свой режим", "GoL-секции помечены 🧬 во вкладках"],
     "ru-classic": ["«Игра Жизнь» — флаг на каждую секцию отдельно", "Метка 🧬 на вкладках"], "uk": ["«Гра Життя» — прапорець на кожну секцію окремо", "Позначка 🧬 на вкладках"],
     "eng-ny": ["The Game of Life toggle now applies per section, not to the whole track — each section has its own mode", "GoL sections are tagged 🧬 in the tabs"],
@@ -271,21 +270,6 @@ const CHANGELOG = [
     "sa": ["لعبة الحياة تُطبّق لكل مقطع على حدة", "مقاطع GoL موسومة بـ🧬"], "cn": ["生命游戏改为按段落生效", "GoL 段落用🧬标记"],
     "kz": ["«Өмір» ойыны әр бөлімге бөлек қолданылады", "GoL бөлімдері 🧬 белгісімен"], "lt": ["Gyvybės žaidimas taikomas kiekvienai sekcijai atskirai", "GoL sekcijos pažymėtos 🧬"],
   }, arch: {} },
-  { v: "0.1.3", commit: "—", items: {
-    "ru-modern": ["Экспорт в WAV, MP3 и FLAC (клиентски: lamejs + libflac wasm)", "Множитель длины ×1…×100 — очень длинный трек одной кнопкой; GoL-секции при экспорте эволюционируют", "Название трека + метаданные (title, комментарий-ссылка juri-konoplev.pro/bit8maker) в WAV/MP3"],
-    "ru-classic": ["Экспорт WAV/MP3/FLAC", "Множитель повторов ×1…×100", "Название трека и метаданные"],
-    "uk": ["Експорт WAV/MP3/FLAC", "Множник повторів ×1…×100", "Назва треку та метадані"],
-    "eng-ny": ["Export to WAV, MP3 and FLAC (client-side: lamejs + libflac wasm)", "Length multiplier ×1…×100 — a very long track in one click; GoL sections evolve through the export", "Track name + metadata (title, comment link juri-konoplev.pro/bit8maker) in WAV/MP3"],
-    "eng-uk": ["Export to WAV/MP3/FLAC, ×1…×100 length multiplier, track name + metadata"],
-    "fr": ["Export WAV/MP3/FLAC", "Multiplicateur ×1…×100", "Nom de piste + métadonnées"],
-    "jp": ["WAV/MP3/FLAC書き出し", "長さ倍率 ×1…×100", "トラック名とメタデータ"],
-    "sa": ["تصدير WAV/MP3/FLAC", "مضاعف الطول ×1…×100", "اسم المقطع والبيانات الوصفية"],
-    "cn": ["导出 WAV/MP3/FLAC", "长度倍数 ×1…×100", "曲目名称与元数据"],
-    "kz": ["WAV/MP3/FLAC экспорты", "Ұзындық көбейткіші ×1…×100", "Трек атауы мен метадеректер"],
-    "lt": ["Eksportas į WAV/MP3/FLAC", "Ilgio daugiklis ×1…×100", "Takelio pavadinimas ir metaduomenys"],
-  }, arch: {
-    "ru-modern": "OfflineAudioContext рендерит ×N проходов; кодирование lamejs (MP3, +ID3v2) и libflac (нативный FLAC).", "eng-ny": "OfflineAudioContext renders ×N passes; encoded via lamejs (MP3, +ID3v2) and libflac (native FLAC).",
-  } },
 ];
 
 // ---- language (URL ?lang overrides stored) ----
@@ -420,97 +404,27 @@ function drawScope(flat) {
 function startScope() { scopeOn = true; if (rafId) cancelAnimationFrame(rafId); drawScope(); }
 function stopScope() { scopeOn = false; if (rafId) cancelAnimationFrame(rafId); rafId = null; drawScope(true); }
 
-// ---- export: WAV / MP3 / FLAC, repeat multiplier, metadata ----
-const META_URL = "https://juri-konoplev.pro/bit8maker/";
-const _cat = (...a) => { let n = 0; a.forEach((x) => (n += x.length)); const o = new Uint8Array(n); let p = 0; a.forEach((x) => { o.set(x, p); p += x.length; }); return o; };
-const _scripts = {};
-function loadScript(src) {
-  if (!_scripts[src]) _scripts[src] = new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = () => res(); s.onerror = () => rej(new Error("load " + src)); document.head.appendChild(s); });
-  return _scripts[src];
-}
-let _flac = null;
-function loadFlac() {
-  if (!_flac) _flac = loadScript("lib/libflac.wasm.js").then(() => new Promise((res) => { const F = window.Flac, chk = () => (F.isReady && F.isReady() ? res(F) : setTimeout(chk, 30)); F.on ? F.on("ready", () => res(F)) : chk(); }));
-  return _flac;
-}
-function floatTo16(ch) { const n = ch.length, o = new Int16Array(n); for (let i = 0; i < n; i++) { const x = Math.max(-1, Math.min(1, ch[i])); o[i] = x < 0 ? x * 0x8000 : x * 0x7fff; } return o; }
-function wavInfoChunk(meta) {
-  const te = new TextEncoder(), parts = [];
-  [["INAM", meta.title], ["ICMT", meta.comment], ["ISFT", meta.software]].filter((f) => f[1]).forEach(([id, val]) => {
-    let d = te.encode(val + "\0"); if (d.length % 2) d = _cat(d, new Uint8Array(1));
-    const h = new Uint8Array(8); for (let i = 0; i < 4; i++) h[i] = id.charCodeAt(i); new DataView(h.buffer).setUint32(4, d.length, true);
-    parts.push(h, d);
-  });
-  const info = _cat(new Uint8Array([73, 78, 70, 79]), ...parts); // "INFO"
-  const head = new Uint8Array(8); head.set([76, 73, 83, 84]); new DataView(head.buffer).setUint32(4, info.length, true); // "LIST"
-  return _cat(head, info);
-}
-function encodeWAV(audioBuf, meta) {
-  const ch = audioBuf.getChannelData(0), n = ch.length, sr = audioBuf.sampleRate, dataLen = n * 2;
-  const info = meta ? wavInfoChunk(meta) : new Uint8Array(0);
-  const ab = new ArrayBuffer(44 + dataLen + info.length), v = new DataView(ab);
+// ---- WAV export (full storyline) ----
+function encodeWAV(audioBuf) {
+  const ch = audioBuf.getChannelData(0), n = ch.length, sr = audioBuf.sampleRate;
+  const ab = new ArrayBuffer(44 + n * 2), v = new DataView(ab);
   const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
-  str(0, "RIFF"); v.setUint32(4, 36 + dataLen + info.length, true); str(8, "WAVE"); str(12, "fmt ");
+  str(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); str(8, "WAVE"); str(12, "fmt ");
   v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
   v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
-  str(36, "data"); v.setUint32(40, dataLen, true);
+  str(36, "data"); v.setUint32(40, n * 2, true);
   let o = 44; for (let i = 0; i < n; i++) { const x = Math.max(-1, Math.min(1, ch[i])); v.setInt16(o, x < 0 ? x * 0x8000 : x * 0x7fff, true); o += 2; }
-  if (info.length) new Uint8Array(ab).set(info, 44 + dataLen);
   return ab;
 }
-function id3v2(meta) {
-  const te = new TextEncoder();
-  const frame = (id, body) => { const h = new Uint8Array(10); for (let i = 0; i < 4; i++) h[i] = id.charCodeAt(i); const s = body.length; h[4] = (s >>> 24) & 255; h[5] = (s >>> 16) & 255; h[6] = (s >>> 8) & 255; h[7] = s & 255; return _cat(h, body); };
-  const txt = (id, t) => frame(id, _cat(new Uint8Array([3]), te.encode(t)));
-  const comm = (t) => frame("COMM", _cat(new Uint8Array([3, 101, 110, 103, 0]), te.encode(t))); // UTF-8, "eng", empty desc
-  const frames = _cat(txt("TIT2", meta.title), txt("TSSE", meta.software), comm(meta.comment)), sz = frames.length;
-  return _cat(new Uint8Array([73, 68, 51, 3, 0, 0, (sz >> 21) & 127, (sz >> 14) & 127, (sz >> 7) & 127, sz & 127]), frames); // "ID3" v2.3
-}
-async function encodeMP3(buf, meta) {
-  await loadScript("lib/lame.min.js");
-  const s16 = floatTo16(buf.getChannelData(0)), n = s16.length, enc = new lamejs.Mp3Encoder(1, buf.sampleRate, 192), parts = [id3v2(meta)];
-  for (let i = 0; i < n; i += 1152) { const m = enc.encodeBuffer(s16.subarray(i, i + 1152)); if (m.length) parts.push(m); }
-  const end = enc.flush(); if (end.length) parts.push(end);
-  return new Blob(parts, { type: "audio/mpeg" });
-}
-async function encodeFLAC(buf) {
-  const Flac = await loadFlac(), ch = buf.getChannelData(0), n = ch.length, s32 = new Int32Array(n);
-  for (let i = 0; i < n; i++) { const x = Math.max(-1, Math.min(1, ch[i])); s32[i] = (x < 0 ? x * 0x8000 : x * 0x7fff) | 0; }
-  const enc = Flac.create_libflac_encoder(buf.sampleRate, 1, 16, 5, n), parts = [];
-  const st = Flac.init_encoder_stream(enc, (data, bytes) => parts.push(new Uint8Array(data.slice(0, bytes))), () => {});
-  if (st !== 0) throw new Error("FLAC init " + st);
-  for (let i = 0; i < n; i += 4096) { const sub = s32.subarray(i, Math.min(i + 4096, n)); Flac.FLAC__stream_encoder_process_interleaved(enc, sub, sub.length); }
-  Flac.FLAC__stream_encoder_finish(enc); Flac.FLAC__stream_encoder_delete(enc);
-  return new Blob(parts, { type: "audio/flac" });
-}
-async function exportAudio() {
-  const fmt = $("fmt-select").value, mult = Math.max(1, Math.min(100, +$("mult-select").value || 1));
-  const name = (($("track-name").value || "").trim().replace(/[^\w .\-]+/g, "_").slice(0, 60)) || "bit8maker";
-  const sr = 44100, stepDur = (60 / bpm) / 4;
-  // clone patterns so Game-of-Life evolution during export doesn't touch the live grid
-  const work = sections.map((sec) => ({ gol: sec.gol, repeat: sec.repeat, pattern: INSTR.reduce((o, k) => ((o[k] = sec.pattern[k].slice()), o), {}) }));
-  const wseq = []; work.forEach((sec, si) => { for (let r = 0; r < sec.repeat; r++) for (let st = 0; st < STEPS; st++) wseq.push([sec.pattern, st, si]); });
-  const totalSteps = (wseq.length || 1) * mult, total = totalSteps * stepDur + 0.4;
-  let off; try { off = new OfflineAudioContext(1, Math.ceil(total * sr), sr); } catch (e) { flashStatus("too long"); return; }
-  const live = ctx, liveBus = bus; ctx = off; bus = null; flashStatus("…");
+async function exportWAV() {
+  const sq = buildSequence(), sr = 44100, stepDur = (60 / bpm) / 4, total = sq.length * stepDur + 0.4;
+  const off = new OfflineAudioContext(1, Math.ceil(total * sr), sr), live = ctx, liveBus = bus; ctx = off; bus = null;
   try {
-    let gt = 0;
-    for (let i = 0; i < totalSteps; i++) {
-      const cell = wseq[i % wseq.length], si = cell[2], t = i * stepDur;
-      if (gt > 0 && gt % golStep === 0 && work[si].gol) lifeStep(work[si].pattern);
-      INSTR.forEach((k) => { if (cell[0][k][cell[1]]) VOICES[k](t, volumes[k]); });
-      gt++;
-    }
-    const buf = await off.startRendering(), meta = { title: name, comment: META_URL, software: "Bit8maker v" + VERSION };
-    let blob, ext;
-    if (fmt === "mp3") { blob = await encodeMP3(buf, meta); ext = "mp3"; }
-    else if (fmt === "flac") { blob = await encodeFLAC(buf); ext = "flac"; }
-    else { blob = new Blob([encodeWAV(buf, meta)], { type: "audio/wav" }); ext = "wav"; }
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name + "." + ext; a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1500);
-    flashStatus("✓ " + ext.toUpperCase());
-  } catch (e) { flashStatus("export failed"); }
-  finally { ctx = live; bus = liveBus; }
+    sq.forEach((cell, i) => { const t = i * stepDur; INSTR.forEach((k) => { if (cell[0][k][cell[1]]) VOICES[k](t, volumes[k]); }); });
+    const blob = new Blob([encodeWAV(await off.startRendering())], { type: "audio/wav" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "bit8maker.wav"; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  } finally { ctx = live; bus = liveBus; }
 }
 
 // ---- save / load by link ----
@@ -618,7 +532,6 @@ function applyLang() {
   $("tagline").textContent = t.tagline;
   $("clear").textContent = t.clear;
   $("export").textContent = EXPORT_LABEL[lang];
-  $("track-name").placeholder = TRACK_LABEL[lang];
   $("share").textContent = SHARE_LABEL[lang];
   $("rep-label").textContent = REPEAT_LABEL[lang];
   $("preset-select").options[0].textContent = PRESET_LABEL[lang];
@@ -639,7 +552,7 @@ LANGS.forEach(([code, label]) => { const o = document.createElement("option"); o
 sel.onchange = () => { lang = sel.value; localStorage.setItem("b8_lang", lang); applyLang(); };
 $("play").onclick = () => (playing ? stop() : play());
 $("clear").onclick = () => { INSTR.forEach((k) => sections[cur].pattern[k].fill(false)); renderGrid(); };
-$("export").onclick = exportAudio;
+$("export").onclick = exportWAV;
 $("share").onclick = shareLink;
 $("rep-dn").onclick = () => { sections[cur].repeat = Math.max(1, sections[cur].repeat - 1); $("rep-val").textContent = "×" + sections[cur].repeat; };
 $("rep-up").onclick = () => { sections[cur].repeat = Math.min(8, sections[cur].repeat + 1); $("rep-val").textContent = "×" + sections[cur].repeat; };

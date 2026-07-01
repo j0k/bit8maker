@@ -13,6 +13,11 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
+## v0.1.3
+
+- **Export to WAV / MP3 / FLAC** — client-side (lamejs + libflac wasm)
+- **Length multiplier ×1…×100** — render the storyline repeated up to 100× for a long track; Game-of-Life sections keep evolving through the export
+- **Track name** + metadata (title, comment link) embedded in WAV & MP3
 ## v0.1.2
 
 - Game of Life is now a **per-section** toggle (each section has its own mode; GoL sections are tagged 🧬 in the tabs)
