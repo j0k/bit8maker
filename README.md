@@ -13,8 +13,9 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-## v0.0.17
+## v0.1.0
 
+- **Game of Life mode** 🧬 — turn the 6×16 grid into a Conway cellular automaton (toroidal) so the beat evolves live while it plays; evolution step from **1/16 to 64/16**, plus manual "step" and "random seed" 🎲. This is the 0.1.0 milestone (native desktop builds move to 0.1.x).
 - **Live audio visualiser** — waveform (oscilloscope) and frequency spectrum while the beat plays (Web Audio `AnalyserNode`)
 - **Steady version slider** — moved to its own full-width row so it never resizes or jumps while dragging
 - **Snappy version switching** — snapshots are cached in an iframe pool (loaded once, then just shown), with neighbours pre-warmed, so dragging the slider no longer lags

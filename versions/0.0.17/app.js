@@ -1,6 +1,6 @@
-// Bit8maker 0.1.0 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.0.17 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.0";
+const VERSION = "0.0.17";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -36,8 +36,6 @@ const PRESET_LABEL = { "ru-modern": "+ стиль", "ru-classic": "+ стиль"
 const SEC_FULL = { "ru-modern": "максимум секций", "ru-classic": "максимум секций", "uk": "максимум секцій", "eng-ny": "max sections", "eng-uk": "max sections", "fr": "sections au max", "jp": "セクション上限", "sa": "الحد الأقصى للمقاطع", "cn": "段落已满", "kz": "бөлім шегі", "lt": "sekcijų riba" };
 const NP_LABEL = { "ru-modern": "Сейчас играет", "ru-classic": "Сейчас играет", "uk": "Зараз грає", "eng-ny": "Now playing", "eng-uk": "Now playing", "fr": "En lecture", "jp": "再生中", "sa": "قيد التشغيل", "cn": "正在播放", "kz": "Қазір ойнауда", "lt": "Dabar groja" };
 const SCOPE_LABEL = { "ru-modern": "Волна и спектр", "ru-classic": "Волна и спектр", "uk": "Хвиля та спектр", "eng-ny": "Wave & spectrum", "eng-uk": "Wave & spectrum", "fr": "Onde et spectre", "jp": "波形とスペクトル", "sa": "الموجة والطيف", "cn": "波形与频谱", "kz": "Толқын мен спектр", "lt": "Banga ir spektras" };
-const GOL_LABEL = { "ru-modern": "Игра «Жизнь»", "ru-classic": "Игра «Жизнь»", "uk": "Гра «Життя»", "eng-ny": "Game of Life", "eng-uk": "Game of Life", "fr": "Jeu de la vie", "jp": "ライフゲーム", "sa": "لعبة الحياة", "cn": "生命游戏", "kz": "«Өмір» ойыны", "lt": "Gyvybės žaidimas" };
-const GOL_RATE = { "ru-modern": "шаг", "ru-classic": "шаг", "uk": "крок", "eng-ny": "step", "eng-uk": "step", "fr": "pas", "jp": "間隔", "sa": "الخطوة", "cn": "步长", "kz": "қадам", "lt": "žingsnis" };
 const SNAP_LABEL = { "ru-modern": "снимок · только просмотр", "ru-classic": "снимок · только просмотр", "uk": "знімок · лише перегляд", "eng-ny": "snapshot · read-only", "eng-uk": "snapshot · read-only", "fr": "instantané · lecture seule", "jp": "スナップショット · 閲覧のみ", "sa": "لقطة · للعرض فقط", "cn": "快照 · 只读", "kz": "түсірілім · тек оқу", "lt": "momentinė kopija · tik peržiūra" };
 
 // Conventional names for BPM ranges — universal music terms, kept untranslated (like the drum names).
@@ -230,28 +228,13 @@ const CHANGELOG = [
     "sa": ["نُقل شريط الإصدارات إلى سطر مستقل بعرض كامل — لم يعد يتغير حجمه أو يقفز"], "cn": ["版本滑块移到单独的整行 — 拖动时不再改变长度或跳动"],
     "kz": ["Нұсқа слайдері бөлек жолға, толық еніне — енді өлшемі өзгермейді, секірмейді"], "lt": ["Versijų slankiklis perkeltas į atskirą viso pločio eilutę — nebekeičia dydžio ir nebešokinėja"],
   }, arch: {} },
-  { v: "0.0.17", commit: "05c0213", items: {
+  { v: "0.0.17", commit: "—", items: {
     "ru-modern": ["Живая визуализация звука во время игры: форма волны (осциллограф) и спектр частот", "Весь звук идёт через анализатор (AnalyserNode)"],
     "ru-classic": ["Осциллограф и спектр воспроизведения"], "uk": ["Осцилограф і спектр відтворення"],
     "eng-ny": ["Live audio visuals while it plays: the waveform (scope) and the frequency spectrum", "Everything routes through an AnalyserNode"],
     "eng-uk": ["Live waveform + spectrum while it plays"], "fr": ["Visualisation en direct : forme d'onde et spectre"], "jp": ["再生中のライブ表示：波形とスペクトル"],
     "sa": ["عرض حي أثناء التشغيل: الموجة والطيف"], "cn": ["播放时实时显示：波形与频谱"], "kz": ["Ойнау кезінде тірі визуализация: толқын мен спектр"], "lt": ["Gyva vizualizacija grojant: banga ir spektras"],
   }, arch: {} },
-  { v: "0.1.0", commit: "—", items: {
-    "ru-modern": ["«Игра Жизнь»: поле превращается в клеточный автомат Конвея (тор 6×16) — бит эволюционирует вживую во время игры", "Шаг эволюции от 1/16 до 64/16; кнопки «шаг» и «случайный посев» 🎲", "Веха-релиз 0.1.0 — нативные сборки уедут на 0.1.x"],
-    "ru-classic": ["Режим «Игра Жизнь» (клеточный автомат) для сетки", "Шаг 1/16…64/16, ручной шаг и посев"],
-    "uk": ["Режим «Гра Життя» (клітинний автомат) для сітки", "Крок 1/16…64/16, ручний крок і посів"],
-    "eng-ny": ["Game of Life: the grid becomes a Conway cellular automaton (6×16 torus) and the beat mutates live as it plays", "Evolution step from 1/16 to 64/16; 'step' and 'random seed' 🎲 buttons", "The 0.1.0 milestone — native builds move to 0.1.x"],
-    "eng-uk": ["Game of Life mode — the grid runs Conway's Life and the beat evolves while it plays", "Step from 1/16 to 64/16, manual step + random seed"],
-    "fr": ["Mode Jeu de la vie : la grille devient un automate cellulaire (tore 6×16)", "Pas d'évolution de 1/16 à 64/16 ; boutons pas et graine aléatoire"],
-    "jp": ["ライフゲーム・モード：グリッドがコンウェイのセルオートマトン（6×16トーラス）に", "進化間隔 1/16〜64/16、手動ステップとランダム種"],
-    "sa": ["وضع لعبة الحياة: تتحول الشبكة إلى خلية أوتوماتية (حلقة 6×16)", "خطوة التطور من 1/16 إلى 64/16، خطوة يدوية وبذرة عشوائية"],
-    "cn": ["生命游戏模式：网格变为康威元胞自动机（6×16 环面）", "演化步长 1/16 至 64/16；单步与随机播种"],
-    "kz": ["«Өмір» ойыны режимі: тор Конвей клеткалық автоматына айналады (6×16 тор)", "Эволюция қадамы 1/16-дан 64/16-ға дейін; қадам және кездейсоқ себу"],
-    "lt": ["Gyvybės žaidimo režimas: tinklelis tampa Konvėjaus ląsteliniu automatu (6×16 toras)", "Evoliucijos žingsnis nuo 1/16 iki 64/16; rankinis žingsnis ir sėjimas"],
-  }, arch: {
-    "ru-modern": "Правила B3/S23 на торе INSTR×STEPS; эволюция в tick() на границе шага.", "eng-ny": "B3/S23 on an INSTR×STEPS torus; evolves in tick() at the step boundary.",
-  } },
 ];
 
 // ---- language (URL ?lang overrides stored) ----
@@ -282,7 +265,6 @@ function ensureCtx() {
 }
 let playing = false, nextNoteTime = 0, timer = null;
 let seq = [], seqPos = 0, playingSec = -1;
-let golOn = false, golStep = 16, golTick = 0; // Game of Life: evolve every golStep 16ths
 const $ = (id) => document.getElementById(id);
 
 // ---- synthesis ----
@@ -301,26 +283,8 @@ function buildSequence() {
   sections.forEach((sec, si) => { for (let r = 0; r < sec.repeat; r++) for (let st = 0; st < STEPS; st++) s.push([sec.pattern, st, si, r + 1, sec.repeat]); });
   return s.length ? s : [[sections[0].pattern, 0, 0, 1, 1]];
 }
-// Conway's Life (B3/S23) on a toroidal INSTR×STEPS grid — the pattern IS the board.
-function lifeStep(pat) {
-  const R = INSTR.length, C = STEPS, grid = INSTR.map((k) => pat[k]);
-  const next = INSTR.map(() => new Array(C).fill(false));
-  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
-    let n = 0;
-    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
-      if (!dr && !dc) continue;
-      if (grid[(r + dr + R) % R][(c + dc + C) % C]) n++;
-    }
-    next[r][c] = grid[r][c] ? (n === 2 || n === 3) : (n === 3);
-  }
-  INSTR.forEach((k, r) => { for (let c = 0; c < C; c++) pat[k][c] = next[r][c]; });
-}
 // cell = [pattern, step, sectionIndex, repeatNum, repeatTotal]
 function tick(cell) {
-  if (golOn) {
-    if (golTick > 0 && golTick % golStep === 0) { lifeStep(sections[cell[2]].pattern); if (cell[2] === cur) renderGrid(); }
-    golTick++;
-  }
   highlight(cell[1]);
   setPlayingSection(cell[2]);
   const sec = sections[cell[2]];
@@ -346,7 +310,7 @@ function scheduler() {
 function play() {
   ensureCtx();
   ctx.resume();
-  playing = true; seq = buildSequence(); seqPos = 0; golTick = 0; nextNoteTime = ctx.currentTime + 0.06;
+  playing = true; seq = buildSequence(); seqPos = 0; nextNoteTime = ctx.currentTime + 0.06;
   $("now-playing").classList.add("live");
   scheduler(); startScope(); updateTransport();
 }
@@ -416,15 +380,13 @@ function patBits(pat) { return INSTR.map((k) => { let n = 0; for (let st = 0; st
 function bitsToPat(arr) { const p = emptyPattern(); INSTR.forEach((k, i) => { const n = (arr && arr[i]) | 0; for (let st = 0; st < STEPS; st++) p[k][st] = !!(n & (1 << st)); }); return p; }
 function encodeState() {
   const s = sections.map((sec) => ({ n: sec.name, r: sec.repeat, p: patBits(sec.pattern) }));
-  return b64url(JSON.stringify({ b: bpm, v: INSTR.map((k) => Math.round(volumes[k] * 100)), s: s, g: golOn ? 1 : 0, gs: golStep }));
+  return b64url(JSON.stringify({ b: bpm, v: INSTR.map((k) => Math.round(volumes[k] * 100)), s: s }));
 }
 function decodeState(str) {
   try {
     const o = JSON.parse(b64dec(str));
     if (o.b) bpm = Math.max(60, Math.min(MAX_BPM, o.b | 0));
     if (Array.isArray(o.v)) INSTR.forEach((k, i) => { if (o.v[i] != null) volumes[k] = Math.max(0, Math.min(1, o.v[i] / 100)); });
-    if (o.gs) golStep = Math.max(1, Math.min(64, o.gs | 0));
-    if ("g" in o) golOn = !!o.g;
     if (Array.isArray(o.s)) sections = o.s.slice(0, MAX_SEC).map((sec, i) => ({ name: (sec.n != null ? String(sec.n) : defName(i)).slice(0, 20), repeat: Math.max(1, Math.min(8, (sec.r | 0) || 1)), pattern: bitsToPat(sec.p) }));
     else if (Array.isArray(o.p)) sections = [{ name: defName(0), repeat: 1, pattern: bitsToPat(o.p) }]; // 0.0.5 link
     if (!sections.length) sections = [{ name: defName(0), pattern: emptyPattern(), repeat: 1 }];
@@ -520,8 +482,6 @@ function applyLang() {
   $("preset-select").options[0].textContent = PRESET_LABEL[lang];
   $("np-label").textContent = NP_LABEL[lang];
   $("scope-cap").textContent = SCOPE_LABEL[lang];
-  $("gol-label").textContent = GOL_LABEL[lang];
-  $("gol-rate-label").textContent = GOL_RATE[lang];
   if (!playing) $("np-info").textContent = "—";
   $("bpm-label").textContent = t.bpm;
   updateTransport(); sync(); renderChangelog();
@@ -543,12 +503,6 @@ $("sec-name").oninput = (e) => { sections[cur].name = e.target.value; renderTabs
 const presetSel = $("preset-select");
 PRESETS.forEach((p, i) => { const o = document.createElement("option"); o.value = i; o.textContent = p.label; presetSel.appendChild(o); });
 presetSel.onchange = () => { const p = PRESETS[+presetSel.value]; if (p) addPreset(p); presetSel.selectedIndex = 0; };
-$("gol-on").onchange = (e) => { golOn = e.target.checked; golTick = 0; };
-const golStepIn = $("gol-step");
-golStepIn.oninput = (e) => { golStep = +e.target.value; $("gol-step-val").textContent = golStep + "/16"; };
-$("gol-next").onclick = () => { lifeStep(sections[cur].pattern); renderGrid(); };
-$("gol-rand").onclick = () => { const p = sections[cur].pattern; INSTR.forEach((k) => { for (let s = 0; s < STEPS; s++) p[k][s] = Math.random() < 0.32; }); renderGrid(); };
-golStepIn.value = golStep; $("gol-step-val").textContent = golStep + "/16"; $("gol-on").checked = golOn;
 function showBpm() { $("bpm-val").textContent = bpm; $("bpm-name").textContent = bpmName(bpm); }
 const bpmIn = $("bpm"); bpmIn.max = MAX_BPM; bpmIn.value = bpm; showBpm();
 bpmIn.oninput = (e) => { bpm = +e.target.value; showBpm(); };
