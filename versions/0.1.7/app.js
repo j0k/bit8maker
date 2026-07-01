@@ -1,6 +1,6 @@
-// Bit8maker 0.1.8 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.7 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.8";
+const VERSION = "0.1.7";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -37,7 +37,6 @@ const PRESET_LABEL = { "ru-modern": "+ стиль", "ru-classic": "+ стиль"
 const SEC_FULL = { "ru-modern": "максимум секций", "ru-classic": "максимум секций", "uk": "максимум секцій", "eng-ny": "max sections", "eng-uk": "max sections", "fr": "sections au max", "jp": "セクション上限", "sa": "الحد الأقصى للمقاطع", "cn": "段落已满", "kz": "бөлім шегі", "lt": "sekcijų riba" };
 const NP_LABEL = { "ru-modern": "Сейчас играет", "ru-classic": "Сейчас играет", "uk": "Зараз грає", "eng-ny": "Now playing", "eng-uk": "Now playing", "fr": "En lecture", "jp": "再生中", "sa": "قيد التشغيل", "cn": "正在播放", "kz": "Қазір ойнауда", "lt": "Dabar groja" };
 const PAUSE_LABEL = { "ru-modern": "Пауза", "ru-classic": "Пауза", "uk": "Пауза", "eng-ny": "Pause", "eng-uk": "Pause", "fr": "Pause", "jp": "一時停止", "sa": "إيقاف مؤقت", "cn": "暂停", "kz": "Кідірту", "lt": "Pauzė" };
-const REC_LABEL = { "ru-modern": "Запись", "ru-classic": "Запись", "uk": "Запис", "eng-ny": "Rec", "eng-uk": "Rec", "fr": "Enreg.", "jp": "録音", "sa": "تسجيل", "cn": "录制", "kz": "Жазу", "lt": "Įrašyti" };
 const SCOPE_LABEL = { "ru-modern": "Волна и спектр", "ru-classic": "Волна и спектр", "uk": "Хвиля та спектр", "eng-ny": "Wave & spectrum", "eng-uk": "Wave & spectrum", "fr": "Onde et spectre", "jp": "波形とスペクトル", "sa": "الموجة والطيف", "cn": "波形与频谱", "kz": "Толқын мен спектр", "lt": "Banga ir spektras" };
 const GOL_LABEL = { "ru-modern": "Игра «Жизнь»", "ru-classic": "Игра «Жизнь»", "uk": "Гра «Життя»", "eng-ny": "Game of Life", "eng-uk": "Game of Life", "fr": "Jeu de la vie", "jp": "ライフゲーム", "sa": "لعبة الحياة", "cn": "生命游戏", "kz": "«Өмір» ойыны", "lt": "Gyvybės žaidimas" };
 const GOL_RATE = { "ru-modern": "шаг", "ru-classic": "шаг", "uk": "крок", "eng-ny": "step", "eng-uk": "step", "fr": "pas", "jp": "間隔", "sa": "الخطوة", "cn": "步长", "kz": "қадам", "lt": "žingsnis" };
@@ -311,19 +310,12 @@ const CHANGELOG = [
     "eng-uk": ["MIDI export (.mid) — opens in any DAW"], "fr": ["Export MIDI (.mid)"], "jp": ["MIDI書き出し（.mid）"],
     "sa": ["تصدير MIDI (.mid)"], "cn": ["MIDI 导出（.mid）"], "kz": ["MIDI экспорты (.mid)"], "lt": ["MIDI eksportas (.mid)"],
   }, arch: {} },
-  { v: "0.1.7", commit: "eb64a0f", items: {
+  { v: "0.1.7", commit: "—", items: {
     "ru-modern": ["Инструменты можно перетаскивать за подпись и менять местами — порядок строк запоминается", "«Игра Жизнь» считает соседство по видимому порядку строк"],
     "ru-classic": ["Перетаскивание инструментов (смена порядка строк)"], "uk": ["Перетягування інструментів (зміна порядку рядків)"],
     "eng-ny": ["Drag instruments by their label to reorder the rows (the order is remembered)", "Game of Life uses the visible row order for adjacency"],
     "eng-uk": ["Drag instrument rows by the label to reorder them"], "fr": ["Réordonner les instruments par glisser-déposer"], "jp": ["ラベルをドラッグして楽器の並びを変更"],
     "sa": ["إعادة ترتيب الآلات بالسحب من التسمية"], "cn": ["拖动乐器标签重新排序"], "kz": ["Аспаптарды жапсырмасынан сүйреп ретін өзгерту"], "lt": ["Instrumentų pertvarkymas tempiant už pavadinimo"],
-  }, arch: {} },
-  { v: "0.1.8", commit: "—", items: {
-    "ru-modern": ["Кнопка «Запись» (⏺): пишет живой звук в реальном времени — со всеми правками, эволюцией GoL и паузами; на стопе кодирует в выбранный формат (WAV/MP3/FLAC) и скачивает «<имя>-rec»"],
-    "ru-classic": ["Живая запись (Rec) в файл"], "uk": ["Живий запис (Rec) у файл"],
-    "eng-ny": ["Rec button (⏺): captures the live output in real time — with your edits, GoL evolution and pauses; on stop it encodes to the chosen format (WAV/MP3/FLAC) and downloads <name>-rec"],
-    "eng-uk": ["Rec button — capture the live output to a file"], "fr": ["Bouton Rec — enregistre la sortie en direct"], "jp": ["録音ボタン：ライブ出力をそのまま録音"],
-    "sa": ["زر التسجيل: يسجّل الخرج الحي مباشرة"], "cn": ["录制按钮：实时录制现场输出"], "kz": ["Жазу батырмасы: тірі шығысты жазады"], "lt": ["Įrašymo mygtukas — įrašo gyvą išvestį"],
   }, arch: {} },
 ];
 
@@ -351,7 +343,6 @@ let dragKey = null;
 
 let bpm = 100;
 let ctx = null, analyser = null, bus = null, rafId = null, waveBuf = null, freqBuf = null, scopeOn = false;
-let recNode = null, recChunks = [], recLen = 0, recording = false, recSr = 0; // live recording (tap the bus)
 const out = () => bus || ctx.destination; // voices route through the analyser bus when live
 function ensureCtx() {
   if (ctx) return;
@@ -570,37 +561,6 @@ function buildMIDI(mult) {
   return new Blob([_cat(head, mtrk, t)], { type: "audio/midi" });
 }
 function dl(blob, fname) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = fname; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1500); }
-async function encodeByFmt(fmt, buf, meta) {
-  if (fmt === "mp3") return { blob: await encodeMP3(buf, meta, +$("mp3-quality").value), ext: "mp3" };
-  if (fmt === "flac") return { blob: await encodeFLAC(buf), ext: "flac" };
-  return { blob: new Blob([encodeWAV(buf, meta)], { type: "audio/wav" }), ext: "wav" };
-}
-function exportName() { return (($("track-name").value || "").trim().replace(/[^\w .\-]+/g, "_").slice(0, 60)) || "bit8maker"; }
-
-// ---- live recording: tap the master bus and encode on stop ----
-function startRec() {
-  ensureCtx(); ctx.resume();
-  recChunks = []; recLen = 0; recSr = ctx.sampleRate;
-  recNode = ctx.createScriptProcessor(4096, 1, 1);
-  recNode.onaudioprocess = (e) => { const d = e.inputBuffer.getChannelData(0); recChunks.push(new Float32Array(d)); recLen += d.length; };
-  bus.connect(recNode); recNode.connect(ctx.destination); // ScriptProcessor needs a sink to run (outputs silence)
-  recording = true; updateRec();
-}
-async function stopRec() {
-  recording = false; updateRec();
-  try { bus.disconnect(recNode); } catch (e) {} try { recNode.disconnect(); } catch (e) {}
-  recNode.onaudioprocess = null; recNode = null;
-  if (!recLen) { flashStatus("empty"); return; }
-  const merged = new Float32Array(recLen); let p = 0; for (const c of recChunks) { merged.set(c, p); p += c.length; }
-  recChunks = [];
-  const fake = { getChannelData: () => merged, length: recLen, sampleRate: recSr };
-  let fmt = $("fmt-select").value; if (fmt === "midi") fmt = "wav"; // MIDI can't capture live audio
-  const name = exportName(), meta = { title: name, comment: META_URL, software: "Bit8maker v" + VERSION };
-  flashStatus("…");
-  try { const { blob, ext } = await encodeByFmt(fmt, fake, meta); dl(blob, name + "-rec." + ext); flashStatus("✓ " + ext.toUpperCase()); }
-  catch (e) { flashStatus("rec failed"); }
-}
-function updateRec() { const b = $("rec"); b.textContent = (recording ? "⏹ " : "⏺ ") + REC_LABEL[lang]; b.classList.toggle("recording", recording); }
 
 async function exportAudio() {
   const fmt = $("fmt-select").value, mult = Math.max(1, Math.min(100, +$("mult-select").value || 1));
@@ -622,7 +582,10 @@ async function exportAudio() {
       gt++;
     }
     const buf = await off.startRendering(), meta = { title: name, comment: META_URL, software: "Bit8maker v" + VERSION };
-    const { blob, ext } = await encodeByFmt(fmt, buf, meta);
+    let blob, ext;
+    if (fmt === "mp3") { blob = await encodeMP3(buf, meta, +$("mp3-quality").value); ext = "mp3"; }
+    else if (fmt === "flac") { blob = await encodeFLAC(buf); ext = "flac"; }
+    else { blob = new Blob([encodeWAV(buf, meta)], { type: "audio/wav" }); ext = "wav"; }
     dl(blob, name + "." + ext);
     flashStatus("✓ " + ext.toUpperCase());
   } catch (e) { flashStatus("export failed"); }
@@ -754,7 +717,7 @@ function applyLang() {
   $("gol-rate-label").textContent = GOL_RATE[lang];
   if (!playing) $("np-info").textContent = "—";
   $("bpm-label").textContent = t.bpm;
-  updateTransport(); updateRec(); sync(); renderChangelog();
+  updateTransport(); sync(); renderChangelog();
   $("lang-select").value = lang;
 }
 
@@ -765,7 +728,6 @@ LANGS.forEach(([code, label]) => { const o = document.createElement("option"); o
 sel.onchange = () => { lang = sel.value; localStorage.setItem("b8_lang", lang); applyLang(); };
 $("play").onclick = () => { playing ? pause() : paused ? resume() : play(); };
 $("stop-btn").onclick = () => stop();
-$("rec").onclick = () => { recording ? stopRec() : startRec(); };
 $("clear").onclick = () => { INSTR.forEach((k) => sections[cur].pattern[k].fill(false)); renderGrid(); };
 $("export").onclick = exportAudio;
 const fmtSel = $("fmt-select"), mp3q = $("mp3-quality");
