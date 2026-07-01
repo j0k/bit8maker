@@ -1,6 +1,6 @@
-// Bit8maker 0.1.9 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.8 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.9";
+const VERSION = "0.1.8";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -318,19 +318,12 @@ const CHANGELOG = [
     "eng-uk": ["Drag instrument rows by the label to reorder them"], "fr": ["Réordonner les instruments par glisser-déposer"], "jp": ["ラベルをドラッグして楽器の並びを変更"],
     "sa": ["إعادة ترتيب الآلات بالسحب من التسمية"], "cn": ["拖动乐器标签重新排序"], "kz": ["Аспаптарды жапсырмасынан сүйреп ретін өзгерту"], "lt": ["Instrumentų pertvarkymas tempiant už pavadinimo"],
   }, arch: {} },
-  { v: "0.1.8", commit: "815443c", items: {
+  { v: "0.1.8", commit: "—", items: {
     "ru-modern": ["Кнопка «Запись» (⏺): пишет живой звук в реальном времени — со всеми правками, эволюцией GoL и паузами; на стопе кодирует в выбранный формат (WAV/MP3/FLAC) и скачивает «<имя>-rec»"],
     "ru-classic": ["Живая запись (Rec) в файл"], "uk": ["Живий запис (Rec) у файл"],
     "eng-ny": ["Rec button (⏺): captures the live output in real time — with your edits, GoL evolution and pauses; on stop it encodes to the chosen format (WAV/MP3/FLAC) and downloads <name>-rec"],
     "eng-uk": ["Rec button — capture the live output to a file"], "fr": ["Bouton Rec — enregistre la sortie en direct"], "jp": ["録音ボタン：ライブ出力をそのまま録音"],
     "sa": ["زر التسجيل: يسجّل الخرج الحي مباشرة"], "cn": ["录制按钮：实时录制现场输出"], "kz": ["Жазу батырмасы: тірі шығысты жазады"], "lt": ["Įrašymo mygtukas — įrašo gyvą išvestį"],
-  }, arch: {} },
-  { v: "0.1.9", commit: "—", items: {
-    "ru-modern": ["«Повторы» секции теперь применяются на лету: меняешь во время игры — и со следующего цикла секция звучит нужное число раз (раньше эффект был только после перезапуска)", "Если секция одна, повтор не слышен (луп бесконечный); разница слышна между несколькими секциями"],
-    "ru-classic": ["«Повторы» секции применяются во время игры"], "uk": ["«Повтори» секції застосовуються під час гри"],
-    "eng-ny": ["Section 'Repeats' now applies live — change it while playing and the section loops the new number of times from the next cycle (previously it only took effect after a restart)", "With a single section the repeat is inaudible (it loops forever anyway); the difference shows across multiple sections"],
-    "eng-uk": ["Section repeats now apply live while playing"], "fr": ["Les « répétitions » de section s'appliquent en direct"], "jp": ["セクションの「反復」が再生中に即反映"],
-    "sa": ["«تكرار» المقطع يُطبّق أثناء التشغيل"], "cn": ["段落“重复”现在实时生效"], "kz": ["Бөлімнің «Қайталауы» ойнау кезінде қолданылады"], "lt": ["Sekcijos pakartojimai taikomi grojant"],
   }, arch: {} },
 ];
 
@@ -702,12 +695,6 @@ function renderTabs() {
   $("rep-val").textContent = "×" + sections[cur].repeat;
 }
 function sync() { renderTabs(); $("sec-name").value = sections[cur].name; $("gol-on").checked = !!sections[cur].gol; renderGrid(); }
-function setRepeat(delta) {
-  const s = sections[cur];
-  s.repeat = Math.max(1, Math.min(8, s.repeat + delta));
-  $("rep-val").textContent = "×" + s.repeat;
-  if (playing) { seq = buildSequence(); if (seqPos >= seq.length) seqPos %= seq.length; } // apply live, next loop
-}
 function updateTransport() {
   $("play").textContent = playing ? PAUSE_LABEL[lang] : STRINGS[lang].play;
   $("stop-btn").hidden = !(playing || paused);
@@ -785,8 +772,8 @@ const fmtSel = $("fmt-select"), mp3q = $("mp3-quality");
 const syncMp3q = () => { mp3q.disabled = fmtSel.value !== "mp3"; };
 fmtSel.onchange = syncMp3q; syncMp3q();
 $("share").onclick = shareLink;
-$("rep-dn").onclick = () => setRepeat(-1);
-$("rep-up").onclick = () => setRepeat(1);
+$("rep-dn").onclick = () => { sections[cur].repeat = Math.max(1, sections[cur].repeat - 1); $("rep-val").textContent = "×" + sections[cur].repeat; };
+$("rep-up").onclick = () => { sections[cur].repeat = Math.min(8, sections[cur].repeat + 1); $("rep-val").textContent = "×" + sections[cur].repeat; };
 $("sec-name").oninput = (e) => { sections[cur].name = e.target.value; renderTabs(); };
 const presetSel = $("preset-select");
 PRESETS.forEach((p, i) => { const o = document.createElement("option"); o.value = i; o.textContent = p.label; presetSel.appendChild(o); });
