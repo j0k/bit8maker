@@ -13,6 +13,10 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
+## v0.1.5
+
+- **Pause / Stop** — while playing, the button becomes **Pause** + **Stop**: pause freezes in place and resumes from the same spot; stop resets to the start
+
 ## v0.1.4
 
 - **MP3 quality selector** — 128 / 192 / 256 / 320 kbps
