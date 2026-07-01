@@ -1,0 +1,16 @@
+.{
+    .name = "bit8maker_gui",
+    .version = "0.1.14",
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "main.zig",
+        "README.md",
+    },
+    .dependencies = .{
+        .raylib = .{
+            .url = "https://github.com/raysan5/raylib/archive/refs/tags/5.5.tar.gz",
+            .hash = "1220d93782859726c2c46a05450615b7edfc82b7319daac50cbc7c3345d660b022d7",
+        },
+    },
+}

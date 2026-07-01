@@ -6,6 +6,8 @@ zig-out/
 .zig-cache/
 zig/bit8maker
 zig/*.o
+zig/*.obj
+zig/gui/bit8maker-gui
 *.wav
 *.log
 .vscode/

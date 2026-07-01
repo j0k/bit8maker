@@ -24,6 +24,10 @@ Release:
 
 (`.dmg` for macOS is not built yet.) Build locally with `npm install && npm run dist`.
 
+## v0.1.14
+
+- **Native GUI port started (Zig + raylib)** — `zig/gui`: a window with a clickable 6×16 grid, Play/Stop/Clear, BPM ±, and audio (the pattern rendered with the same voices and looped); builds raylib from source
+
 ## v0.1.13
 
 - **Experimental native Zig renderer** (`zig/`) — the same 6-instrument synthesis rendered to a WAV by a dependency-free static x86-64 binary (`zig build-exe -O ReleaseFast bit8maker.zig`); headless for now

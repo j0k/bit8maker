@@ -1,6 +1,6 @@
-// Bit8maker 0.1.14 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.13 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.14";
+const VERSION = "0.1.13";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -373,7 +373,7 @@ const CHANGELOG = [
     "sv": ["8 fler gränssnittsspråk (19 totalt)"], "fi": ["8 lisää käyttöliittymäkieltä (yhteensä 19)"],
     "ka": ["კიდევ 8 ინტერფეისის ენა (სულ 19)"], "az": ["daha 8 interfeys dili (cəmi 19)"],
   }, arch: {} },
-  { v: "0.1.13", commit: "7a007b2", items: {
+  { v: "0.1.13", commit: "—", items: {
     "ru-modern": ["Экспериментальная нативная версия на Zig: тот же синтез 6 инструментов рендерит демо-бит в WAV; собирается в статический x86-64 бинарник без зависимостей (папка zig/)", "Пока headless; полноценный GUI-порт (Zig + raylib) — следующий шаг"],
     "ru-classic": ["Нативный рендерер на Zig (папка zig/) → WAV"], "uk": ["Нативний рендерер на Zig (zig/) → WAV"],
     "eng-ny": ["Experimental native Zig renderer: the same 6-instrument synthesis renders the demo beat to WAV; builds to a static x86-64 binary with no deps (see zig/)", "Headless for now; a full GUI port (Zig + raylib) is the next step"],
@@ -383,17 +383,6 @@ const CHANGELOG = [
     "sv": ["Experimentell nativ Zig-renderare (zig/) → WAV"], "fi": ["Kokeellinen natiivi Zig-renderöijä (zig/) → WAV"], "ka": ["ექსპერიმენტული Zig რენდერერი (zig/) → WAV"], "az": ["Eksperimental Zig renderer (zig/) → WAV"],
   }, arch: {
     "ru-modern": "Чистый Zig 0.13, без зависимостей; те же голоса (свип-синус, шум+тон, пила/треугольник) → 16-бит PCM WAV; статический ELF x86-64.", "eng-ny": "Pure Zig 0.13, no deps; same voices (swept sine, noise+tone, saw/triangle) → 16-bit PCM WAV; static x86-64 ELF.",
-  } },
-  { v: "0.1.14", commit: "—", items: {
-    "ru-modern": ["Начат нативный GUI-порт на Zig + raylib (папка zig/gui): окно, сетка 6×16 с кликами, транспорт Play/Stop/Clear, BPM ±, и звук — паттерн рендерится теми же голосами и зациклен", "Собирается из исходников (raylib, X11); дальше — секции, «Игра Жизнь», экспорт, i18n"],
-    "ru-classic": ["Начат GUI-порт на Zig + raylib (zig/gui): сетка, клики, воспроизведение"], "uk": ["Розпочато GUI-порт на Zig + raylib (zig/gui)"],
-    "eng-ny": ["Started the native GUI port in Zig + raylib (zig/gui): a window, a clickable 6x16 grid, Play/Stop/Clear, BPM ±, and audio — the pattern is rendered with the same voices and looped", "Builds raylib from source (X11); sections, Game of Life, export and i18n come next"],
-    "eng-uk": ["Started the Zig + raylib GUI port (zig/gui): grid, clicks, playback"], "fr": ["Début du portage GUI en Zig + raylib (zig/gui)"], "jp": ["Zig + raylib のGUI移植を開始（zig/gui）"],
-    "sa": ["بدء منفذ الواجهة الرسومية بـ Zig + raylib (zig/gui)"], "cn": ["开始 Zig + raylib 的 GUI 移植（zig/gui）"], "kz": ["Zig + raylib GUI портын бастау (zig/gui)"], "lt": ["Pradetas Zig + raylib GUI portas (zig/gui)"],
-    "es": ["Iniciado el port GUI nativo en Zig + raylib (zig/gui)"], "pt": ["Iniciado o port GUI nativo em Zig + raylib (zig/gui)"], "it": ["Avviato il port GUI nativo in Zig + raylib (zig/gui)"], "nl": ["Native GUI-port in Zig + raylib gestart (zig/gui)"],
-    "sv": ["Påbörjat den nativa GUI-porten i Zig + raylib (zig/gui)"], "fi": ["Aloitettu natiivi GUI-portti Zig + raylib (zig/gui)"], "ka": ["დაწყებულია Zig + raylib GUI პორტი (zig/gui)"], "az": ["Zig + raylib GUI portu başlandı (zig/gui)"],
-  }, arch: {
-    "ru-modern": "raylib собирается из исходников через build.zig.zon (закреплён 5.5), X11-бэкенд; звук — Wave из отрендеренного паттерна.", "eng-ny": "raylib built from source via build.zig.zon (pinned 5.5), X11 backend; audio is a Wave rendered from the pattern.",
   } },
 ];
 
