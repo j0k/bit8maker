@@ -1,6 +1,6 @@
-// Bit8maker 0.1.6 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.5 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.6";
+const VERSION = "0.1.5";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -294,7 +294,7 @@ const CHANGELOG = [
     "eng-uk": ["Pick your MP3 bitrate (128–320 kbps)"], "fr": ["Choix du débit MP3 (128–320 kbps)"], "jp": ["MP3ビットレート選択（128〜320 kbps）"],
     "sa": ["اختيار جودة MP3 (128–320 kbps)"], "cn": ["MP3 音质选择（128–320 kbps）"], "kz": ["MP3 сапасын таңдау (128–320 kbps)"], "lt": ["MP3 bitų dažnio pasirinkimas (128–320 kbps)"],
   }, arch: {} },
-  { v: "0.1.5", commit: "5c6cf1d", items: {
+  { v: "0.1.5", commit: "—", items: {
     "ru-modern": ["При игре кнопка превращается в «Пауза» + «Стоп»: пауза замирает на месте и продолжает с той же точки, стоп сбрасывает в начало", "Пауза через ctx.suspend() — позиция и звук замирают точно"],
     "ru-classic": ["Пауза и Стоп раздельно (пауза продолжает с места)"], "uk": ["Окремі Пауза і Стоп (пауза продовжує з місця)"],
     "eng-ny": ["While playing the button splits into Pause + Stop: pause freezes in place and resumes from the same spot, stop resets to the start", "Pause uses ctx.suspend() so the position and audio hold exactly"],
@@ -302,13 +302,6 @@ const CHANGELOG = [
     "fr": ["Pause + Stop séparés (la pause reprend au même endroit)"], "jp": ["再生中はボタンが「一時停止」＋「停止」に（一時停止は同じ位置から再開）"],
     "sa": ["أثناء التشغيل يصبح الزر إيقاف مؤقت + إيقاف (الإيقاف المؤقت يستأنف من نفس المكان)"], "cn": ["播放时按钮分为暂停+停止（暂停可从原处继续）"],
     "kz": ["Ойнау кезінде батырма «Кідірту» + «Тоқтату» болады (кідірту сол жерден жалғасады)"], "lt": ["Grojant mygtukas tampa Pauzė + Stop (pauzė tęsia iš tos pačios vietos)"],
-  }, arch: {} },
-  { v: "0.1.6", commit: "—", items: {
-    "ru-modern": ["Экспорт в MIDI (.mid) — стандартный файл, открывается в любой DAW", "Каждый инструмент → своя GM-нота (Kick 36, Snare 38, Hat F#1, Clap 39, Бас A1, Синт E4); учитывается темп, множитель длины и эволюция GoL"],
-    "ru-classic": ["MIDI-экспорт (.mid)"], "uk": ["MIDI-експорт (.mid)"],
-    "eng-ny": ["MIDI export (.mid) — a standard file any DAW opens", "Each instrument maps to a GM note (Kick 36, Snare 38, Hat F#1, Clap 39, Bass A1, Synth E4); tempo, length multiplier and GoL evolution included"],
-    "eng-uk": ["MIDI export (.mid) — opens in any DAW"], "fr": ["Export MIDI (.mid)"], "jp": ["MIDI書き出し（.mid）"],
-    "sa": ["تصدير MIDI (.mid)"], "cn": ["MIDI 导出（.mid）"], "kz": ["MIDI экспорты (.mid)"], "lt": ["MIDI eksportas (.mid)"],
   }, arch: {} },
 ];
 
@@ -522,38 +515,9 @@ async function encodeFLAC(buf) {
   Flac.FLAC__stream_encoder_finish(enc); Flac.FLAC__stream_encoder_delete(enc);
   return new Blob(parts, { type: "audio/flac" });
 }
-// ---- MIDI export (Standard MIDI File, format 0) ----
-const MIDI_MAP = { kick: [9, 36], snare: [9, 38], hihat: [9, 42], clap: [9, 39], bass: [0, 33], synth: [1, 64] }; // [channel, note]
-function vlq(n) { const b = [n & 0x7f]; n = Math.floor(n / 128); while (n > 0) { b.unshift((n & 0x7f) | 0x80); n = Math.floor(n / 128); } return b; }
-function buildMIDI(mult) {
-  const div = 96, stepTicks = div / 4, gate = Math.max(1, stepTicks - 4);
-  const work = sections.map((sec) => ({ gol: sec.gol, repeat: sec.repeat, pattern: INSTR.reduce((o, k) => ((o[k] = sec.pattern[k].slice()), o), {}) }));
-  const wseq = []; work.forEach((sec, si) => { for (let r = 0; r < sec.repeat; r++) for (let st = 0; st < STEPS; st++) wseq.push([sec.pattern, st, si]); });
-  const totalSteps = (wseq.length || 1) * mult, events = [];
-  let gt = 0;
-  for (let i = 0; i < totalSteps; i++) {
-    const cell = wseq[i % wseq.length], si = cell[2], tick = i * stepTicks;
-    if (gt > 0 && gt % golStep === 0 && work[si].gol) lifeStep(work[si].pattern);
-    INSTR.forEach((k) => { if (cell[0][k][cell[1]]) { const m = MIDI_MAP[k]; events.push([tick, 1, m[0], m[1]]); events.push([tick + gate, 0, m[0], m[1]]); } });
-    gt++;
-  }
-  events.sort((a, b) => a[0] - b[0] || a[1] - b[1]); // by tick; note-offs (0) before note-ons (1)
-  const trk = [], mpq = Math.round(60000000 / bpm);
-  trk.push(...vlq(0), 0xff, 0x51, 0x03, (mpq >> 16) & 255, (mpq >> 8) & 255, mpq & 255); // tempo
-  let last = 0;
-  for (const [tick, type, ch, note] of events) { trk.push(...vlq(tick - last)); last = tick; trk.push((type ? 0x90 : 0x80) | ch, note, type ? 100 : 0); }
-  trk.push(...vlq(0), 0xff, 0x2f, 0x00); // end of track
-  const t = new Uint8Array(trk);
-  const head = new Uint8Array([0x4d, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 0, 0, 1, (div >> 8) & 255, div & 255]);
-  const mtrk = new Uint8Array([0x4d, 0x54, 0x72, 0x6b, (t.length >>> 24) & 255, (t.length >>> 16) & 255, (t.length >>> 8) & 255, t.length & 255]);
-  return new Blob([_cat(head, mtrk, t)], { type: "audio/midi" });
-}
-function dl(blob, fname) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = fname; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1500); }
-
 async function exportAudio() {
   const fmt = $("fmt-select").value, mult = Math.max(1, Math.min(100, +$("mult-select").value || 1));
   const name = (($("track-name").value || "").trim().replace(/[^\w .\-]+/g, "_").slice(0, 60)) || "bit8maker";
-  if (fmt === "midi") { try { dl(buildMIDI(mult), name + ".mid"); flashStatus("✓ MIDI"); } catch (e) { flashStatus("export failed"); } return; }
   const sr = 44100, stepDur = (60 / bpm) / 4;
   // clone patterns so Game-of-Life evolution during export doesn't touch the live grid
   const work = sections.map((sec) => ({ gol: sec.gol, repeat: sec.repeat, pattern: INSTR.reduce((o, k) => ((o[k] = sec.pattern[k].slice()), o), {}) }));
@@ -574,7 +538,8 @@ async function exportAudio() {
     if (fmt === "mp3") { blob = await encodeMP3(buf, meta, +$("mp3-quality").value); ext = "mp3"; }
     else if (fmt === "flac") { blob = await encodeFLAC(buf); ext = "flac"; }
     else { blob = new Blob([encodeWAV(buf, meta)], { type: "audio/wav" }); ext = "wav"; }
-    dl(blob, name + "." + ext);
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name + "." + ext; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1500);
     flashStatus("✓ " + ext.toUpperCase());
   } catch (e) { flashStatus("export failed"); }
   finally { ctx = live; bus = liveBus; }
