@@ -1,6 +1,6 @@
-// Bit8maker 0.1.12 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.11 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.12";
+const VERSION = "0.1.11";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -11,8 +11,6 @@ const LANGS = [
   ["ru-modern", "Русский"], ["ru-classic", "Русский · классич."], ["uk", "Українська"],
   ["eng-ny", "English · NY"], ["eng-uk", "English · UK"], ["fr", "Français"], ["jp", "日本語"],
   ["sa", "العربية"], ["cn", "中文"], ["kz", "Қазақша"], ["lt", "Lietuvių"],
-  ["es", "Español"], ["pt", "Português"], ["nl", "Nederlands"], ["sv", "Svenska"],
-  ["ka", "ქართული"], ["az", "Azərbaycan"], ["fi", "Suomi"], ["it", "Italiano"],
 ];
 const RTL = { sa: true };
 const RU_INSTR = { kick: "Бочка", snare: "Снейр", hihat: "Хэт", clap: "Хлопок", bass: "Бас", synth: "Синт" };
@@ -29,28 +27,20 @@ const STRINGS = {
   "cn": { tagline: "点击网格，做出你的节拍。", play: "播放", stop: "停止", clear: "清除", bpm: "BPM", instr: EN_INSTR },
   "kz": { tagline: "Торды басып, битіңді жаса.", play: "Ойнату", stop: "Тоқтату", clear: "Тазалау", bpm: "Қарқын", instr: EN_INSTR },
   "lt": { tagline: "Spustelėk tinklelį ir sukurk ritmą.", play: "Groti", stop: "Stop", clear: "Išvalyti", bpm: "Tempas", instr: EN_INSTR },
-  "es": { tagline: "Toca la cuadrícula y crea tu ritmo.", play: "Reproducir", stop: "Parar", clear: "Borrar", bpm: "BPM", instr: EN_INSTR },
-  "pt": { tagline: "Toque na grade e crie sua batida.", play: "Tocar", stop: "Parar", clear: "Limpar", bpm: "BPM", instr: EN_INSTR },
-  "nl": { tagline: "Tik op het raster en maak je beat.", play: "Afspelen", stop: "Stop", clear: "Wissen", bpm: "BPM", instr: EN_INSTR },
-  "sv": { tagline: "Tryck på rutnätet och gör din beat.", play: "Spela", stop: "Stopp", clear: "Rensa", bpm: "BPM", instr: EN_INSTR },
-  "ka": { tagline: "შეეხე ბადეს და შექმენი შენი რიტმი.", play: "დაკვრა", stop: "გაჩერება", clear: "გასუფთავება", bpm: "BPM", instr: EN_INSTR },
-  "az": { tagline: "Şəbəkəyə toxun və ritmini yarat.", play: "Oynat", stop: "Dayan", clear: "Təmizlə", bpm: "BPM", instr: EN_INSTR },
-  "fi": { tagline: "Napauta ruudukkoa ja tee biitti.", play: "Toista", stop: "Seis", clear: "Tyhjennä", bpm: "BPM", instr: EN_INSTR },
-  "it": { tagline: "Tocca la griglia e crea il tuo ritmo.", play: "Riproduci", stop: "Stop", clear: "Cancella", bpm: "BPM", instr: EN_INSTR },
 };
-const EXPORT_LABEL = { "ru-modern": "Экспорт", "ru-classic": "Экспорт", "uk": "Експорт", "eng-ny": "Export", "eng-uk": "Export", "fr": "Exporter", "jp": "書き出し", "sa": "تصدير", "cn": "导出", "kz": "Экспорт", "lt": "Eksportuoti", "es": "Exportar", "pt": "Exportar", "nl": "Exporteren", "sv": "Exportera", "ka": "ექსპორტი", "az": "İxrac", "fi": "Vie", "it": "Esporta" };
-const TRACK_LABEL = { "ru-modern": "название трека", "ru-classic": "название трека", "uk": "назва треку", "eng-ny": "track name", "eng-uk": "track name", "fr": "nom de piste", "jp": "トラック名", "sa": "اسم المقطع", "cn": "曲目名称", "kz": "трек атауы", "lt": "takelio pavadinimas", "es": "nombre de pista", "pt": "nome da faixa", "nl": "tracknaam", "sv": "spårnamn", "ka": "ტრეკის სახელი", "az": "trek adı", "fi": "kappaleen nimi", "it": "nome traccia" };
-const SHARE_LABEL = { "ru-modern": "Поделиться", "ru-classic": "Поделиться", "uk": "Поділитися", "eng-ny": "Share link", "eng-uk": "Share link", "fr": "Partager", "jp": "共有", "sa": "مشاركة", "cn": "分享", "kz": "Бөлісу", "lt": "Dalintis", "es": "Compartir", "pt": "Compartilhar", "nl": "Delen", "sv": "Dela", "ka": "გაზიარება", "az": "Paylaş", "fi": "Jaa", "it": "Condividi" };
-const COPIED = { "ru-modern": "ссылка скопирована", "ru-classic": "ссылка скопирована", "uk": "посилання скопійовано", "eng-ny": "link copied!", "eng-uk": "link copied — sorted!", "fr": "lien copié", "jp": "リンクをコピーしました", "sa": "تم نسخ الرابط", "cn": "链接已复制", "kz": "сілтеме көшірілді", "lt": "nuoroda nukopijuota", "es": "enlace copiado", "pt": "link copiado", "nl": "link gekopieerd", "sv": "länk kopierad", "ka": "ბმული დაკოპირდა", "az": "keçid kopyalandı", "fi": "linkki kopioitu", "it": "link copiato" };
-const REPEAT_LABEL = { "ru-modern": "Повторы", "ru-classic": "Повторы", "uk": "Повтори", "eng-ny": "Repeats", "eng-uk": "Repeats", "fr": "Répét.", "jp": "反復", "sa": "تكرار", "cn": "重复", "kz": "Қайталау", "lt": "Kart.", "es": "Repet.", "pt": "Repet.", "nl": "Herh.", "sv": "Uppr.", "ka": "გამეორება", "az": "Təkrar", "fi": "Toistot", "it": "Ripet." };
-const PRESET_LABEL = { "ru-modern": "+ стиль", "ru-classic": "+ стиль", "uk": "+ стиль", "eng-ny": "+ style", "eng-uk": "+ style", "fr": "+ style", "jp": "+ スタイル", "sa": "+ نمط", "cn": "+ 风格", "kz": "+ стиль", "lt": "+ stilius", "es": "+ estilo", "pt": "+ estilo", "nl": "+ stijl", "sv": "+ stil", "ka": "+ სტილი", "az": "+ üslub", "fi": "+ tyyli", "it": "+ stile" };
-const SEC_FULL = { "ru-modern": "максимум секций", "ru-classic": "максимум секций", "uk": "максимум секцій", "eng-ny": "max sections", "eng-uk": "max sections", "fr": "sections au max", "jp": "セクション上限", "sa": "الحد الأقصى للمقاطع", "cn": "段落已满", "kz": "бөлім шегі", "lt": "sekcijų riba", "es": "máx. secciones", "pt": "máx. seções", "nl": "max. secties", "sv": "max sektioner", "ka": "მაქს. სექციები", "az": "maks. bölmə", "fi": "osioiden raja", "it": "max sezioni" };
-const NP_LABEL = { "ru-modern": "Сейчас играет", "ru-classic": "Сейчас играет", "uk": "Зараз грає", "eng-ny": "Now playing", "eng-uk": "Now playing", "fr": "En lecture", "jp": "再生中", "sa": "قيد التشغيل", "cn": "正在播放", "kz": "Қазір ойнауда", "lt": "Dabar groja", "es": "Sonando", "pt": "Tocando agora", "nl": "Speelt nu", "sv": "Spelas nu", "ka": "ახლა უკრავს", "az": "İndi çalır", "fi": "Soi nyt", "it": "In riproduzione" };
-const PAUSE_LABEL = { "ru-modern": "Пауза", "ru-classic": "Пауза", "uk": "Пауза", "eng-ny": "Pause", "eng-uk": "Pause", "fr": "Pause", "jp": "一時停止", "sa": "إيقاف مؤقت", "cn": "暂停", "kz": "Кідірту", "lt": "Pauzė", "es": "Pausa", "pt": "Pausar", "nl": "Pauze", "sv": "Paus", "ka": "პაუზა", "az": "Fasilə", "fi": "Tauko", "it": "Pausa" };
-const REC_LABEL = { "ru-modern": "Запись", "ru-classic": "Запись", "uk": "Запис", "eng-ny": "Rec", "eng-uk": "Rec", "fr": "Enreg.", "jp": "録音", "sa": "تسجيل", "cn": "录制", "kz": "Жазу", "lt": "Įrašyti", "es": "Grabar", "pt": "Gravar", "nl": "Opnemen", "sv": "Spela in", "ka": "ჩაწერა", "az": "Yaz", "fi": "Nauhoita", "it": "Registra" };
-const SCOPE_LABEL = { "ru-modern": "Волна и спектр", "ru-classic": "Волна и спектр", "uk": "Хвиля та спектр", "eng-ny": "Wave & spectrum", "eng-uk": "Wave & spectrum", "fr": "Onde et spectre", "jp": "波形とスペクトル", "sa": "الموجة والطيف", "cn": "波形与频谱", "kz": "Толқын мен спектр", "lt": "Banga ir spektras", "es": "Onda y espectro", "pt": "Onda e espectro", "nl": "Golf & spectrum", "sv": "Våg & spektrum", "ka": "ტალღა და სპექტრი", "az": "Dalğa və spektr", "fi": "Aalto & spektri", "it": "Onda e spettro" };
-const GOL_LABEL = { "ru-modern": "Игра «Жизнь»", "ru-classic": "Игра «Жизнь»", "uk": "Гра «Життя»", "eng-ny": "Game of Life", "eng-uk": "Game of Life", "fr": "Jeu de la vie", "jp": "ライフゲーム", "sa": "لعبة الحياة", "cn": "生命游戏", "kz": "«Өмір» ойыны", "lt": "Gyvybės žaidimas", "es": "Juego de la vida", "pt": "Jogo da vida", "nl": "Game of Life", "sv": "Livets spel", "ka": "სიცოცხლის თამაში", "az": "Həyat oyunu", "fi": "Elämän peli", "it": "Gioco della vita" };
-const GOL_RATE = { "ru-modern": "шаг", "ru-classic": "шаг", "uk": "крок", "eng-ny": "step", "eng-uk": "step", "fr": "pas", "jp": "間隔", "sa": "الخطوة", "cn": "步长", "kz": "қадам", "lt": "žingsnis", "es": "paso", "pt": "passo", "nl": "stap", "sv": "steg", "ka": "ნაბიჯი", "az": "addım", "fi": "askel", "it": "passo" };
+const EXPORT_LABEL = { "ru-modern": "Экспорт", "ru-classic": "Экспорт", "uk": "Експорт", "eng-ny": "Export", "eng-uk": "Export", "fr": "Exporter", "jp": "書き出し", "sa": "تصدير", "cn": "导出", "kz": "Экспорт", "lt": "Eksportuoti" };
+const TRACK_LABEL = { "ru-modern": "название трека", "ru-classic": "название трека", "uk": "назва треку", "eng-ny": "track name", "eng-uk": "track name", "fr": "nom de piste", "jp": "トラック名", "sa": "اسم المقطع", "cn": "曲目名称", "kz": "трек атауы", "lt": "takelio pavadinimas" };
+const SHARE_LABEL = { "ru-modern": "Поделиться", "ru-classic": "Поделиться", "uk": "Поділитися", "eng-ny": "Share link", "eng-uk": "Share link", "fr": "Partager", "jp": "共有", "sa": "مشاركة", "cn": "分享", "kz": "Бөлісу", "lt": "Dalintis" };
+const COPIED = { "ru-modern": "ссылка скопирована", "ru-classic": "ссылка скопирована", "uk": "посилання скопійовано", "eng-ny": "link copied!", "eng-uk": "link copied — sorted!", "fr": "lien copié", "jp": "リンクをコピーしました", "sa": "تم نسخ الرابط", "cn": "链接已复制", "kz": "сілтеме көшірілді", "lt": "nuoroda nukopijuota" };
+const REPEAT_LABEL = { "ru-modern": "Повторы", "ru-classic": "Повторы", "uk": "Повтори", "eng-ny": "Repeats", "eng-uk": "Repeats", "fr": "Répét.", "jp": "反復", "sa": "تكرار", "cn": "重复", "kz": "Қайталау", "lt": "Kart." };
+const PRESET_LABEL = { "ru-modern": "+ стиль", "ru-classic": "+ стиль", "uk": "+ стиль", "eng-ny": "+ style", "eng-uk": "+ style", "fr": "+ style", "jp": "+ スタイル", "sa": "+ نمط", "cn": "+ 风格", "kz": "+ стиль", "lt": "+ stilius" };
+const SEC_FULL = { "ru-modern": "максимум секций", "ru-classic": "максимум секций", "uk": "максимум секцій", "eng-ny": "max sections", "eng-uk": "max sections", "fr": "sections au max", "jp": "セクション上限", "sa": "الحد الأقصى للمقاطع", "cn": "段落已满", "kz": "бөлім шегі", "lt": "sekcijų riba" };
+const NP_LABEL = { "ru-modern": "Сейчас играет", "ru-classic": "Сейчас играет", "uk": "Зараз грає", "eng-ny": "Now playing", "eng-uk": "Now playing", "fr": "En lecture", "jp": "再生中", "sa": "قيد التشغيل", "cn": "正在播放", "kz": "Қазір ойнауда", "lt": "Dabar groja" };
+const PAUSE_LABEL = { "ru-modern": "Пауза", "ru-classic": "Пауза", "uk": "Пауза", "eng-ny": "Pause", "eng-uk": "Pause", "fr": "Pause", "jp": "一時停止", "sa": "إيقاف مؤقت", "cn": "暂停", "kz": "Кідірту", "lt": "Pauzė" };
+const REC_LABEL = { "ru-modern": "Запись", "ru-classic": "Запись", "uk": "Запис", "eng-ny": "Rec", "eng-uk": "Rec", "fr": "Enreg.", "jp": "録音", "sa": "تسجيل", "cn": "录制", "kz": "Жазу", "lt": "Įrašyti" };
+const SCOPE_LABEL = { "ru-modern": "Волна и спектр", "ru-classic": "Волна и спектр", "uk": "Хвиля та спектр", "eng-ny": "Wave & spectrum", "eng-uk": "Wave & spectrum", "fr": "Onde et spectre", "jp": "波形とスペクトル", "sa": "الموجة والطيف", "cn": "波形与频谱", "kz": "Толқын мен спектр", "lt": "Banga ir spektras" };
+const GOL_LABEL = { "ru-modern": "Игра «Жизнь»", "ru-classic": "Игра «Жизнь»", "uk": "Гра «Життя»", "eng-ny": "Game of Life", "eng-uk": "Game of Life", "fr": "Jeu de la vie", "jp": "ライフゲーム", "sa": "لعبة الحياة", "cn": "生命游戏", "kz": "«Өмір» ойыны", "lt": "Gyvybės žaidimas" };
+const GOL_RATE = { "ru-modern": "шаг", "ru-classic": "шаг", "uk": "крок", "eng-ny": "step", "eng-uk": "step", "fr": "pas", "jp": "間隔", "sa": "الخطوة", "cn": "步长", "kz": "қадам", "lt": "žingsnis" };
 const SNAP_LABEL = { "ru-modern": "снимок · только просмотр", "ru-classic": "снимок · только просмотр", "uk": "знімок · лише перегляд", "eng-ny": "snapshot · read-only", "eng-uk": "snapshot · read-only", "fr": "instantané · lecture seule", "jp": "スナップショット · 閲覧のみ", "sa": "لقطة · للعرض فقط", "cn": "快照 · 只读", "kz": "түсірілім · тек оқу", "lt": "momentinė kopija · tik peržiūra" };
 
 // Conventional names for BPM ranges — universal music terms, kept untranslated (like the drum names).
@@ -94,10 +84,6 @@ const CL_LABELS = {
   "fr": { version: "Version", whats: "Nouveautés", arch: "Architecture" }, "jp": { version: "バージョン", whats: "新着", arch: "アーキテクチャ" },
   "sa": { version: "الإصدار", whats: "الجديد", arch: "البنية" }, "cn": { version: "版本", whats: "更新内容", arch: "架构" },
   "kz": { version: "Нұсқа", whats: "Жаңалықтар", arch: "Архитектура" }, "lt": { version: "Versija", whats: "Naujienos", arch: "Architektūra" },
-  "es": { version: "Versión", whats: "Novedades", arch: "Arquitectura" }, "pt": { version: "Versão", whats: "Novidades", arch: "Arquitetura" },
-  "nl": { version: "Versie", whats: "Nieuw", arch: "Architectuur" }, "sv": { version: "Version", whats: "Nyheter", arch: "Arkitektur" },
-  "ka": { version: "ვერსია", whats: "სიახლეები", arch: "არქიტექტურა" }, "az": { version: "Versiya", whats: "Yeniliklər", arch: "Arxitektura" },
-  "fi": { version: "Versio", whats: "Uutta", arch: "Arkkitehtuuri" }, "it": { version: "Versione", whats: "Novità", arch: "Architettura" },
 };
 const CHANGELOG = [
   { v: "0.0.1", commit: "2479f18", items: {
@@ -355,23 +341,12 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "Electron-обёртка (webSecurity:false для fetch wasm из file://); electron-builder targets win:nsis, linux:[deb,tar.gz]; матрица windows/ubuntu.", "eng-ny": "Electron wrapper (webSecurity:false so wasm fetch works over file://); electron-builder targets win:nsis, linux:[deb,tar.gz]; windows/ubuntu matrix.",
   } },
-  { v: "0.1.11", commit: "b7f477b", items: {
+  { v: "0.1.11", commit: "—", items: {
     "ru-modern": ["Починка релизного CI: загрузка бинарников больше не зависит от стороннего action — использую встроенный gh CLI, релиз создаётся и exe/deb/tar.gz прикладываются", "Раньше джобы падали на «Set up job» (0 шагов) — вероятно, сторонний action был запрещён политикой репозитория"],
     "ru-classic": ["Фикс релиза GitHub Actions (gh CLI вместо стороннего action)"], "uk": ["Фікс релізного CI (gh CLI замість стороннього action)"],
     "eng-ny": ["Fixed the release CI: binary upload no longer needs a third-party action — uses the built-in gh CLI, so the Release is created and exe/deb/tar.gz attach", "The jobs were failing at 'Set up job' (0 steps) — a sign the third-party action was blocked by repo policy"],
     "eng-uk": ["Fixed the release workflow (gh CLI instead of a third-party action)"], "fr": ["Correction du CI de release (gh CLI au lieu d'une action tierce)"], "jp": ["リリースCIの修正（サードパーティactionをやめgh CLIに）"],
     "sa": ["إصلاح CI الإصدار (gh CLI بدل إجراء طرف ثالث)"], "cn": ["修复发布 CI（改用内置 gh CLI，不再依赖第三方 action）"], "kz": ["Релиз CI түзетілді (сыртқы action орнына gh CLI)"], "lt": ["Pataisytas leidimo CI (gh CLI vietoj treciosios salies action)"],
-  }, arch: {} },
-  { v: "0.1.12", commit: "—", items: {
-    "ru-modern": ["Ещё 8 языков интерфейса: испанский, португальский, нидерландский, шведский, грузинский, азербайджанский, финский, итальянский — всего 19"],
-    "ru-classic": ["+8 языков интерфейса (всего 19)"], "uk": ["+8 мов інтерфейсу (разом 19)"],
-    "eng-ny": ["8 more interface languages: Spanish, Portuguese, Dutch, Swedish, Georgian, Azerbaijani, Finnish, Italian — 19 total"],
-    "eng-uk": ["8 more UI languages (19 total)"], "fr": ["8 langues d'interface en plus (19 au total)"], "jp": ["UI言語を8つ追加（計19）"],
-    "sa": ["8 لغات واجهة إضافية (19 إجمالاً)"], "cn": ["新增 8 种界面语言（共 19 种）"], "kz": ["Тағы 8 тіл (барлығы 19)"], "lt": ["Dar 8 sąsajos kalbos (iš viso 19)"],
-    "es": ["8 idiomas de interfaz más: español, portugués, neerlandés, sueco, georgiano, azerbaiyano, finés, italiano — 19 en total"],
-    "pt": ["Mais 8 idiomas de interface (19 no total)"], "it": ["8 lingue di interfaccia in più (19 in totale)"], "nl": ["8 extra interfacetalen (19 in totaal)"],
-    "sv": ["8 fler gränssnittsspråk (19 totalt)"], "fi": ["8 lisää käyttöliittymäkieltä (yhteensä 19)"],
-    "ka": ["კიდევ 8 ინტერფეისის ენა (სულ 19)"], "az": ["daha 8 interfeys dili (cəmi 19)"],
   }, arch: {} },
 ];
 
