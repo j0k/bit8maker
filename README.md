@@ -13,6 +13,10 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
+## v0.1.7
+
+- **Reorder instruments** — drag a row by its label to swap instrument positions (Kick / Snare / HiHat / Clap / Bass / Synth); the order is remembered and Game of Life uses the visible order for adjacency
+
 ## v0.1.6
 
 - **MIDI export** (`.mid`) — a Standard MIDI File any DAW opens; each instrument maps to a GM note, with tempo, length multiplier and Game-of-Life evolution

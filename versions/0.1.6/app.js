@@ -1,6 +1,6 @@
-// Bit8maker 0.1.7 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.6 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.7";
+const VERSION = "0.1.6";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -303,19 +303,12 @@ const CHANGELOG = [
     "sa": ["أثناء التشغيل يصبح الزر إيقاف مؤقت + إيقاف (الإيقاف المؤقت يستأنف من نفس المكان)"], "cn": ["播放时按钮分为暂停+停止（暂停可从原处继续）"],
     "kz": ["Ойнау кезінде батырма «Кідірту» + «Тоқтату» болады (кідірту сол жерден жалғасады)"], "lt": ["Grojant mygtukas tampa Pauzė + Stop (pauzė tęsia iš tos pačios vietos)"],
   }, arch: {} },
-  { v: "0.1.6", commit: "5038c84", items: {
+  { v: "0.1.6", commit: "—", items: {
     "ru-modern": ["Экспорт в MIDI (.mid) — стандартный файл, открывается в любой DAW", "Каждый инструмент → своя GM-нота (Kick 36, Snare 38, Hat F#1, Clap 39, Бас A1, Синт E4); учитывается темп, множитель длины и эволюция GoL"],
     "ru-classic": ["MIDI-экспорт (.mid)"], "uk": ["MIDI-експорт (.mid)"],
     "eng-ny": ["MIDI export (.mid) — a standard file any DAW opens", "Each instrument maps to a GM note (Kick 36, Snare 38, Hat F#1, Clap 39, Bass A1, Synth E4); tempo, length multiplier and GoL evolution included"],
     "eng-uk": ["MIDI export (.mid) — opens in any DAW"], "fr": ["Export MIDI (.mid)"], "jp": ["MIDI書き出し（.mid）"],
     "sa": ["تصدير MIDI (.mid)"], "cn": ["MIDI 导出（.mid）"], "kz": ["MIDI экспорты (.mid)"], "lt": ["MIDI eksportas (.mid)"],
-  }, arch: {} },
-  { v: "0.1.7", commit: "—", items: {
-    "ru-modern": ["Инструменты можно перетаскивать за подпись и менять местами — порядок строк запоминается", "«Игра Жизнь» считает соседство по видимому порядку строк"],
-    "ru-classic": ["Перетаскивание инструментов (смена порядка строк)"], "uk": ["Перетягування інструментів (зміна порядку рядків)"],
-    "eng-ny": ["Drag instruments by their label to reorder the rows (the order is remembered)", "Game of Life uses the visible row order for adjacency"],
-    "eng-uk": ["Drag instrument rows by the label to reorder them"], "fr": ["Réordonner les instruments par glisser-déposer"], "jp": ["ラベルをドラッグして楽器の並びを変更"],
-    "sa": ["إعادة ترتيب الآلات بالسحب من التسمية"], "cn": ["拖动乐器标签重新排序"], "kz": ["Аспаптарды жапсырмасынан сүйреп ретін өзгерту"], "lt": ["Instrumentų pertvarkymas tempiant už pavadinimo"],
   }, arch: {} },
 ];
 
@@ -335,11 +328,6 @@ let cur = 0;
 const DEF_VOL = { kick: 0.9, snare: 0.8, hihat: 0.6, clap: 0.7, bass: 0.8, synth: 0.5 };
 const volumes = Object.assign({}, DEF_VOL, JSON.parse(localStorage.getItem("b8_vol") || "{}"));
 function saveVol() { localStorage.setItem("b8_vol", JSON.stringify(volumes)); }
-let order = INSTR.slice(); // display order of instrument rows (data stays keyed by name)
-(() => { try { const s = JSON.parse(localStorage.getItem("b8_order") || "null"); if (Array.isArray(s) && s.length === INSTR.length && INSTR.every((k) => s.includes(k))) order = s; } catch (e) {} })();
-function saveOrder() { localStorage.setItem("b8_order", JSON.stringify(order)); }
-function reorder(from, to) { if (!from || from === to) return; const a = order.filter((x) => x !== from); a.splice(a.indexOf(to), 0, from); order = a; saveOrder(); renderGrid(); }
-let dragKey = null;
 
 let bpm = 100;
 let ctx = null, analyser = null, bus = null, rafId = null, waveBuf = null, freqBuf = null, scopeOn = false;
@@ -373,8 +361,8 @@ function buildSequence() {
 }
 // Conway's Life (B3/S23) on a toroidal INSTR×STEPS grid — the pattern IS the board.
 function lifeStep(pat) {
-  const R = order.length, C = STEPS, grid = order.map((k) => pat[k]);
-  const next = order.map(() => new Array(C).fill(false));
+  const R = INSTR.length, C = STEPS, grid = INSTR.map((k) => pat[k]);
+  const next = INSTR.map(() => new Array(C).fill(false));
   for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
     let n = 0;
     for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
@@ -383,7 +371,7 @@ function lifeStep(pat) {
     }
     next[r][c] = grid[r][c] ? (n === 2 || n === 3) : (n === 3);
   }
-  order.forEach((k, r) => { for (let c = 0; c < C; c++) pat[k][c] = next[r][c]; });
+  INSTR.forEach((k, r) => { for (let c = 0; c < C; c++) pat[k][c] = next[r][c]; });
 }
 // cell = [pattern, step, sectionIndex, repeatNum, repeatTotal]
 function tick(cell) {
@@ -628,15 +616,9 @@ function highlight(step) { clearHighlight(); document.querySelectorAll('.cell[da
 function clearHighlight() { document.querySelectorAll(".cell.playing").forEach((c) => c.classList.remove("playing")); }
 function renderGrid() {
   const g = $("grid"); g.innerHTML = ""; const pat = sections[cur].pattern;
-  order.forEach((k) => {
-    const row = document.createElement("div"); row.className = "row"; row.dataset.k = k;
+  INSTR.forEach((k) => {
+    const row = document.createElement("div"); row.className = "row";
     const lab = document.createElement("div"); lab.className = "label"; lab.textContent = STRINGS[lang].instr[k];
-    lab.draggable = true; lab.title = "drag to reorder";
-    lab.ondragstart = (e) => { dragKey = k; row.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; };
-    lab.ondragend = () => row.classList.remove("dragging");
-    row.ondragover = (e) => { e.preventDefault(); row.classList.add("drop-hint"); };
-    row.ondragleave = () => row.classList.remove("drop-hint");
-    row.ondrop = (e) => { e.preventDefault(); row.classList.remove("drop-hint"); reorder(dragKey, k); };
     const steps = document.createElement("div"); steps.className = "steps";
     for (let s = 0; s < STEPS; s++) {
       const c = document.createElement("div"); c.className = "cell" + (pat[k][s] ? " on" : ""); c.dataset.step = s;
