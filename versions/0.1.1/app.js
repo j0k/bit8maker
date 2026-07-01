@@ -1,6 +1,6 @@
-// Bit8maker 0.1.2 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.1 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.2";
+const VERSION = "0.1.1";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -252,7 +252,7 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "Правила B3/S23 на торе INSTR×STEPS; эволюция в tick() на границе шага.", "eng-ny": "B3/S23 on an INSTR×STEPS torus; evolves in tick() at the step boundary.",
   } },
-  { v: "0.1.1", commit: "4c65f80", items: {
+  { v: "0.1.1", commit: "—", items: {
     "ru-modern": ["Исправлено: при «Стоп» осциллограф и спектр больше не застывают на последнем кадре — отложенный кадр анимации гасится флагом scopeOn"],
     "ru-classic": ["Фикс: визуализация не зависает при стопе"], "uk": ["Фікс: візуалізація не зависає при стопі"],
     "eng-ny": ["Fixed: on Stop the scope and spectrum no longer freeze on the last frame (a stray animation frame could redraw over the reset)"],
@@ -260,15 +260,6 @@ const CHANGELOG = [
     "fr": ["Corrigé : à l'arrêt, l'oscilloscope et le spectre ne se figent plus"], "jp": ["修正：停止時に波形とスペクトルが固まらないように"],
     "sa": ["إصلاح: عند الإيقاف لم يعد العرض يتجمد على آخر إطار"], "cn": ["修复：停止时波形与频谱不再卡在最后一帧"],
     "kz": ["Түзету: «Тоқтату» кезінде визуализация қатып қалмайды"], "lt": ["Pataisa: sustabdžius, vizualizacija nebeužstringa"],
-  }, arch: {} },
-  { v: "0.1.2", commit: "—", items: {
-    "ru-modern": ["Галочка «Игра Жизнь» теперь применяется к конкретной секции, а не ко всему треку — у каждой секции свой режим", "GoL-секции помечены 🧬 во вкладках"],
-    "ru-classic": ["«Игра Жизнь» — флаг на каждую секцию отдельно", "Метка 🧬 на вкладках"], "uk": ["«Гра Життя» — прапорець на кожну секцію окремо", "Позначка 🧬 на вкладках"],
-    "eng-ny": ["The Game of Life toggle now applies per section, not to the whole track — each section has its own mode", "GoL sections are tagged 🧬 in the tabs"],
-    "eng-uk": ["Game of Life is now per-section", "GoL sections tagged 🧬 in the tabs"],
-    "fr": ["Le Jeu de la vie s'applique par section", "Sections GoL marquées 🧬"], "jp": ["ライフゲームはセクションごとに適用", "GoLセクションを🧬で表示"],
-    "sa": ["لعبة الحياة تُطبّق لكل مقطع على حدة", "مقاطع GoL موسومة بـ🧬"], "cn": ["生命游戏改为按段落生效", "GoL 段落用🧬标记"],
-    "kz": ["«Өмір» ойыны әр бөлімге бөлек қолданылады", "GoL бөлімдері 🧬 белгісімен"], "lt": ["Gyvybės žaidimas taikomas kiekvienai sekcijai atskirai", "GoL sekcijos pažymėtos 🧬"],
   }, arch: {} },
 ];
 
@@ -300,7 +291,7 @@ function ensureCtx() {
 }
 let playing = false, nextNoteTime = 0, timer = null;
 let seq = [], seqPos = 0, playingSec = -1;
-let golStep = 16, golTick = 0; // Game of Life: per-section flag (sec.gol); evolve every golStep 16ths
+let golOn = false, golStep = 16, golTick = 0; // Game of Life: evolve every golStep 16ths
 const $ = (id) => document.getElementById(id);
 
 // ---- synthesis ----
@@ -335,10 +326,10 @@ function lifeStep(pat) {
 }
 // cell = [pattern, step, sectionIndex, repeatNum, repeatTotal]
 function tick(cell) {
-  if (golTick > 0 && golTick % golStep === 0 && sections[cell[2]].gol) {
-    lifeStep(sections[cell[2]].pattern); if (cell[2] === cur) renderGrid();
+  if (golOn) {
+    if (golTick > 0 && golTick % golStep === 0) { lifeStep(sections[cell[2]].pattern); if (cell[2] === cur) renderGrid(); }
+    golTick++;
   }
-  golTick++;
   highlight(cell[1]);
   setPlayingSection(cell[2]);
   const sec = sections[cell[2]];
@@ -433,8 +424,8 @@ const b64dec = (s) => decodeURIComponent(escape(atob(s.replace(/-/g, "+").replac
 function patBits(pat) { return INSTR.map((k) => { let n = 0; for (let st = 0; st < STEPS; st++) if (pat[k][st]) n |= 1 << st; return n; }); }
 function bitsToPat(arr) { const p = emptyPattern(); INSTR.forEach((k, i) => { const n = (arr && arr[i]) | 0; for (let st = 0; st < STEPS; st++) p[k][st] = !!(n & (1 << st)); }); return p; }
 function encodeState() {
-  const s = sections.map((sec) => ({ n: sec.name, r: sec.repeat, g: sec.gol ? 1 : 0, p: patBits(sec.pattern) }));
-  return b64url(JSON.stringify({ b: bpm, v: INSTR.map((k) => Math.round(volumes[k] * 100)), s: s, gs: golStep }));
+  const s = sections.map((sec) => ({ n: sec.name, r: sec.repeat, p: patBits(sec.pattern) }));
+  return b64url(JSON.stringify({ b: bpm, v: INSTR.map((k) => Math.round(volumes[k] * 100)), s: s, g: golOn ? 1 : 0, gs: golStep }));
 }
 function decodeState(str) {
   try {
@@ -442,7 +433,8 @@ function decodeState(str) {
     if (o.b) bpm = Math.max(60, Math.min(MAX_BPM, o.b | 0));
     if (Array.isArray(o.v)) INSTR.forEach((k, i) => { if (o.v[i] != null) volumes[k] = Math.max(0, Math.min(1, o.v[i] / 100)); });
     if (o.gs) golStep = Math.max(1, Math.min(64, o.gs | 0));
-    if (Array.isArray(o.s)) sections = o.s.slice(0, MAX_SEC).map((sec, i) => ({ name: (sec.n != null ? String(sec.n) : defName(i)).slice(0, 20), repeat: Math.max(1, Math.min(8, (sec.r | 0) || 1)), gol: !!sec.g, pattern: bitsToPat(sec.p) }));
+    if ("g" in o) golOn = !!o.g;
+    if (Array.isArray(o.s)) sections = o.s.slice(0, MAX_SEC).map((sec, i) => ({ name: (sec.n != null ? String(sec.n) : defName(i)).slice(0, 20), repeat: Math.max(1, Math.min(8, (sec.r | 0) || 1)), pattern: bitsToPat(sec.p) }));
     else if (Array.isArray(o.p)) sections = [{ name: defName(0), repeat: 1, pattern: bitsToPat(o.p) }]; // 0.0.5 link
     if (!sections.length) sections = [{ name: defName(0), pattern: emptyPattern(), repeat: 1 }];
     cur = 0;
@@ -479,14 +471,14 @@ function renderGrid() {
 }
 function renderTabs() {
   const el = $("tabs"); el.innerHTML = "";
-  sections.forEach((s, i) => { const b = document.createElement("button"); b.className = "tab" + (i === cur ? " active" : "") + (i === playingSec ? " playing" : ""); b.textContent = (i + 1) + ". " + (s.name || "—") + (s.gol ? " 🧬" : ""); b.onclick = () => { cur = i; sync(); }; el.appendChild(b); });
+  sections.forEach((s, i) => { const b = document.createElement("button"); b.className = "tab" + (i === cur ? " active" : "") + (i === playingSec ? " playing" : ""); b.textContent = (i + 1) + ". " + (s.name || "—"); b.onclick = () => { cur = i; sync(); }; el.appendChild(b); });
   const add = document.createElement("button"); add.className = "tab tab--icon"; add.textContent = "＋"; add.title = "add";
   add.onclick = () => { if (sections.length < MAX_SEC) { sections.push({ name: defName(sections.length), pattern: emptyPattern(), repeat: 2 }); cur = sections.length - 1; sync(); } };
   el.appendChild(add);
   if (sections.length > 1) { const rem = document.createElement("button"); rem.className = "tab tab--icon"; rem.textContent = "✕"; rem.title = "remove"; rem.onclick = () => { sections.splice(cur, 1); cur = Math.min(cur, sections.length - 1); sync(); }; el.appendChild(rem); }
   $("rep-val").textContent = "×" + sections[cur].repeat;
 }
-function sync() { renderTabs(); $("sec-name").value = sections[cur].name; $("gol-on").checked = !!sections[cur].gol; renderGrid(); }
+function sync() { renderTabs(); $("sec-name").value = sections[cur].name; renderGrid(); }
 function updateTransport() { $("play").textContent = playing ? STRINGS[lang].stop : STRINGS[lang].play; }
 function renderChangelog() {
   const e = CHANGELOG[clIndex], L = CL_LABELS[lang], latest = clIndex === CHANGELOG.length - 1;
@@ -560,12 +552,12 @@ $("sec-name").oninput = (e) => { sections[cur].name = e.target.value; renderTabs
 const presetSel = $("preset-select");
 PRESETS.forEach((p, i) => { const o = document.createElement("option"); o.value = i; o.textContent = p.label; presetSel.appendChild(o); });
 presetSel.onchange = () => { const p = PRESETS[+presetSel.value]; if (p) addPreset(p); presetSel.selectedIndex = 0; };
-$("gol-on").onchange = (e) => { sections[cur].gol = e.target.checked; golTick = 0; renderTabs(); };
+$("gol-on").onchange = (e) => { golOn = e.target.checked; golTick = 0; };
 const golStepIn = $("gol-step");
 golStepIn.oninput = (e) => { golStep = +e.target.value; $("gol-step-val").textContent = golStep + "/16"; };
 $("gol-next").onclick = () => { lifeStep(sections[cur].pattern); renderGrid(); };
 $("gol-rand").onclick = () => { const p = sections[cur].pattern; INSTR.forEach((k) => { for (let s = 0; s < STEPS; s++) p[k][s] = Math.random() < 0.32; }); renderGrid(); };
-golStepIn.value = golStep; $("gol-step-val").textContent = golStep + "/16";
+golStepIn.value = golStep; $("gol-step-val").textContent = golStep + "/16"; $("gol-on").checked = golOn;
 function showBpm() { $("bpm-val").textContent = bpm; $("bpm-name").textContent = bpmName(bpm); }
 const bpmIn = $("bpm"); bpmIn.max = MAX_BPM; bpmIn.value = bpm; showBpm();
 bpmIn.oninput = (e) => { bpm = +e.target.value; showBpm(); };
