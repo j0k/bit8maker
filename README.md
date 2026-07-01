@@ -24,6 +24,10 @@ Release:
 
 (`.dmg` for macOS is not built yet.) Build locally with `npm install && npm run dist`.
 
+## v0.1.13
+
+- **Experimental native Zig renderer** (`zig/`) — the same 6-instrument synthesis rendered to a WAV by a dependency-free static x86-64 binary (`zig build-exe -O ReleaseFast bit8maker.zig`); headless for now
+
 ## v0.1.12
 
 - **19 interface languages** — added Spanish, Portuguese, Dutch, Swedish, Georgian, Azerbaijani, Finnish, Italian

@@ -1,6 +1,6 @@
-// Bit8maker 0.1.13 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.12 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.13";
+const VERSION = "0.1.12";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -362,7 +362,7 @@ const CHANGELOG = [
     "eng-uk": ["Fixed the release workflow (gh CLI instead of a third-party action)"], "fr": ["Correction du CI de release (gh CLI au lieu d'une action tierce)"], "jp": ["リリースCIの修正（サードパーティactionをやめgh CLIに）"],
     "sa": ["إصلاح CI الإصدار (gh CLI بدل إجراء طرف ثالث)"], "cn": ["修复发布 CI（改用内置 gh CLI，不再依赖第三方 action）"], "kz": ["Релиз CI түзетілді (сыртқы action орнына gh CLI)"], "lt": ["Pataisytas leidimo CI (gh CLI vietoj treciosios salies action)"],
   }, arch: {} },
-  { v: "0.1.12", commit: "0a41a39", items: {
+  { v: "0.1.12", commit: "—", items: {
     "ru-modern": ["Ещё 8 языков интерфейса: испанский, португальский, нидерландский, шведский, грузинский, азербайджанский, финский, итальянский — всего 19"],
     "ru-classic": ["+8 языков интерфейса (всего 19)"], "uk": ["+8 мов інтерфейсу (разом 19)"],
     "eng-ny": ["8 more interface languages: Spanish, Portuguese, Dutch, Swedish, Georgian, Azerbaijani, Finnish, Italian — 19 total"],
@@ -373,17 +373,6 @@ const CHANGELOG = [
     "sv": ["8 fler gränssnittsspråk (19 totalt)"], "fi": ["8 lisää käyttöliittymäkieltä (yhteensä 19)"],
     "ka": ["კიდევ 8 ინტერფეისის ენა (სულ 19)"], "az": ["daha 8 interfeys dili (cəmi 19)"],
   }, arch: {} },
-  { v: "0.1.13", commit: "—", items: {
-    "ru-modern": ["Экспериментальная нативная версия на Zig: тот же синтез 6 инструментов рендерит демо-бит в WAV; собирается в статический x86-64 бинарник без зависимостей (папка zig/)", "Пока headless; полноценный GUI-порт (Zig + raylib) — следующий шаг"],
-    "ru-classic": ["Нативный рендерер на Zig (папка zig/) → WAV"], "uk": ["Нативний рендерер на Zig (zig/) → WAV"],
-    "eng-ny": ["Experimental native Zig renderer: the same 6-instrument synthesis renders the demo beat to WAV; builds to a static x86-64 binary with no deps (see zig/)", "Headless for now; a full GUI port (Zig + raylib) is the next step"],
-    "eng-uk": ["Experimental native Zig renderer (zig/) → WAV"], "fr": ["Rendu natif expérimental en Zig (zig/) → WAV"], "jp": ["実験的なZigネイティブレンダラー（zig/）→ WAV"],
-    "sa": ["مُصيّر Zig أصلي تجريبي (zig/) → WAV"], "cn": ["实验性 Zig 原生渲染器（zig/）→ WAV"], "kz": ["Эксперименттік Zig нативті рендерер (zig/) → WAV"], "lt": ["Eksperimentinis Zig renderis (zig/) -> WAV"],
-    "es": ["Renderizador nativo en Zig experimental (zig/) → WAV"], "pt": ["Renderizador nativo em Zig experimental (zig/) → WAV"], "it": ["Renderer nativo sperimentale in Zig (zig/) → WAV"], "nl": ["Experimentele native Zig-renderer (zig/) → WAV"],
-    "sv": ["Experimentell nativ Zig-renderare (zig/) → WAV"], "fi": ["Kokeellinen natiivi Zig-renderöijä (zig/) → WAV"], "ka": ["ექსპერიმენტული Zig რენდერერი (zig/) → WAV"], "az": ["Eksperimental Zig renderer (zig/) → WAV"],
-  }, arch: {
-    "ru-modern": "Чистый Zig 0.13, без зависимостей; те же голоса (свип-синус, шум+тон, пила/треугольник) → 16-бит PCM WAV; статический ELF x86-64.", "eng-ny": "Pure Zig 0.13, no deps; same voices (swept sine, noise+tone, saw/triangle) → 16-bit PCM WAV; static x86-64 ELF.",
-  } },
 ];
 
 // ---- language (URL ?lang overrides stored) ----
