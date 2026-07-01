@@ -1,6 +1,6 @@
-// Bit8maker 0.1.4 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.3 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.4";
+const VERSION = "0.1.3";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -271,7 +271,7 @@ const CHANGELOG = [
     "sa": ["لعبة الحياة تُطبّق لكل مقطع على حدة", "مقاطع GoL موسومة بـ🧬"], "cn": ["生命游戏改为按段落生效", "GoL 段落用🧬标记"],
     "kz": ["«Өмір» ойыны әр бөлімге бөлек қолданылады", "GoL бөлімдері 🧬 белгісімен"], "lt": ["Gyvybės žaidimas taikomas kiekvienai sekcijai atskirai", "GoL sekcijos pažymėtos 🧬"],
   }, arch: {} },
-  { v: "0.1.3", commit: "7542ba8", items: {
+  { v: "0.1.3", commit: "—", items: {
     "ru-modern": ["Экспорт в WAV, MP3 и FLAC (клиентски: lamejs + libflac wasm)", "Множитель длины ×1…×100 — очень длинный трек одной кнопкой; GoL-секции при экспорте эволюционируют", "Название трека + метаданные (title, комментарий-ссылка juri-konoplev.pro/bit8maker) в WAV/MP3"],
     "ru-classic": ["Экспорт WAV/MP3/FLAC", "Множитель повторов ×1…×100", "Название трека и метаданные"],
     "uk": ["Експорт WAV/MP3/FLAC", "Множник повторів ×1…×100", "Назва треку та метадані"],
@@ -286,13 +286,6 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "OfflineAudioContext рендерит ×N проходов; кодирование lamejs (MP3, +ID3v2) и libflac (нативный FLAC).", "eng-ny": "OfflineAudioContext renders ×N passes; encoded via lamejs (MP3, +ID3v2) and libflac (native FLAC).",
   } },
-  { v: "0.1.4", commit: "—", items: {
-    "ru-modern": ["Выбор качества MP3 — битрейт 128 / 192 / 256 / 320 kbps (активен, когда формат MP3)"],
-    "ru-classic": ["Выбор битрейта MP3 (128–320 kbps)"], "uk": ["Вибір бітрейту MP3 (128–320 kbps)"],
-    "eng-ny": ["MP3 quality selector — 128 / 192 / 256 / 320 kbps (enabled when the format is MP3)"],
-    "eng-uk": ["Pick your MP3 bitrate (128–320 kbps)"], "fr": ["Choix du débit MP3 (128–320 kbps)"], "jp": ["MP3ビットレート選択（128〜320 kbps）"],
-    "sa": ["اختيار جودة MP3 (128–320 kbps)"], "cn": ["MP3 音质选择（128–320 kbps）"], "kz": ["MP3 сапасын таңдау (128–320 kbps)"], "lt": ["MP3 bitų dažnio pasirinkimas (128–320 kbps)"],
-  }, arch: {} },
 ];
 
 // ---- language (URL ?lang overrides stored) ----
@@ -473,9 +466,9 @@ function id3v2(meta) {
   const frames = _cat(txt("TIT2", meta.title), txt("TSSE", meta.software), comm(meta.comment)), sz = frames.length;
   return _cat(new Uint8Array([73, 68, 51, 3, 0, 0, (sz >> 21) & 127, (sz >> 14) & 127, (sz >> 7) & 127, sz & 127]), frames); // "ID3" v2.3
 }
-async function encodeMP3(buf, meta, kbps) {
+async function encodeMP3(buf, meta) {
   await loadScript("lib/lame.min.js");
-  const s16 = floatTo16(buf.getChannelData(0)), n = s16.length, enc = new lamejs.Mp3Encoder(1, buf.sampleRate, kbps || 192), parts = [id3v2(meta)];
+  const s16 = floatTo16(buf.getChannelData(0)), n = s16.length, enc = new lamejs.Mp3Encoder(1, buf.sampleRate, 192), parts = [id3v2(meta)];
   for (let i = 0; i < n; i += 1152) { const m = enc.encodeBuffer(s16.subarray(i, i + 1152)); if (m.length) parts.push(m); }
   const end = enc.flush(); if (end.length) parts.push(end);
   return new Blob(parts, { type: "audio/mpeg" });
@@ -510,7 +503,7 @@ async function exportAudio() {
     }
     const buf = await off.startRendering(), meta = { title: name, comment: META_URL, software: "Bit8maker v" + VERSION };
     let blob, ext;
-    if (fmt === "mp3") { blob = await encodeMP3(buf, meta, +$("mp3-quality").value); ext = "mp3"; }
+    if (fmt === "mp3") { blob = await encodeMP3(buf, meta); ext = "mp3"; }
     else if (fmt === "flac") { blob = await encodeFLAC(buf); ext = "flac"; }
     else { blob = new Blob([encodeWAV(buf, meta)], { type: "audio/wav" }); ext = "wav"; }
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name + "." + ext; a.click();
@@ -647,9 +640,6 @@ sel.onchange = () => { lang = sel.value; localStorage.setItem("b8_lang", lang); 
 $("play").onclick = () => (playing ? stop() : play());
 $("clear").onclick = () => { INSTR.forEach((k) => sections[cur].pattern[k].fill(false)); renderGrid(); };
 $("export").onclick = exportAudio;
-const fmtSel = $("fmt-select"), mp3q = $("mp3-quality");
-const syncMp3q = () => { mp3q.disabled = fmtSel.value !== "mp3"; };
-fmtSel.onchange = syncMp3q; syncMp3q();
 $("share").onclick = shareLink;
 $("rep-dn").onclick = () => { sections[cur].repeat = Math.max(1, sections[cur].repeat - 1); $("rep-val").textContent = "×" + sections[cur].repeat; };
 $("rep-up").onclick = () => { sections[cur].repeat = Math.min(8, sections[cur].repeat + 1); $("rep-val").textContent = "×" + sections[cur].repeat; };

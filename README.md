@@ -13,6 +13,10 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
+## v0.1.4
+
+- **MP3 quality selector** — 128 / 192 / 256 / 320 kbps
+
 ## v0.1.3
 
 - **Export to WAV / MP3 / FLAC** — client-side (lamejs + libflac wasm)
