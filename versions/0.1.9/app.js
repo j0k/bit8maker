@@ -1,6 +1,6 @@
-// Bit8maker 0.1.10 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.9 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.10";
+const VERSION = "0.1.9";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -325,22 +325,13 @@ const CHANGELOG = [
     "eng-uk": ["Rec button — capture the live output to a file"], "fr": ["Bouton Rec — enregistre la sortie en direct"], "jp": ["録音ボタン：ライブ出力をそのまま録音"],
     "sa": ["زر التسجيل: يسجّل الخرج الحي مباشرة"], "cn": ["录制按钮：实时录制现场输出"], "kz": ["Жазу батырмасы: тірі шығысты жазады"], "lt": ["Įrašymo mygtukas — įrašo gyvą išvestį"],
   }, arch: {} },
-  { v: "0.1.9", commit: "f886a0f", items: {
+  { v: "0.1.9", commit: "—", items: {
     "ru-modern": ["«Повторы» секции теперь применяются на лету: меняешь во время игры — и со следующего цикла секция звучит нужное число раз (раньше эффект был только после перезапуска)", "Если секция одна, повтор не слышен (луп бесконечный); разница слышна между несколькими секциями"],
     "ru-classic": ["«Повторы» секции применяются во время игры"], "uk": ["«Повтори» секції застосовуються під час гри"],
     "eng-ny": ["Section 'Repeats' now applies live — change it while playing and the section loops the new number of times from the next cycle (previously it only took effect after a restart)", "With a single section the repeat is inaudible (it loops forever anyway); the difference shows across multiple sections"],
     "eng-uk": ["Section repeats now apply live while playing"], "fr": ["Les « répétitions » de section s'appliquent en direct"], "jp": ["セクションの「反復」が再生中に即反映"],
     "sa": ["«تكرار» المقطع يُطبّق أثناء التشغيل"], "cn": ["段落“重复”现在实时生效"], "kz": ["Бөлімнің «Қайталауы» ойнау кезінде қолданылады"], "lt": ["Sekcijos pakartojimai taikomi grojant"],
   }, arch: {} },
-  { v: "0.1.10", commit: "—", items: {
-    "ru-modern": ["Нативные сборки: GitHub Actions по тегу собирает десктоп-приложение (Electron) — Windows .exe (установщик) и Linux .deb + .tar.gz — и кладёт их в Releases", "Тот же клиентский код, обёрнутый electron-main.js; dmg пока не делаем"],
-    "ru-classic": ["Нативные сборки exe/deb/tar.gz через GitHub Actions"], "uk": ["Нативні збірки exe/deb/tar.gz через GitHub Actions"],
-    "eng-ny": ["Native builds: a GitHub Actions release workflow packages a desktop app (Electron) on tag — Windows .exe installer and Linux .deb + .tar.gz — attached to the Release", "Same client-side code, wrapped by electron-main.js; dmg skipped for now"],
-    "eng-uk": ["Native builds — exe/deb/tar.gz via GitHub Actions (Electron)"], "fr": ["Builds natifs exe/deb/tar.gz via GitHub Actions (Electron)"], "jp": ["ネイティブビルド exe/deb/tar.gz（GitHub Actions + Electron）"],
-    "sa": ["حزم أصلية exe/deb/tar.gz عبر GitHub Actions"], "cn": ["原生构建 exe/deb/tar.gz（GitHub Actions + Electron）"], "kz": ["Нативті құрастыру exe/deb/tar.gz (GitHub Actions)"], "lt": ["Natyvūs paketai exe/deb/tar.gz per GitHub Actions"],
-  }, arch: {
-    "ru-modern": "Electron-обёртка (webSecurity:false для fetch wasm из file://); electron-builder targets win:nsis, linux:[deb,tar.gz]; матрица windows/ubuntu.", "eng-ny": "Electron wrapper (webSecurity:false so wasm fetch works over file://); electron-builder targets win:nsis, linux:[deb,tar.gz]; windows/ubuntu matrix.",
-  } },
 ];
 
 // ---- language (URL ?lang overrides stored) ----

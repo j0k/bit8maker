@@ -13,6 +13,21 @@ It's a static site — just open `index.html`, or serve the folder:
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
+## Desktop builds
+
+Bit8maker also ships as a desktop app (a thin **Electron** wrapper around the same
+client-side code). On every `v*` tag, GitHub Actions builds and attaches to the
+Release:
+
+- **Windows** — `Bit8maker-<ver>-setup.exe` (NSIS installer)
+- **Linux** — `bit8maker-<ver>-<arch>.deb` and `bit8maker-<ver>-<arch>.tar.gz`
+
+(`.dmg` for macOS is not built yet.) Build locally with `npm install && npm run dist`.
+
+## v0.1.10
+
+- **Native builds** — GitHub Actions packages a desktop app on tag (Windows `.exe`, Linux `.deb` + `.tar.gz`) and attaches them to the Release
+
 ## v0.1.9
 
 - Section **Repeats** now apply live while playing (previously only after a restart); note a single section loops forever so its repeat is only audible across multiple sections

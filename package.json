@@ -1,0 +1,41 @@
+{
+  "name": "bit8maker",
+  "version": "0.1.10",
+  "description": "Bit8maker — a client-side beat maker (Web Audio). Desktop wrapper via Electron.",
+  "main": "electron-main.js",
+  "author": "j0k <juri.konoplev@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://juri-konoplev.pro/bit8maker/",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "pro.junikonoplev.bit8maker",
+    "productName": "Bit8maker",
+    "files": [
+      "electron-main.js",
+      "index.html",
+      "app.js",
+      "style.css",
+      "lib/**",
+      "versions/**"
+    ],
+    "directories": { "output": "dist" },
+    "win": {
+      "target": "nsis",
+      "artifactName": "Bit8maker-${version}-setup.${ext}"
+    },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true },
+    "linux": {
+      "target": ["deb", "tar.gz"],
+      "category": "AudioVideo",
+      "maintainer": "j0k <juri.konoplev@gmail.com>",
+      "artifactName": "bit8maker-${version}-${arch}.${ext}"
+    }
+  }
+}
