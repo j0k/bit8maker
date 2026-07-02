@@ -2,8 +2,12 @@
 
 **Yo — tap the grid, cook a beat… can't be beat.**
 
+### ▶️ [Try it live — juri-konoplev.pro/bit8maker](https://juri-konoplev.pro/bit8maker/)
+
+Make beats right in your browser — no install needed.
+
 A click-to-make beat sequencer that runs entirely in your browser (Web Audio API,
-no backend). Bilingual 🗽 EN / 🇷🇺 RU.
+no backend). Available in 19 interface languages.
 
 ## Run
 
