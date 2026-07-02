@@ -11,11 +11,13 @@ A **native interactive** Bit8maker, written in Zig with
 - **Game of Life** per section — **Life** toggle (bakes the evolution into the
   looped audio), a manual **step**, and a **life N/16** rate
 - a **playhead** that marks the sounding section (green tab outline) and its step
+- **export** — `WAV` and `MID` buttons write `bit8maker.wav` / `bit8maker.mid`
+  (honoring sections, repeats and baked Game-of-Life evolution) into the working dir
 
 Audio: the storyline is rendered to a seamless `Wave` (tails wrapped) and played.
 
-Still web-only (not yet ported): presets, export, share links, i18n, visualiser,
-now-playing, record, instrument reorder.
+Still web-only (not yet ported): MP3/FLAC export (need the LAME/FLAC C libs),
+presets, share links, i18n, visualiser, now-playing, record, instrument reorder.
 
 ## Build & run
 

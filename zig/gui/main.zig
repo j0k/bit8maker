@@ -13,6 +13,8 @@ const ROWS: usize = 6;
 const ROWS_I: i32 = 6;
 const MAX_SEC: usize = 8;
 const LABELS = [ROWS][*c]const u8{ "Kick", "Snare", "HiHat", "Clap", "Bass", "Synth" };
+const MIDI_CH = [ROWS]u8{ 9, 9, 9, 9, 0, 1 }; // GM: drums on ch10; bass/synth on their own
+const MIDI_NOTE = [ROWS]u8{ 36, 38, 42, 39, 33, 64 };
 
 const Section = struct {
     pat: [ROWS][STEPS]bool = std.mem.zeroes([ROWS][STEPS]bool),
@@ -32,6 +34,12 @@ var sound: rl.Sound = undefined;
 var have_sound: bool = false;
 var play_start: f64 = 0;
 var step_dur_g: f32 = 0.15;
+var status_msg: [*c]const u8 = "";
+var status_until: f64 = 0;
+fn flash(msg: [*c]const u8) void {
+    status_msg = msg;
+    status_until = rl.GetTime() + 2.5;
+}
 
 // storyline cell -> (section, step) map, filled by render, used by the playhead
 var seq_sec: [1024]u8 = undefined;
@@ -213,6 +221,127 @@ fn renderStoryline(alloc: std.mem.Allocator) ![]i16 {
     return out;
 }
 
+fn exportWav() void {
+    const alloc = std.heap.c_allocator;
+    const samples = renderStoryline(alloc) catch {
+        flash("export failed");
+        return;
+    };
+    defer alloc.free(samples);
+    const file = std.fs.cwd().createFile("bit8maker.wav", .{}) catch {
+        flash("export failed");
+        return;
+    };
+    defer file.close();
+    var bw = std.io.bufferedWriter(file.writer());
+    const w = bw.writer();
+    const n: u32 = @intCast(samples.len);
+    const data_len: u32 = n * 2;
+    w.writeAll("RIFF") catch return;
+    w.writeInt(u32, 36 + data_len, .little) catch return;
+    w.writeAll("WAVE") catch return;
+    w.writeAll("fmt ") catch return;
+    w.writeInt(u32, 16, .little) catch return;
+    w.writeInt(u16, 1, .little) catch return;
+    w.writeInt(u16, 1, .little) catch return;
+    w.writeInt(u32, 44100, .little) catch return;
+    w.writeInt(u32, 88200, .little) catch return;
+    w.writeInt(u16, 2, .little) catch return;
+    w.writeInt(u16, 16, .little) catch return;
+    w.writeAll("data") catch return;
+    w.writeInt(u32, data_len, .little) catch return;
+    for (samples) |sm| w.writeInt(i16, sm, .little) catch return;
+    bw.flush() catch return;
+    flash("saved bit8maker.wav");
+}
+
+const MEv = struct { tick: u32, kind: u8, ch: u8, note: u8 }; // kind: 0=off, 1=on
+fn midiLess(_: void, a: MEv, b: MEv) bool {
+    if (a.tick != b.tick) return a.tick < b.tick;
+    return a.kind < b.kind; // note-offs before note-ons at the same tick
+}
+fn writeVlq(list: *std.ArrayList(u8), n0: u32) !void {
+    var stack: [5]u8 = undefined;
+    var sp: usize = 0;
+    var n = n0;
+    stack[sp] = @intCast(n & 0x7f);
+    sp += 1;
+    n >>= 7;
+    while (n > 0) {
+        stack[sp] = @intCast((n & 0x7f) | 0x80);
+        sp += 1;
+        n >>= 7;
+    }
+    while (sp > 0) {
+        sp -= 1;
+        try list.append(stack[sp]);
+    }
+}
+fn exportMidi() void {
+    const alloc = std.heap.c_allocator;
+    const div: u32 = 96;
+    const step_ticks: u32 = 24;
+    const gate: u32 = 20;
+    var trk = std.ArrayList(u8).init(alloc);
+    defer trk.deinit();
+    var events = std.ArrayList(MEv).init(alloc);
+    defer events.deinit();
+
+    const mpq: u32 = @intFromFloat(60000000.0 / @as(f32, @floatFromInt(bpm)));
+    writeVlq(&trk, 0) catch return;
+    trk.appendSlice(&[_]u8{ 0xff, 0x51, 0x03, @intCast((mpq >> 16) & 0xff), @intCast((mpq >> 8) & 0xff), @intCast(mpq & 0xff) }) catch return;
+
+    var work: [MAX_SEC]Section = undefined;
+    var si: usize = 0;
+    while (si < n_sec) : (si += 1) work[si] = sections[si];
+    var cell_idx: u32 = 0;
+    var gt: i32 = 0;
+    si = 0;
+    while (si < n_sec) : (si += 1) {
+        var r: i32 = 0;
+        while (r < sections[si].repeat) : (r += 1) {
+            var st: usize = 0;
+            while (st < STEPS) : (st += 1) {
+                if (gt > 0 and @rem(gt, gol_step) == 0 and work[si].gol) lifeStep(&work[si].pat);
+                const tick = cell_idx * step_ticks;
+                var k: usize = 0;
+                while (k < ROWS) : (k += 1) {
+                    if (work[si].pat[k][st]) {
+                        events.append(.{ .tick = tick, .kind = 1, .ch = MIDI_CH[k], .note = MIDI_NOTE[k] }) catch return;
+                        events.append(.{ .tick = tick + gate, .kind = 0, .ch = MIDI_CH[k], .note = MIDI_NOTE[k] }) catch return;
+                    }
+                }
+                cell_idx += 1;
+                gt += 1;
+            }
+        }
+    }
+    std.mem.sort(MEv, events.items, {}, midiLess);
+    var last: u32 = 0;
+    for (events.items) |e| {
+        writeVlq(&trk, e.tick - last) catch return;
+        last = e.tick;
+        const status: u8 = (if (e.kind == 1) @as(u8, 0x90) else @as(u8, 0x80)) | e.ch;
+        trk.appendSlice(&[_]u8{ status, e.note, if (e.kind == 1) @as(u8, 100) else 0 }) catch return;
+    }
+    writeVlq(&trk, 0) catch return;
+    trk.appendSlice(&[_]u8{ 0xff, 0x2f, 0x00 }) catch return;
+
+    const file = std.fs.cwd().createFile("bit8maker.mid", .{}) catch {
+        flash("export failed");
+        return;
+    };
+    defer file.close();
+    var bw = std.io.bufferedWriter(file.writer());
+    const w = bw.writer();
+    const tl: u32 = @intCast(trk.items.len);
+    w.writeAll(&[_]u8{ 0x4d, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 0, 0, 1, @intCast((div >> 8) & 0xff), @intCast(div & 0xff) }) catch return;
+    w.writeAll(&[_]u8{ 0x4d, 0x54, 0x72, 0x6b, @intCast((tl >> 24) & 0xff), @intCast((tl >> 16) & 0xff), @intCast((tl >> 8) & 0xff), @intCast(tl & 0xff) }) catch return;
+    w.writeAll(trk.items) catch return;
+    bw.flush() catch return;
+    flash("saved bit8maker.mid");
+}
+
 fn startPlay(alloc: std.mem.Allocator) void {
     const samples = renderStoryline(alloc) catch return;
     defer alloc.free(samples);
@@ -309,6 +438,8 @@ pub fn main() void {
         if (button(138, 92, 90, 40, "Clear", false)) sections[cur].pat = std.mem.zeroes([ROWS][STEPS]bool);
         if (button(240, 92, 34, 40, "-", false)) bpm = @max(60, bpm - 5);
         if (button(322, 92, 34, 40, "+", false)) bpm = @min(250, bpm + 5);
+        if (button(470, 92, 64, 40, "WAV", false)) exportWav();
+        if (button(546, 92, 64, 40, "MID", false)) exportMidi();
 
         // sections bar
         const ty: i32 = 160;
@@ -369,7 +500,8 @@ pub fn main() void {
             rl.DrawRectangle(px, grid_top - 4, cellpx + gap, ROWS_I * row_h, rl.Color{ .r = 255, .g = 255, .b = 255, .a = 45 });
         }
 
-        rl.DrawText("Zig + raylib · click cells · tabs = sections · Life = Game of Life", 16, H - 30, 15, MUTED);
+        rl.DrawText("Zig + raylib · click cells · tabs = sections · WAV/MID export", 16, H - 30, 15, MUTED);
+        if (rl.GetTime() < status_until) rl.DrawText(status_msg, 560, H - 30, 15, GREEN);
         rl.EndDrawing();
     }
 

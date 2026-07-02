@@ -1,6 +1,6 @@
-// Bit8maker 0.1.17 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.16 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.17";
+const VERSION = "0.1.16";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -404,7 +404,7 @@ const CHANGELOG = [
     "es": ["Port raylib: cabezal de reproducción + bucle sin cortes"], "pt": ["Port raylib: cabeçote de reprodução + loop sem emendas"], "it": ["Port raylib: testina di riproduzione + loop senza giunzioni"], "nl": ["raylib-port: meelopende afspeelkop + naadloze loop"],
     "sv": ["raylib-port: löpande spelhuvud + sömlös loop"], "fi": ["raylib-portti: juokseva toistopää + saumaton silmukka"], "ka": ["raylib პორტი: მოძრავი დამკვრელი + უწყვეტი მარყუჟი"], "az": ["raylib portu: hərəkət edən pleyhed + qırıqsız dövr"],
   }, arch: {} },
-  { v: "0.1.16", commit: "a51c76f", items: {
+  { v: "0.1.16", commit: "—", items: {
     "ru-modern": ["raylib-порт дорос: громкости на дорожку (−/+), секции с вкладками и повторами, и «Игра Жизнь» на секцию (тумблер + шаг вручную + запекание эволюции в звук)", "Плейхед подсвечивает играющую секцию (зелёная рамка вкладки) и её шаг"],
     "ru-classic": ["raylib-порт: громкости, секции, Игра Жизнь"], "uk": ["raylib-порт: гучності, секції, Гра Життя"],
     "eng-ny": ["Zig+raylib port grew up: per-track volume (−/+), sections with tabs and repeats, and per-section Game of Life (toggle + manual step + evolution baked into the audio)", "The playhead marks the sounding section (green tab outline) and its step"],
@@ -412,15 +412,6 @@ const CHANGELOG = [
     "sa": ["منفذ raylib: مستوى لكل مسار، مقاطع، لعبة الحياة"], "cn": ["raylib 移植：每轨音量、段落、生命游戏"], "kz": ["raylib порты: трек дыбысы, бөлімдер, Өмір ойыны"], "lt": ["raylib portas: takelių garsumas, sekcijos, Gyvybes zaidimas"],
     "es": ["Port raylib: volumen por pista, secciones, Juego de la vida"], "pt": ["Port raylib: volume por faixa, seções, Jogo da vida"], "it": ["Port raylib: volume per traccia, sezioni, Gioco della vita"], "nl": ["raylib-port: volume per track, secties, Game of Life"],
     "sv": ["raylib-port: volym per spår, sektioner, Livets spel"], "fi": ["raylib-portti: raitakohtainen äänenvoimakkuus, osiot, Elämän peli"], "ka": ["raylib პორტი: ხმა თითო ტრეკზე, სექციები, სიცოცხლის თამაში"], "az": ["raylib portu: trek üzrə səs, bölmələr, Həyat oyunu"],
-  }, arch: {} },
-  { v: "0.1.17", commit: "—", items: {
-    "ru-modern": ["raylib-порт: экспорт из GUI — кнопки WAV и MID пишут файл (bit8maker.wav / bit8maker.mid) с учётом секций, повторов и запечённой эволюции GoL", "MP3/FLAC в нативе требуют C-библиотек LAME/FLAC — позже"],
-    "ru-classic": ["raylib-порт: экспорт WAV и MIDI"], "uk": ["raylib-порт: експорт WAV і MIDI"],
-    "eng-ny": ["Zig+raylib port: export from the GUI — WAV and MID buttons write a file (bit8maker.wav / bit8maker.mid) honoring sections, repeats and baked Game-of-Life evolution", "MP3/FLAC would need the LAME/FLAC C libraries — later"],
-    "eng-uk": ["Zig+raylib port: WAV & MIDI export"], "fr": ["Port raylib : export WAV et MIDI"], "jp": ["raylib移植：WAV・MIDI書き出し"],
-    "sa": ["منفذ raylib: تصدير WAV و MIDI"], "cn": ["raylib 移植：WAV 和 MIDI 导出"], "kz": ["raylib порты: WAV және MIDI экспорты"], "lt": ["raylib portas: WAV ir MIDI eksportas"],
-    "es": ["Port raylib: exportar WAV y MIDI"], "pt": ["Port raylib: exportar WAV e MIDI"], "it": ["Port raylib: esportazione WAV e MIDI"], "nl": ["raylib-port: WAV- en MIDI-export"],
-    "sv": ["raylib-port: WAV- och MIDI-export"], "fi": ["raylib-portti: WAV- ja MIDI-vienti"], "ka": ["raylib პორტი: WAV და MIDI ექსპორტი"], "az": ["raylib portu: WAV və MIDI ixracı"],
   }, arch: {} },
 ];
 

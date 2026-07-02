@@ -1,0 +1,107 @@
+:root{
+  --brand:#267DB7; --brand-d:#1F6699; --brand-l:#5aa6da;
+  --bg:#0e0e10; --card:#15161a; --line:#23262e; --txt:#eef2f6; --muted:#8b97a4;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:24px 16px 60px;
+}
+.wrap{max-width:860px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+h1 .i{color:var(--brand)}
+.lang-sel{
+  background:#0e0e10;border:1px solid var(--line);color:#cfd6dd;
+  border-radius:999px;padding:7px 12px;cursor:pointer;font:inherit;font-size:14px;
+}
+.tagline{color:var(--muted);margin-top:6px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:18px}
+.transport{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.btn{
+  background:var(--brand);color:#fff;border:none;border-radius:12px;
+  padding:12px 24px;font:inherit;font-weight:700;cursor:pointer;min-width:96px;
+}
+.btn:hover{background:var(--brand-d)}
+.btn--ghost{background:transparent;border:1px solid var(--line);color:#cfd6dd;min-width:0}
+.btn.recording{background:#c0392b;border-color:#e74c3c;color:#fff}
+.share-status{color:var(--brand-l);font-size:13px}
+.bpm{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-left:auto}
+.bpm input{width:130px}
+.bpm b{display:inline-block;min-width:32px;text-align:right}
+/* reserve fixed space so the genre/tempo hint never reflows the BPM slider while dragging */
+.bpm-name{display:inline-block;width:210px;color:var(--brand-l);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+@media(max-width:560px){.bpm{margin-left:0;width:100%}.bpm-name{width:auto;flex:1}}
+
+.sections{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;direction:ltr}
+.gol{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;direction:ltr;color:var(--muted);font-size:14px}
+.gol-tog{display:flex;align-items:center;gap:6px;cursor:pointer;color:#cfd6dd}
+.gol-tog input{accent-color:var(--brand)}
+.gol-rate{display:flex;align-items:center;gap:8px}
+.gol-rate input{width:120px;accent-color:var(--brand)}
+.gol-rate b{color:var(--txt);min-width:44px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{background:#1c1f27;border:1px solid var(--line);color:#cfd6dd;border-radius:8px;min-width:34px;padding:6px 10px;font:inherit;cursor:pointer}
+.tab.active{background:var(--brand);border-color:var(--brand-l);color:#fff;font-weight:700}
+.tab.playing{box-shadow:0 0 0 2px var(--brand-l), 0 0 10px rgba(90,166,218,.7)}
+.tab--icon{min-width:30px;padding:6px 8px}
+.sec-name{background:#0e0e10;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;width:110px}
+.rep{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px;margin-left:auto}
+.rep b{min-width:26px;text-align:center;color:var(--txt)}
+.mini{background:#1c1f27;border:1px solid var(--line);color:#cfd6dd;border-radius:6px;width:26px;height:26px;cursor:pointer;font:inherit}
+
+.scope{margin-top:16px}
+.scope-cap{color:var(--muted);font-size:13px;margin-bottom:6px}
+.scope-cv{display:block;width:100%;height:80px;background:#0c0d11;border:1px solid var(--line);border-radius:10px}
+.scope-cv+.scope-cv{margin-top:8px}
+
+.now-playing{display:flex;align-items:center;gap:10px;margin-top:16px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#12141a;color:var(--muted);font-size:14px}
+.now-playing b{color:var(--brand-l)}
+#np-info{color:var(--txt)}
+.np-dot{width:10px;height:10px;border-radius:50%;background:#3a4150;flex:none}
+.now-playing.live .np-dot{background:var(--brand);animation:np-pulse 1s ease-in-out infinite}
+@keyframes np-pulse{0%,100%{box-shadow:0 0 0 0 rgba(38,125,183,.7)}50%{box-shadow:0 0 0 6px rgba(38,125,183,0)}}
+
+.export-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;direction:ltr}
+.track-name{background:#0e0e10;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;font:inherit;font-size:14px;min-width:160px;flex:1}
+
+.grid{display:grid;gap:6px}
+.row{display:grid;grid-template-columns:84px 1fr 92px;gap:10px;align-items:center}
+.label{font-size:14px;color:#cfd6dd;cursor:grab}
+.label:active{cursor:grabbing}
+.row.dragging{opacity:.45}
+.row.drop-hint{outline:2px dashed var(--brand-l);outline-offset:3px;border-radius:6px}
+.row-vol{width:92px;accent-color:var(--brand)}
+@media(max-width:560px){.row{grid-template-columns:64px 1fr}.row-vol{display:none}}
+.steps{display:grid;grid-template-columns:repeat(16,1fr);gap:4px}
+.cell{
+  aspect-ratio:1;background:#1c1f27;border:1px solid #2a2e38;border-radius:6px;
+  cursor:pointer;transition:background .05s;
+}
+.cell:nth-child(4n+1){border-color:#3a4150}
+.cell.on{background:var(--brand);border-color:var(--brand-l);box-shadow:0 0 8px rgba(38,125,183,.55)}
+.cell.playing{outline:2px solid #fff}
+
+/* keep the sequencer left-to-right even in RTL languages */
+.grid,.steps,.transport{direction:ltr}
+
+/* fixed height + own scroll: switching versions never resizes/jumps the page */
+.ver-stage{margin-top:18px}
+.ver-frame{width:100%;height:640px;border:1px solid var(--line);border-radius:16px;background:var(--bg);display:block}
+
+/* slider on its own full-width row so the version/commit/snapshot text below it
+   can change length without ever resizing or jerking the slider */
+.changelog .cl-head{margin-bottom:10px}
+.cl-snap{color:var(--muted);font-size:13px}
+#ver-slider{display:block;width:100%;accent-color:var(--brand);margin-bottom:10px}
+.cl-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:20px}
+.cl-ver{font-weight:700}
+.cl-commit a{color:var(--brand-l);text-decoration:none;font-family:ui-monospace,monospace;font-size:13px}
+#cl-body h3{font-size:15px;margin-bottom:6px;color:#cfd6dd}
+#cl-body ul{margin:0 0 6px;padding-inline-start:22px;line-height:1.7}
+.cl-arch{color:var(--muted);font-size:14px;margin-top:6px}
+
+footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center}
+footer a{color:var(--brand-l);text-decoration:none}

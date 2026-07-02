@@ -84,7 +84,8 @@ Zig ones. `.dmg` (macOS) is not built.
 
 - **Web** — mature (0.1.x). Possible: swing/groove, per-section BPM, save slots.
 - **Zig + raylib GUI** — porting the web features one at a time (done: grid,
-  transport, volume, sections, Game of Life, playhead; next: presets, export, i18n).
+  transport, volume, sections, Game of Life, playhead, WAV/MIDI export; next:
+  MP3/FLAC, presets, i18n).
 - **CI native builds** — unblock GitHub Actions (billing) so Electron `.exe/.deb/.tar.gz`
   publish automatically per tag.
 
