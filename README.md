@@ -24,6 +24,10 @@ Release:
 
 (`.dmg` for macOS is not built yet.) Build locally with `npm install && npm run dist`.
 
+## v0.1.15
+
+- **Zig + raylib port**: a running **playhead** highlights the current step in sync with the audio, and the loop is now **seamless** (note tails wrap into the start)
+
 ## v0.1.14
 
 - **Native GUI port started (Zig + raylib)** — `zig/gui`: a window with a clickable 6×16 grid, Play/Stop/Clear, BPM ±, and audio (the pattern rendered with the same voices and looped); builds raylib from source

@@ -17,6 +17,8 @@ var bpm: i32 = 100;
 var playing: bool = false;
 var sound: rl.Sound = undefined;
 var have_sound: bool = false;
+var play_start: f64 = 0; // rl.GetTime() at (re)start of the loop, for the playhead
+var step_dur_g: f32 = 0.15; // seconds per 16th step
 
 fn col(hex: u32) rl.Color {
     return rl.Color{ .r = @intCast((hex >> 16) & 0xff), .g = @intCast((hex >> 8) & 0xff), .b = @intCast(hex & 0xff), .a = 255 };
@@ -104,23 +106,28 @@ fn addSynth(b: []f32, s: usize, v: f32) void {
 
 fn renderCurrent(alloc: std.mem.Allocator) ![]i16 {
     const step_samples: usize = @intFromFloat((60.0 / @as(f32, @floatFromInt(bpm))) / 4.0 * SR);
-    const n = STEPS * step_samples + @as(usize, @intFromFloat(0.3 * SR));
-    const buf = try alloc.alloc(f32, n);
-    defer alloc.free(buf);
-    @memset(buf, 0);
+    const n = STEPS * step_samples; // exact loop length (one bar)
+    const tail: usize = @intFromFloat(0.35 * SR);
+    const work = try alloc.alloc(f32, n + tail); // extra room for ringing tails
+    defer alloc.free(work);
+    @memset(work, 0);
     var st: usize = 0;
     while (st < STEPS) : (st += 1) {
         const off = st * step_samples;
-        if (pattern[0][st]) addKick(buf, off, VOL[0]);
-        if (pattern[1][st]) addSnare(buf, off, VOL[1]);
-        if (pattern[2][st]) addHat(buf, off, VOL[2]);
-        if (pattern[3][st]) addClap(buf, off, VOL[3]);
-        if (pattern[4][st]) addBass(buf, off, VOL[4]);
-        if (pattern[5][st]) addSynth(buf, off, VOL[5]);
+        if (pattern[0][st]) addKick(work, off, VOL[0]);
+        if (pattern[1][st]) addSnare(work, off, VOL[1]);
+        if (pattern[2][st]) addHat(work, off, VOL[2]);
+        if (pattern[3][st]) addClap(work, off, VOL[3]);
+        if (pattern[4][st]) addBass(work, off, VOL[4]);
+        if (pattern[5][st]) addSynth(work, off, VOL[5]);
     }
+    // fold the overhanging tail back into the start so the loop is seamless
+    var i: usize = 0;
+    while (i < tail) : (i += 1) work[i] += work[n + i];
     const out = try alloc.alloc(i16, n);
-    for (buf, 0..) |sv, i| {
-        var x = sv;
+    i = 0;
+    while (i < n) : (i += 1) {
+        var x = work[i];
         if (x > 1.0) x = 1.0;
         if (x < -1.0) x = -1.0;
         out[i] = @intFromFloat(x * 32767.0);
@@ -141,7 +148,9 @@ fn startPlay(alloc: std.mem.Allocator) void {
     if (have_sound) rl.UnloadSound(sound);
     sound = rl.LoadSoundFromWave(wave); // copies the samples internally
     have_sound = true;
+    step_dur_g = (60.0 / @as(f32, @floatFromInt(bpm))) / 4.0;
     rl.PlaySound(sound);
+    play_start = rl.GetTime();
     playing = true;
 }
 fn stopPlay() void {
@@ -192,7 +201,10 @@ pub fn main() void {
 
     while (!rl.WindowShouldClose()) {
         // loop playback
-        if (playing and have_sound and !rl.IsSoundPlaying(sound)) rl.PlaySound(sound);
+        if (playing and have_sound and !rl.IsSoundPlaying(sound)) {
+            rl.PlaySound(sound);
+            play_start = rl.GetTime(); // resync the playhead each loop
+        }
 
         // transport
         if (button(24, 92, 120, 40, if (playing) "Stop" else "Play", true)) {
@@ -238,6 +250,17 @@ pub fn main() void {
                 rl.DrawRectangle(cx, ry, cell, cell, if (on) BRAND else CELL);
                 rl.DrawRectangleLines(cx, ry, cell, cell, if (on) BRAND_L else col(0x2a2e38));
             }
+        }
+        // playhead: white column sweeping the current step, in sync with the loop
+        if (playing) {
+            const el: f64 = rl.GetTime() - play_start;
+            var cs: i32 = @intFromFloat(el / @as(f64, step_dur_g));
+            if (cs < 0) cs = 0;
+            if (cs > 15) cs = 15;
+            const px = grid_x + cs * (cell + gap) - @divTrunc(gap, 2);
+            const ptop = grid_top - 4;
+            const pbot = grid_top + @as(i32, @intCast(ROWS)) * row_h;
+            rl.DrawRectangle(px, ptop, cell + gap, pbot - ptop, rl.Color{ .r = 255, .g = 255, .b = 255, .a = 45 });
         }
         rl.DrawText("Zig + raylib · click cells, Play to hear", 24, H - 34, 16, MUTED);
         rl.EndDrawing();

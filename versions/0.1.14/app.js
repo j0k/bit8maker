@@ -1,6 +1,6 @@
-// Bit8maker 0.1.15 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.14 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.15";
+const VERSION = "0.1.14";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -384,7 +384,7 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "Чистый Zig 0.13, без зависимостей; те же голоса (свип-синус, шум+тон, пила/треугольник) → 16-бит PCM WAV; статический ELF x86-64.", "eng-ny": "Pure Zig 0.13, no deps; same voices (swept sine, noise+tone, saw/triangle) → 16-bit PCM WAV; static x86-64 ELF.",
   } },
-  { v: "0.1.14", commit: "9672416", items: {
+  { v: "0.1.14", commit: "—", items: {
     "ru-modern": ["Начат нативный GUI-порт на Zig + raylib (папка zig/gui): окно, сетка 6×16 с кликами, транспорт Play/Stop/Clear, BPM ±, и звук — паттерн рендерится теми же голосами и зациклен", "Собирается из исходников (raylib, X11); дальше — секции, «Игра Жизнь», экспорт, i18n"],
     "ru-classic": ["Начат GUI-порт на Zig + raylib (zig/gui): сетка, клики, воспроизведение"], "uk": ["Розпочато GUI-порт на Zig + raylib (zig/gui)"],
     "eng-ny": ["Started the native GUI port in Zig + raylib (zig/gui): a window, a clickable 6x16 grid, Play/Stop/Clear, BPM ±, and audio — the pattern is rendered with the same voices and looped", "Builds raylib from source (X11); sections, Game of Life, export and i18n come next"],
@@ -395,15 +395,6 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "raylib собирается из исходников через build.zig.zon (закреплён 5.5), X11-бэкенд; звук — Wave из отрендеренного паттерна.", "eng-ny": "raylib built from source via build.zig.zon (pinned 5.5), X11 backend; audio is a Wave rendered from the pattern.",
   } },
-  { v: "0.1.15", commit: "—", items: {
-    "ru-modern": ["raylib-порт: бегущий плейхед — белая подсветка текущего шага, синхронная со звуком; луп сделан бесшовным (хвосты нот заворачиваются в начало)"],
-    "ru-classic": ["raylib-порт: плейхед + бесшовный луп"], "uk": ["raylib-порт: плейхед + безшовний луп"],
-    "eng-ny": ["Zig+raylib port: a running playhead highlights the current step in sync with the audio; the loop is now seamless (note tails wrap into the start)"],
-    "eng-uk": ["Zig+raylib port: running playhead + seamless loop"], "fr": ["Port raylib : tête de lecture + boucle sans couture"], "jp": ["raylib移植：再生ヘッド＋シームレスなループ"],
-    "sa": ["منفذ raylib: مؤشر تشغيل متحرك + حلقة سلسة"], "cn": ["raylib 移植：走动的播放头 + 无缝循环"], "kz": ["raylib порты: жүгіретін плейхед + үзіліссіз луп"], "lt": ["raylib portas: bėgantis grotuvo žymeklis + vientisa kilpa"],
-    "es": ["Port raylib: cabezal de reproducción + bucle sin cortes"], "pt": ["Port raylib: cabeçote de reprodução + loop sem emendas"], "it": ["Port raylib: testina di riproduzione + loop senza giunzioni"], "nl": ["raylib-port: meelopende afspeelkop + naadloze loop"],
-    "sv": ["raylib-port: löpande spelhuvud + sömlös loop"], "fi": ["raylib-portti: juokseva toistopää + saumaton silmukka"], "ka": ["raylib პორტი: მოძრავი დამკვრელი + უწყვეტი მარყუჟი"], "az": ["raylib portu: hərəkət edən pleyhed + qırıqsız dövr"],
-  }, arch: {} },
 ];
 
 // ---- language (URL ?lang overrides stored) ----
