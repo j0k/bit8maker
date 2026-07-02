@@ -1,14 +1,21 @@
 # Bit8maker GUI — Zig + raylib (native desktop port)
 
-The start of a **native interactive** Bit8maker, written in Zig with
-[raylib](https://www.raylib.com). First increment:
+A **native interactive** Bit8maker, written in Zig with
+[raylib](https://www.raylib.com). Current features:
 
 - a window with the 6×16 step grid (Kick / Snare / HiHat / Clap / Bass / Synth)
-- **click a cell** to toggle it
-- **Play / Stop** — the current pattern is rendered with the same procedural
-  voices as the web app and looped; **Clear**; **BPM −/+**
+- **click a cell** to toggle it; **Play / Stop / Clear**; **BPM −/+**
+- **per-track volume** (−/+ per row)
+- **storyline sections** — tabs to switch, **+ / x** to add/remove, per-section
+  **repeat** (−/+); the whole storyline is rendered and looped
+- **Game of Life** per section — **Life** toggle (bakes the evolution into the
+  looped audio), a manual **step**, and a **life N/16** rate
+- a **playhead** that marks the sounding section (green tab outline) and its step
 
-Audio uses raylib's audio device; the pattern is rendered to a `Wave` and played.
+Audio: the storyline is rendered to a seamless `Wave` (tails wrapped) and played.
+
+Still web-only (not yet ported): presets, export, share links, i18n, visualiser,
+now-playing, record, instrument reorder.
 
 ## Build & run
 

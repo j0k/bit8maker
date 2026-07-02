@@ -1,6 +1,6 @@
-// Bit8maker 0.1.16 — client-side beat maker (Web Audio API). No backend.
+// Bit8maker 0.1.15 — client-side beat maker (Web Audio API). No backend.
 "use strict";
-const VERSION = "0.1.16";
+const VERSION = "0.1.15";
 const STEPS = 16;
 const INSTR = ["kick", "snare", "hihat", "clap", "bass", "synth"];
 const MAX_BPM = 250;
@@ -395,7 +395,7 @@ const CHANGELOG = [
   }, arch: {
     "ru-modern": "raylib собирается из исходников через build.zig.zon (закреплён 5.5), X11-бэкенд; звук — Wave из отрендеренного паттерна.", "eng-ny": "raylib built from source via build.zig.zon (pinned 5.5), X11 backend; audio is a Wave rendered from the pattern.",
   } },
-  { v: "0.1.15", commit: "55656df", items: {
+  { v: "0.1.15", commit: "—", items: {
     "ru-modern": ["raylib-порт: бегущий плейхед — белая подсветка текущего шага, синхронная со звуком; луп сделан бесшовным (хвосты нот заворачиваются в начало)"],
     "ru-classic": ["raylib-порт: плейхед + бесшовный луп"], "uk": ["raylib-порт: плейхед + безшовний луп"],
     "eng-ny": ["Zig+raylib port: a running playhead highlights the current step in sync with the audio; the loop is now seamless (note tails wrap into the start)"],
@@ -403,15 +403,6 @@ const CHANGELOG = [
     "sa": ["منفذ raylib: مؤشر تشغيل متحرك + حلقة سلسة"], "cn": ["raylib 移植：走动的播放头 + 无缝循环"], "kz": ["raylib порты: жүгіретін плейхед + үзіліссіз луп"], "lt": ["raylib portas: bėgantis grotuvo žymeklis + vientisa kilpa"],
     "es": ["Port raylib: cabezal de reproducción + bucle sin cortes"], "pt": ["Port raylib: cabeçote de reprodução + loop sem emendas"], "it": ["Port raylib: testina di riproduzione + loop senza giunzioni"], "nl": ["raylib-port: meelopende afspeelkop + naadloze loop"],
     "sv": ["raylib-port: löpande spelhuvud + sömlös loop"], "fi": ["raylib-portti: juokseva toistopää + saumaton silmukka"], "ka": ["raylib პორტი: მოძრავი დამკვრელი + უწყვეტი მარყუჟი"], "az": ["raylib portu: hərəkət edən pleyhed + qırıqsız dövr"],
-  }, arch: {} },
-  { v: "0.1.16", commit: "—", items: {
-    "ru-modern": ["raylib-порт дорос: громкости на дорожку (−/+), секции с вкладками и повторами, и «Игра Жизнь» на секцию (тумблер + шаг вручную + запекание эволюции в звук)", "Плейхед подсвечивает играющую секцию (зелёная рамка вкладки) и её шаг"],
-    "ru-classic": ["raylib-порт: громкости, секции, Игра Жизнь"], "uk": ["raylib-порт: гучності, секції, Гра Життя"],
-    "eng-ny": ["Zig+raylib port grew up: per-track volume (−/+), sections with tabs and repeats, and per-section Game of Life (toggle + manual step + evolution baked into the audio)", "The playhead marks the sounding section (green tab outline) and its step"],
-    "eng-uk": ["Zig+raylib port: per-track volume, sections, Game of Life"], "fr": ["Port raylib : volume par piste, sections, Jeu de la vie"], "jp": ["raylib移植：トラック音量・セクション・ライフゲーム"],
-    "sa": ["منفذ raylib: مستوى لكل مسار، مقاطع، لعبة الحياة"], "cn": ["raylib 移植：每轨音量、段落、生命游戏"], "kz": ["raylib порты: трек дыбысы, бөлімдер, Өмір ойыны"], "lt": ["raylib portas: takelių garsumas, sekcijos, Gyvybes zaidimas"],
-    "es": ["Port raylib: volumen por pista, secciones, Juego de la vida"], "pt": ["Port raylib: volume por faixa, seções, Jogo da vida"], "it": ["Port raylib: volume per traccia, sezioni, Gioco della vita"], "nl": ["raylib-port: volume per track, secties, Game of Life"],
-    "sv": ["raylib-port: volym per spår, sektioner, Livets spel"], "fi": ["raylib-portti: raitakohtainen äänenvoimakkuus, osiot, Elämän peli"], "ka": ["raylib პორტი: ხმა თითო ტრეკზე, სექციები, სიცოცხლის თამაში"], "az": ["raylib portu: trek üzrə səs, bölmələr, Həyat oyunu"],
   }, arch: {} },
 ];
 
